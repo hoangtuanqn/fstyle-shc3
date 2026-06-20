@@ -9,7 +9,7 @@ import { AlgoJwt } from '~/utils/jwt';
 class MiddlewareAuth {
   auth = async (req: Request, _res: Response, next: NextFunction) => {
     try {
-      const token = Helpers.getTokenFromHeader(req);
+      const token = req.cookies?.access_token;
       if (!token) {
         throw new ErrorWithStatus({
           message: 'Token không được cung cấp!',
@@ -53,7 +53,7 @@ class MiddlewareAuth {
 
   extractUserFromExpiredToken = async (req: Request, _res: Response, next: NextFunction) => {
     try {
-      const token = Helpers.getTokenFromHeader(req);
+      const token = req.cookies?.access_token;
       if (!token) {
         throw new ErrorWithStatus({
           message: 'Token không được cung cấp!',
