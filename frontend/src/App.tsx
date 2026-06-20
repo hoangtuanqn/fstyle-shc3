@@ -70,8 +70,8 @@ export default function App() {
           />
         </Route>
 
-        {/* Admin + BGK only */}
-        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE]} />}>
+        {/* Admin only */}
+        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN]} />}>
           <Route
             path="/scoring"
             element={

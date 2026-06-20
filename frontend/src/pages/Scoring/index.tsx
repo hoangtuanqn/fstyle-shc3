@@ -1,5 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+
+import ScoringApi from '~/api-requests/scoring.requests';
 
 type SubCriteria = {
   name: string;
@@ -15,6 +19,7 @@ type Criteria = {
   evaluator: string;
   accent: string;
   accentGlow: string;
+  apiKey: 'ideaConcept' | 'choreography' | 'synchronization' | 'performance' | 'costume' | 'discipline';
   subs: SubCriteria[];
 };
 
@@ -26,6 +31,7 @@ const criteriaData: Criteria[] = [
     evaluator: 'BGK',
     accent: '#FEE622',
     accentGlow: 'rgba(254,230,34,.12)',
+    apiKey: 'ideaConcept',
     subs: [
       {
         name: 'Tính phù hợp với chủ đề',
@@ -54,6 +60,7 @@ const criteriaData: Criteria[] = [
     evaluator: 'BGK',
     accent: '#FB8C05',
     accentGlow: 'rgba(251,140,5,.12)',
+    apiKey: 'choreography',
     subs: [
       {
         name: 'Cấu trúc bài nhảy',
@@ -94,6 +101,7 @@ const criteriaData: Criteria[] = [
     evaluator: 'BGK',
     accent: '#5973B3',
     accentGlow: 'rgba(89,115,179,.12)',
+    apiKey: 'synchronization',
     subs: [
       {
         name: 'Synchronization',
@@ -122,6 +130,7 @@ const criteriaData: Criteria[] = [
     evaluator: 'BGK',
     accent: '#D04047',
     accentGlow: 'rgba(208,64,71,.12)',
+    apiKey: 'performance',
     subs: [
       {
         name: 'Năng lượng biểu diễn',
@@ -156,6 +165,7 @@ const criteriaData: Criteria[] = [
     evaluator: 'BGK',
     accent: '#5EAF7C',
     accentGlow: 'rgba(94,175,124,.12)',
+    apiKey: 'costume',
     subs: [
       {
         name: 'Phù hợp concept',
@@ -184,6 +194,7 @@ const criteriaData: Criteria[] = [
     evaluator: 'BTC',
     accent: '#d0d0d0',
     accentGlow: 'rgba(200,200,200,.1)',
+    apiKey: 'discipline',
     subs: [
       {
         name: 'Đúng giờ / đúng tiến độ',
@@ -230,44 +241,120 @@ const tdBase: CSSProperties = {
   lineHeight: 1.5,
 };
 
-const Scoring = () => {
-  const [scores, setScores] = useState<Record<string, number | ''>>(
-    () => {
-      const init: Record<string, number | ''> = {};
-      criteriaData.forEach((cat) => {
-        cat.subs.forEach((_, subIdx) => {
-          init[`${cat.id}-${subIdx}`] = '';
-        });
-      });
-      return init;
-    },
-  );
+type JudgeScoresState = {
+  ideaConcept: number;
+  choreography: number;
+  synchronization: number;
+  performance: number;
+  costume: number;
+};
 
-  const handleScoreChange = (key: string, value: string, max: number) => {
-    if (value === '') {
-      setScores((prev) => ({ ...prev, [key]: '' }));
-      return;
+const Scoring = () => {
+  const queryClient = useQueryClient();
+
+  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
+  const [selectedJudge, setSelectedJudge] = useState<1 | 2 | 3>(1);
+  const [judgeScores, setJudgeScores] = useState<JudgeScoresState>({
+    ideaConcept: 0,
+    choreography: 0,
+    synchronization: 0,
+    performance: 0,
+    costume: 0,
+  });
+  const [disciplineScore, setDisciplineScore] = useState(0);
+
+  const { data: teamsRes } = useQuery({
+    queryKey: ['scoring-teams'],
+    queryFn: ScoringApi.getTeams,
+  });
+
+  const { data: teamScoresRes } = useQuery({
+    queryKey: ['scoring-team-scores', selectedTeamId],
+    queryFn: () => ScoringApi.getTeamScores(selectedTeamId!),
+    enabled: !!selectedTeamId,
+  });
+
+  useEffect(() => {
+    if (!teamScoresRes?.result) return;
+    const judgeRow = teamScoresRes.result.judgeScores.find((s) => s.judgeNumber === selectedJudge);
+    if (judgeRow) {
+      setJudgeScores({
+        ideaConcept: Number(judgeRow.ideaConcept),
+        choreography: Number(judgeRow.choreography),
+        synchronization: Number(judgeRow.synchronization),
+        performance: Number(judgeRow.performance),
+        costume: Number(judgeRow.costume),
+      });
+    } else {
+      setJudgeScores({ ideaConcept: 0, choreography: 0, synchronization: 0, performance: 0, costume: 0 });
     }
-    const num = parseFloat(value);
-    if (isNaN(num)) return;
-    setScores((prev) => ({ ...prev, [key]: Math.min(Math.max(0, num), max) }));
+    const btcRow = teamScoresRes.result.btcScore;
+    setDisciplineScore(btcRow ? Number(btcRow.discipline) : 0);
+  }, [teamScoresRes, selectedJudge]);
+
+  const judgeScoreMutation = useMutation({
+    mutationFn: ScoringApi.saveJudgeScores,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['scoring-teams'] });
+      queryClient.invalidateQueries({ queryKey: ['scoring-team-scores', selectedTeamId] });
+      toast.success('Lưu điểm BGK thành công!');
+    },
+    onError: (err: unknown) => {
+      toast.error(
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Có lỗi xảy ra!',
+      );
+    },
+  });
+
+  const btcScoreMutation = useMutation({
+    mutationFn: ScoringApi.saveBtcScore,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['scoring-teams'] });
+      queryClient.invalidateQueries({ queryKey: ['scoring-team-scores', selectedTeamId] });
+      toast.success('Lưu điểm BTC thành công!');
+    },
+    onError: (err: unknown) => {
+      toast.error(
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Có lỗi xảy ra!',
+      );
+    },
+  });
+
+  const handleSaveJudgeScores = () => {
+    if (!selectedTeamId) return toast.error('Chọn đội trước!');
+    judgeScoreMutation.mutate({ teamId: selectedTeamId, data: { judgeNumber: selectedJudge, ...judgeScores } });
   };
 
-  const categoryTotals = useMemo(() => {
-    const map: Record<number, number> = {};
-    criteriaData.forEach((cat) => {
-      map[cat.id] = cat.subs.reduce((sum, _, i) => {
-        const v = scores[`${cat.id}-${i}`];
-        return sum + (typeof v === 'number' ? v : 0);
-      }, 0);
-    });
-    return map;
-  }, [scores]);
+  const handleSaveBtcScore = () => {
+    if (!selectedTeamId) return toast.error('Chọn đội trước!');
+    btcScoreMutation.mutate({ teamId: selectedTeamId, data: { discipline: disciplineScore } });
+  };
 
-  const grandTotal = useMemo(
-    () => Object.values(categoryTotals).reduce((s, v) => s + v, 0),
-    [categoryTotals],
-  );
+  const getCategoryScore = (cat: Criteria): number => {
+    if (cat.apiKey === 'discipline') return disciplineScore;
+    return judgeScores[cat.apiKey as keyof JudgeScoresState];
+  };
+
+  const setCategoryScore = (cat: Criteria, val: number) => {
+    if (cat.apiKey === 'discipline') {
+      setDisciplineScore(Math.min(Math.max(0, val), cat.maxScore));
+    } else {
+      setJudgeScores((prev) => ({
+        ...prev,
+        [cat.apiKey]: Math.min(Math.max(0, val), cat.maxScore),
+      }));
+    }
+  };
+
+  const grandTotal =
+    judgeScores.ideaConcept +
+    judgeScores.choreography +
+    judgeScores.synchronization +
+    judgeScores.performance +
+    judgeScores.costume +
+    disciplineScore;
+
+  const teams = teamsRes?.result ?? [];
 
   return (
     <div style={{ minHeight: '100vh', paddingTop: 108 }}>
@@ -281,6 +368,70 @@ const Scoring = () => {
           <p style={{ color: 'var(--dim)', fontSize: 14, maxWidth: 600, margin: '0 auto' }}>
             Bảng tiêu chí đánh giá onsite — Tổng điểm tối đa: {totalMax} điểm
           </p>
+        </div>
+      </section>
+
+      {/* Selectors */}
+      <section style={{ paddingBottom: 32 }}>
+        <div className="con">
+          {/* Team selector */}
+          <div style={{ marginBottom: 12 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--dim)', marginBottom: 8 }}>
+              Chọn đội
+            </p>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {teams.map((team) => (
+                <button
+                  key={team.id}
+                  onClick={() => setSelectedTeamId(team.id)}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: 8,
+                    border: '1px solid',
+                    borderColor: selectedTeamId === team.id ? team.color : 'rgba(255,255,255,.15)',
+                    background: selectedTeamId === team.id ? `${team.color}22` : 'transparent',
+                    color: selectedTeamId === team.id ? team.color : 'var(--dim)',
+                    cursor: 'pointer',
+                    fontSize: 13,
+                    fontWeight: 700,
+                  }}
+                >
+                  {team.name}
+                </button>
+              ))}
+              {teams.length === 0 && (
+                <span style={{ fontSize: 13, color: 'var(--dim)' }}>Đang tải danh sách đội...</span>
+              )}
+            </div>
+          </div>
+
+          {/* Judge selector */}
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--dim)', marginBottom: 8 }}>
+              Chọn BGK
+            </p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {([1, 2, 3] as const).map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setSelectedJudge(n)}
+                  style={{
+                    padding: '8px 20px',
+                    borderRadius: 8,
+                    border: '1px solid',
+                    borderColor: selectedJudge === n ? 'var(--orange)' : 'rgba(255,255,255,.15)',
+                    background: selectedJudge === n ? 'rgba(251,140,5,.15)' : 'transparent',
+                    color: selectedJudge === n ? 'var(--orange)' : 'var(--dim)',
+                    cursor: 'pointer',
+                    fontSize: 13,
+                    fontWeight: 700,
+                  }}
+                >
+                  BGK {n}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -316,6 +467,8 @@ const Scoring = () => {
                     const key = `${cat.id}-${subIdx}`;
                     const isFirstRow = subIdx === 0;
                     const catBorderColor = `${cat.accent}26`;
+                    const catScore = getCategoryScore(cat);
+                    const hasScore = catScore > 0;
 
                     return (
                       <tr
@@ -389,43 +542,108 @@ const Scoring = () => {
                         <td style={{ ...tdBase, fontSize: 12, color: '#D04047' }}>
                           <span style={{ opacity: 0.85 }}>−</span> {sub.minus}
                         </td>
-                        <td style={{ ...tdBase, textAlign: 'center', verticalAlign: 'middle' }}>
-                          <input
-                            type="number"
-                            min={0}
-                            max={sub.maxScore}
-                            step={0.5}
-                            value={scores[key]}
-                            onChange={(e) => handleScoreChange(key, e.target.value, sub.maxScore)}
-                            placeholder={`/${sub.maxScore}`}
-                            style={{
-                              width: 64,
-                              padding: '8px 6px',
-                              borderRadius: 8,
-                              border: `1px solid ${
-                                scores[key] !== '' ? `${cat.accent}66` : 'rgba(255,255,255,.12)'
-                              }`,
-                              background: scores[key] !== '' ? `${cat.accent}0D` : 'rgba(255,255,255,.04)',
-                              color: scores[key] !== '' ? cat.accent : 'var(--dim)',
-                              fontFamily: "'Anton', sans-serif",
-                              fontSize: 18,
-                              textAlign: 'center',
-                              outline: 'none',
-                              transition: 'border-color .2s, background .2s, box-shadow .2s',
-                              boxShadow: scores[key] !== '' ? `0 0 12px ${cat.accent}1A` : 'none',
-                            }}
-                            onFocus={(e) => {
-                              e.target.style.borderColor = cat.accent;
-                              e.target.style.boxShadow = `0 0 16px ${cat.accent}33`;
-                            }}
-                            onBlur={(e) => {
-                              e.target.style.borderColor =
-                                scores[key] !== '' ? `${cat.accent}66` : 'rgba(255,255,255,.12)';
-                              e.target.style.boxShadow =
-                                scores[key] !== '' ? `0 0 12px ${cat.accent}1A` : 'none';
-                            }}
-                          />
-                        </td>
+                        {/* Category-level score input — spans all sub-rows */}
+                        {isFirstRow && (
+                          <td
+                            rowSpan={cat.subs.length}
+                            style={{ ...tdBase, textAlign: 'center', verticalAlign: 'middle', background: cat.accentGlow, borderBottom: `1px solid ${catBorderColor}` }}
+                          >
+                            {cat.evaluator === 'BTC' ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  max={cat.maxScore}
+                                  step={0.5}
+                                  value={disciplineScore}
+                                  onChange={(e) => {
+                                    const val = parseFloat(e.target.value);
+                                    if (!isNaN(val)) setCategoryScore(cat, val);
+                                    else if (e.target.value === '') setDisciplineScore(0);
+                                  }}
+                                  placeholder={`/${cat.maxScore}`}
+                                  style={{
+                                    width: 64,
+                                    padding: '8px 6px',
+                                    borderRadius: 8,
+                                    border: `1px solid ${hasScore ? `${cat.accent}66` : 'rgba(255,255,255,.12)'}`,
+                                    background: hasScore ? `${cat.accent}0D` : 'rgba(255,255,255,.04)',
+                                    color: hasScore ? cat.accent : 'var(--dim)',
+                                    fontFamily: "'Anton', sans-serif",
+                                    fontSize: 18,
+                                    textAlign: 'center',
+                                    outline: 'none',
+                                    transition: 'border-color .2s, background .2s, box-shadow .2s',
+                                    boxShadow: hasScore ? `0 0 12px ${cat.accent}1A` : 'none',
+                                  }}
+                                  onFocus={(e) => {
+                                    e.target.style.borderColor = cat.accent;
+                                    e.target.style.boxShadow = `0 0 16px ${cat.accent}33`;
+                                  }}
+                                  onBlur={(e) => {
+                                    e.target.style.borderColor = hasScore ? `${cat.accent}66` : 'rgba(255,255,255,.12)';
+                                    e.target.style.boxShadow = hasScore ? `0 0 12px ${cat.accent}1A` : 'none';
+                                  }}
+                                />
+                                <button
+                                  onClick={handleSaveBtcScore}
+                                  disabled={!selectedTeamId || btcScoreMutation.isPending}
+                                  style={{
+                                    padding: '4px 10px',
+                                    borderRadius: 6,
+                                    border: '1px solid rgba(251,140,5,.4)',
+                                    background: 'rgba(251,140,5,.12)',
+                                    color: 'var(--orange)',
+                                    fontSize: 10,
+                                    fontWeight: 700,
+                                    letterSpacing: '.08em',
+                                    cursor: selectedTeamId ? 'pointer' : 'not-allowed',
+                                    opacity: selectedTeamId ? 1 : 0.5,
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  {btcScoreMutation.isPending ? 'Đang lưu...' : 'Lưu BTC'}
+                                </button>
+                              </div>
+                            ) : (
+                              <input
+                                type="number"
+                                min={0}
+                                max={cat.maxScore}
+                                step={0.5}
+                                value={catScore}
+                                onChange={(e) => {
+                                  const val = parseFloat(e.target.value);
+                                  if (!isNaN(val)) setCategoryScore(cat, val);
+                                  else if (e.target.value === '') setCategoryScore(cat, 0);
+                                }}
+                                placeholder={`/${cat.maxScore}`}
+                                style={{
+                                  width: 64,
+                                  padding: '8px 6px',
+                                  borderRadius: 8,
+                                  border: `1px solid ${hasScore ? `${cat.accent}66` : 'rgba(255,255,255,.12)'}`,
+                                  background: hasScore ? `${cat.accent}0D` : 'rgba(255,255,255,.04)',
+                                  color: hasScore ? cat.accent : 'var(--dim)',
+                                  fontFamily: "'Anton', sans-serif",
+                                  fontSize: 18,
+                                  textAlign: 'center',
+                                  outline: 'none',
+                                  transition: 'border-color .2s, background .2s, box-shadow .2s',
+                                  boxShadow: hasScore ? `0 0 12px ${cat.accent}1A` : 'none',
+                                }}
+                                onFocus={(e) => {
+                                  e.target.style.borderColor = cat.accent;
+                                  e.target.style.boxShadow = `0 0 16px ${cat.accent}33`;
+                                }}
+                                onBlur={(e) => {
+                                  e.target.style.borderColor = hasScore ? `${cat.accent}66` : 'rgba(255,255,255,.12)';
+                                  e.target.style.boxShadow = hasScore ? `0 0 12px ${cat.accent}1A` : 'none';
+                                }}
+                              />
+                            )}
+                          </td>
+                        )}
                         {isFirstRow && (
                           <td
                             rowSpan={cat.subs.length}
@@ -516,9 +734,7 @@ const Scoring = () => {
                             gap: 8,
                           }}
                         >
-                          <span style={{ fontSize: 11, color: cat.accent, fontWeight: 700 }}>
-                            {cat.id}.
-                          </span>
+                          <span style={{ fontSize: 11, color: cat.accent, fontWeight: 700 }}>{cat.id}.</span>
                           <span
                             style={{
                               fontFamily: "'Anton', sans-serif",
@@ -527,7 +743,7 @@ const Scoring = () => {
                               textShadow: `0 0 10px ${cat.accent}44`,
                             }}
                           >
-                            {categoryTotals[cat.id]}
+                            {getCategoryScore(cat)}
                           </span>
                           <span style={{ fontSize: 11, color: 'var(--dim)' }}>/ {cat.maxScore}</span>
                         </div>
@@ -582,6 +798,29 @@ const Scoring = () => {
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          {/* Save BGK scores button */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
+            <button
+              onClick={handleSaveJudgeScores}
+              disabled={!selectedTeamId || judgeScoreMutation.isPending}
+              style={{
+                padding: '12px 32px',
+                borderRadius: 10,
+                border: '1px solid rgba(254,230,34,.4)',
+                background: selectedTeamId ? 'rgba(254,230,34,.12)' : 'rgba(255,255,255,.04)',
+                color: selectedTeamId ? 'var(--gold)' : 'var(--dim)',
+                fontFamily: "'Anton', sans-serif",
+                fontSize: 15,
+                letterSpacing: '.1em',
+                cursor: selectedTeamId ? 'pointer' : 'not-allowed',
+                opacity: selectedTeamId ? 1 : 0.6,
+                transition: 'all .2s',
+              }}
+            >
+              {judgeScoreMutation.isPending ? 'Đang lưu...' : 'LƯU ĐIỂM BGK'}
+            </button>
           </div>
         </div>
       </section>
