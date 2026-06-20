@@ -1,6 +1,12 @@
-import { HTTP_STATUS } from '~/constants/httpStatus';
-import { ErrorWithStatus } from '~/rules/error';
 import scoringRepository from '~/repositories/scoring.repository';
+
+type JudgeScoreRow = {
+  ideaConcept: string | null;
+  choreography: string | null;
+  synchronization: string | null;
+  performance: string | null;
+  costume: string | null;
+};
 
 type JudgeScoreInput = {
   judgeNumber: number;
@@ -80,7 +86,7 @@ class ScoringService {
     });
   };
 
-  private calculateJudgeAverage = (judgeRows: Array<{ ideaConcept: string | null; choreography: string | null; synchronization: string | null; performance: string | null; costume: string | null }>) => {
+  private calculateJudgeAverage = (judgeRows: JudgeScoreRow[]) => {
     if (judgeRows.length === 0) return 0;
     const totals = judgeRows.map(
       (r) =>
