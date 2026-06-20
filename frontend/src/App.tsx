@@ -4,6 +4,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Scoring from './pages/Scoring';
 
 export default function App() {
   return (
@@ -29,6 +30,18 @@ export default function App() {
               <Nav />
               <main>
                 <Dashboard />
+              </main>
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/scoring"
+          element={
+            <>
+              <Nav />
+              <main>
+                <Scoring />
               </main>
               <Footer />
             </>
