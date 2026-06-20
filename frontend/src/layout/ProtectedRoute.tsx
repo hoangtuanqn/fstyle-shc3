@@ -12,13 +12,13 @@ type ProtectedRouteProps = {
 const ProtectedRoute = ({ roleAccess }: ProtectedRouteProps) => {
   const { user, isLoading, isAuthenticated, fetchUser } = useAuth();
 
-  const hasToken = !!LocalStorage.getItem('access_token');
+  const hasToken = !!LocalStorage.getItem('logged_in');
 
   useEffect(() => {
-    if (hasToken && !isAuthenticated && !isLoading) {
+    if (hasToken && !isAuthenticated) {
       fetchUser();
     }
-  }, [hasToken, isAuthenticated, isLoading, fetchUser]);
+  }, [hasToken, isAuthenticated, fetchUser]);
 
   if (isLoading && hasToken) {
     return (

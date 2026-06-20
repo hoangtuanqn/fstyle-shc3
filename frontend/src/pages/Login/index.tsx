@@ -27,13 +27,9 @@ const Login = () => {
         toast.error('Phản hồi từ server không hợp lệ!');
         return;
       }
-      const { access_token, refresh_token, ...user } = data.result;
 
-      LocalStorage.setItem('access_token', access_token);
-      LocalStorage.setItem('refresh_token', refresh_token);
-      LocalStorage.setItem('role', user.role);
-
-      dispatch(setUser(user));
+      LocalStorage.setItem('logged_in', 'true');
+      dispatch(setUser(data.result));
       toast.success(data.message);
       navigate('/dashboard', { replace: true });
     } catch (err) {

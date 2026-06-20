@@ -3,35 +3,27 @@ import { toast } from 'sonner';
 
 import LocalStorage from '~/utils/localStorage';
 
-import type { ApiResponse, RefreshResult } from '~/types/auth';
-
 const BASE_URL = import.meta.env.VITE_API_BACKEND_API;
 
 export const publicApi = axios.create({
   baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
 });
 
 export const privateApi = axios.create({
   baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
-});
-
-privateApi.interceptors.request.use((config) => {
-  const token = LocalStorage.getItem('access_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+  withCredentials: true,
 });
 
 let isRefreshing = false;
-let failedQueue: { resolve: (token: string) => void; reject: (err: unknown) => void }[] = [];
+let failedQueue: { resolve: () => void; reject: (err: unknown) => void }[] = [];
 
-const processQueue = (error: unknown, token: string | null = null) => {
+const processQueue = (error: unknown) => {
   failedQueue.forEach((prom) => {
-    if (token) {
-      prom.resolve(token);
+    if (!error) {
+      prom.resolve();
     } else {
       prom.reject(error);
     }
@@ -48,10 +40,7 @@ privateApi.interceptors.response.use(
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({
-            resolve: (token: string) => {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-              resolve(privateApi(originalRequest));
-            },
+            resolve: () => resolve(privateApi(originalRequest)),
             reject,
           });
         });
@@ -60,39 +49,12 @@ privateApi.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      const refreshToken = LocalStorage.getItem('refresh_token');
-      const accessToken = LocalStorage.getItem('access_token');
-
-      if (!refreshToken || !accessToken) {
-        isRefreshing = false;
-        processQueue(error, null);
-        clearAuth();
-        return Promise.reject(error);
-      }
-
       try {
-        const { data } = await axios.post<ApiResponse<RefreshResult>>(
-          `${BASE_URL}/auth/refresh`,
-          { refresh_token: refreshToken },
-          { headers: { Authorization: `Bearer ${accessToken}` } },
-        );
-
-        if (!data.result) {
-          throw new Error('Refresh token response missing result');
-        }
-
-        const newAccessToken = data.result.access_token;
-        const newRefreshToken = data.result.refresh_token;
-
-        LocalStorage.setItem('access_token', newAccessToken);
-        LocalStorage.setItem('refresh_token', newRefreshToken);
-
-        processQueue(null, newAccessToken);
-
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        await axios.post(`${BASE_URL}/auth/refresh`, {}, { withCredentials: true });
+        processQueue(null);
         return privateApi(originalRequest);
       } catch (refreshError) {
-        processQueue(refreshError, null);
+        processQueue(refreshError);
         clearAuth();
         toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!');
         return Promise.reject(refreshError);
@@ -106,8 +68,6 @@ privateApi.interceptors.response.use(
 );
 
 function clearAuth() {
-  LocalStorage.removeItem('access_token');
-  LocalStorage.removeItem('refresh_token');
-  LocalStorage.removeItem('role');
+  LocalStorage.removeItem('logged_in');
   window.location.href = '/login';
 }
