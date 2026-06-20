@@ -1,17 +1,43 @@
 import type { NextFunction, Request, Response } from 'express';
 
+import { env } from '~/configs/env';
+import { ExpiresInTokenType } from '~/constants/enums';
 import { HTTP_STATUS } from '~/constants/httpStatus';
-import authService from '~/services/auth.service';
 import { ResponseClient } from '~/rules/response';
+import authService from '~/services/auth.service';
+
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: env.NODE_ENV === 'production',
+  sameSite: 'lax' as const,
+};
+
+function setAuthCookies(res: Response, accessToken: string, refreshToken: string) {
+  res.cookie('access_token', accessToken, {
+    ...COOKIE_OPTIONS,
+    maxAge: ExpiresInTokenType.AccessToken * 1000,
+  });
+  res.cookie('refresh_token', refreshToken, {
+    ...COOKIE_OPTIONS,
+    maxAge: ExpiresInTokenType.RefreshToken * 1000,
+    path: '/api/v1/auth',
+  });
+}
+
+function clearAuthCookies(res: Response) {
+  res.clearCookie('access_token', COOKIE_OPTIONS);
+  res.clearCookie('refresh_token', { ...COOKIE_OPTIONS, path: '/api/v1/auth' });
+}
 
 class AuthController {
   login = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await authService.login(req.body);
+      const { accessToken, refreshToken, ...user } = await authService.login(req.body);
+      setAuthCookies(res, accessToken, refreshToken);
       res.status(HTTP_STATUS.OK).json(
         new ResponseClient({
           message: 'Đăng nhập thành công!',
-          result,
+          result: user,
         }),
       );
     } catch (err) {
@@ -22,9 +48,8 @@ class AuthController {
   logout = async (req: Request, res: Response, next: NextFunction) => {
     try {
       await authService.logout(req.userId!);
-      res.status(HTTP_STATUS.OK).json(
-        new ResponseClient({ message: 'Đăng xuất thành công!' }),
-      );
+      clearAuthCookies(res);
+      res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Đăng xuất thành công!' }));
     } catch (err) {
       next(err);
     }
@@ -33,9 +58,7 @@ class AuthController {
   getInfo = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await authService.getInfo(req.userId!);
-      res.status(HTTP_STATUS.OK).json(
-        new ResponseClient({ message: 'Thành công!', result }),
-      );
+      res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Thành công!', result }));
     } catch (err) {
       next(err);
     }
@@ -43,11 +66,10 @@ class AuthController {
 
   refreshToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { refresh_token } = req.body;
-      const result = await authService.refreshToken(req.userId!, refresh_token);
-      res.status(HTTP_STATUS.OK).json(
-        new ResponseClient({ message: 'Làm mới token thành công!', result }),
-      );
+      const currentRefreshToken = req.cookies.refresh_token;
+      const { accessToken, refreshToken } = await authService.refreshToken(req.userId!, currentRefreshToken);
+      setAuthCookies(res, accessToken, refreshToken);
+      res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Làm mới token thành công!' }));
     } catch (err) {
       next(err);
     }

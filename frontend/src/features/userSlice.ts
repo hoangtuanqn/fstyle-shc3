@@ -35,9 +35,7 @@ export const userSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
       state.isLoading = false;
-      LocalStorage.removeItem('access_token');
-      LocalStorage.removeItem('refresh_token');
-      LocalStorage.removeItem('role');
+      LocalStorage.removeItem('logged_in');
     },
   },
   extraReducers: (builder) => {
@@ -54,6 +52,7 @@ export const userSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         state.isLoading = false;
+        LocalStorage.removeItem('logged_in');
       });
   },
 });

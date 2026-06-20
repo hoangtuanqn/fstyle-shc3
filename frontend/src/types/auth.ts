@@ -21,12 +21,4 @@ export type ApiResponse<T = unknown> = {
   result: T;
 };
 
-export type LoginResult = UserType & {
-  access_token: string;
-  refresh_token: string;
-};
-
-export type RefreshResult = {
-  access_token: string;
-  refresh_token: string;
-};
+export type LoginResult = UserType;
