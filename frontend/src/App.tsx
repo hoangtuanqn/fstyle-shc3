@@ -3,6 +3,7 @@ import Nav from './components/Nav';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
 
 export default function App() {
   return (
@@ -21,6 +22,18 @@ export default function App() {
           }
         />
         <Route path="/login" element={<Login />} />
+        <Route
+          path="/dashboard"
+          element={
+            <>
+              <Nav />
+              <main>
+                <Dashboard />
+              </main>
+              <Footer />
+            </>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
