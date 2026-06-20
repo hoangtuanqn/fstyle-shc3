@@ -1,60 +1,13 @@
 import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import type { CSSProperties } from 'react';
 
-const TEAMS = ['SHIRO KURO', 'APEX AURA', 'SLATT', 'ANTI'] as const;
+import AwardApi from '~/api-requests/award.requests';
+import { RoleType } from '~/constants/enums';
+import useAuth from '~/hooks/useAuth';
 
-const teamColors: Record<string, { color: string; glow: string }> = {
-  'SHIRO KURO': { color: 'var(--shiro)', glow: 'rgba(200,200,200,.15)' },
-  'APEX AURA': { color: 'var(--apex)', glow: 'rgba(208,64,71,.15)' },
-  SLATT: { color: 'var(--slatt)', glow: 'rgba(89,115,179,.15)' },
-  ANTI: { color: 'var(--anti)', glow: 'rgba(94,175,124,.15)' },
-};
-
-type TeamAward = {
-  label: string;
-  emoji: string;
-  key: string;
-};
-
-type IndividualAward = {
-  label: string;
-  emoji: string;
-  key: string;
-};
-
-const teamAwards: TeamAward[] = [
-  { label: 'Giải Nhất', emoji: '🥇', key: 'first' },
-  { label: 'Giải Nhì', emoji: '🥈', key: 'second' },
-  { label: 'Giải Ba', emoji: '🥉', key: 'third' },
-  { label: 'Giải Tư', emoji: '4️⃣', key: 'fourth' },
-];
-
-const individualAwards: IndividualAward[] = [
-  { label: 'Best Performer', emoji: '🌟', key: 'best-performer' },
-  { label: 'Best Dancer', emoji: '💃', key: 'best-dancer' },
-  { label: 'Best Face', emoji: '✨', key: 'best-face' },
-  { label: 'Best Energy', emoji: '🔥', key: 'best-energy' },
-  { label: 'Best Creativity', emoji: '🎨', key: 'best-creativity' },
-];
-
-export type AwardsData = {
-  teamAwards: Record<string, string>;
-  individualAwards: Record<string, string>;
-};
-
-const STORAGE_KEY = 'shc3-awards';
-
-const loadAwards = (): AwardsData => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return { teamAwards: {}, individualAwards: {} };
-};
-
-const saveAwards = (data: AwardsData) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-};
+import type { UpdateAwardInput } from '~/types/award';
 
 const inputStyle: CSSProperties = {
   width: '100%',
@@ -81,38 +34,57 @@ const selectStyle: CSSProperties = {
 };
 
 const Awards = () => {
-  const [data, setData] = useState<AwardsData>(loadAwards);
-  const [saved, setSaved] = useState(false);
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
-  const updateTeamAward = (key: string, value: string) => {
-    setData((prev) => ({
-      ...prev,
-      teamAwards: { ...prev.teamAwards, [key]: value },
-    }));
-    setSaved(false);
+  const { data: awardsRes, isLoading } = useQuery({
+    queryKey: ['awards'],
+    queryFn: AwardApi.getAll,
+  });
+  const awards = awardsRes?.result ?? [];
+
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+
+  const getDraft = (awardId: string, fallback: string | null) =>
+    drafts[awardId] !== undefined ? drafts[awardId] : (fallback ?? '');
+
+  const setDraft = (awardId: string, value: string) =>
+    setDrafts((prev) => ({ ...prev, [awardId]: value }));
+
+  const updateMutation = useMutation({
+    mutationFn: AwardApi.updateAward,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['awards'] });
+      toast.success('Đã cập nhật giải thưởng!');
+    },
+    onError: (err: unknown) => {
+      toast.error(
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Có lỗi xảy ra!',
+      );
+    },
+  });
+
+  const autoCalcMutation = useMutation({
+    mutationFn: AwardApi.autoCalculate,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['awards'] });
+      toast.success('Tính giải tự động thành công!');
+    },
+    onError: (err: unknown) => {
+      toast.error(
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Có lỗi xảy ra!',
+      );
+    },
+  });
+
+  const handleSaveAward = (awardId: string, data: UpdateAwardInput) => {
+    updateMutation.mutate({ awardId, data });
   };
 
-  const updateIndividualAward = (key: string, value: string) => {
-    setData((prev) => ({
-      ...prev,
-      individualAwards: { ...prev.individualAwards, [key]: value },
-    }));
-    setSaved(false);
-  };
-
-  const handleSave = () => {
-    saveAwards(data);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
-
-  const handleReset = () => {
-    const empty: AwardsData = { teamAwards: {}, individualAwards: {} };
-    setData(empty);
-    saveAwards(empty);
-  };
-
-  const usedTeams = new Set(Object.values(data.teamAwards).filter(Boolean));
+  const autoAwards = awards.filter((a) => a.type === 'AUTO');
+  const manualAwards = awards.filter((a) => a.type === 'MANUAL');
 
   return (
     <div style={{ minHeight: '100vh', paddingTop: 108 }}>
@@ -130,229 +102,162 @@ const Awards = () => {
 
       <section style={{ paddingBottom: 80 }}>
         <div className="con" style={{ maxWidth: 720, margin: '0 auto' }}>
-          {/* Team Awards */}
-          <div
-            style={{
-              borderRadius: 16,
-              border: '1px solid rgba(254,230,34,.15)',
-              background: 'var(--bg2)',
-              padding: '32px 28px',
-              marginBottom: 28,
-              boxShadow: '0 8px 40px rgba(0,0,0,.5)',
-            }}
-          >
-            <h2
-              style={{
-                fontFamily: "'Anton', sans-serif",
-                fontSize: 22,
-                letterSpacing: '.04em',
-                color: 'var(--gold)',
-                marginBottom: 6,
-              }}
-            >
-              🏆 GIẢI ĐỘI
-            </h2>
-            <p style={{ fontSize: 12, color: 'var(--dim)', marginBottom: 28 }}>
-              Chọn đội từ danh sách — mỗi đội chỉ được chọn một lần
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-              {teamAwards.map((award) => {
-                const selectedTeam = data.teamAwards[award.key] || '';
-                return (
-                  <div key={award.key} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <div
-                      style={{
-                        minWidth: 140,
-                        fontSize: 13,
-                        fontWeight: 700,
-                        color: 'var(--text)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
-                      }}
-                    >
-                      <span style={{ fontSize: 20 }}>{award.emoji}</span>
-                      {award.label}
-                    </div>
-                    <select
-                      value={selectedTeam}
-                      onChange={(e) => updateTeamAward(award.key, e.target.value)}
-                      style={{
-                        ...selectStyle,
-                        borderColor: selectedTeam
-                          ? teamColors[selectedTeam]?.color || 'rgba(254,230,34,.3)'
-                          : 'rgba(255,255,255,.1)',
-                        background: selectedTeam
-                          ? teamColors[selectedTeam]?.glow || 'rgba(254,230,34,.06)'
-                          : 'rgba(255,255,255,.04)',
-                      }}
-                    >
-                      <option value="" style={{ background: '#0a0703', color: '#888' }}>
-                        — Chọn đội —
-                      </option>
-                      {TEAMS.map((team) => (
-                        <option
-                          key={team}
-                          value={team}
-                          disabled={usedTeams.has(team) && data.teamAwards[award.key] !== team}
-                          style={{ background: '#0a0703', color: '#f2ede0' }}
-                        >
-                          {team}
-                          {usedTeams.has(team) && data.teamAwards[award.key] !== team ? ' (đã chọn)' : ''}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                );
-              })}
-
-              {/* Yêu Thích — text input */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 6 }}>
+          {isLoading ? (
+            <div style={{ textAlign: 'center', color: 'var(--dim)', padding: '40px 0', fontSize: 14 }}>
+              Đang tải danh sách giải thưởng...
+            </div>
+          ) : (
+            <>
+              {/* Manual Awards */}
+              {manualAwards.length > 0 && (
                 <div
                   style={{
-                    minWidth: 140,
-                    fontSize: 13,
-                    fontWeight: 700,
-                    color: 'var(--text)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
+                    borderRadius: 16,
+                    border: '1px solid rgba(254,230,34,.15)',
+                    background: 'var(--bg2)',
+                    padding: '32px 28px',
+                    marginBottom: 28,
+                    boxShadow: '0 8px 40px rgba(0,0,0,.5)',
                   }}
                 >
-                  <span style={{ fontSize: 20 }}>❤️</span>
-                  Yêu Thích Nhất
-                </div>
-                <input
-                  type="text"
-                  placeholder="Nhập tên đội..."
-                  value={data.teamAwards['favorite'] || ''}
-                  onChange={(e) => updateTeamAward('favorite', e.target.value)}
-                  style={inputStyle}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#ff6b8a';
-                    e.target.style.boxShadow = '0 0 16px rgba(255,107,138,.2)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = e.target.value
-                      ? 'rgba(255,107,138,.3)'
-                      : 'rgba(255,255,255,.1)';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Individual Awards */}
-          <div
-            style={{
-              borderRadius: 16,
-              border: '1px solid rgba(251,140,5,.15)',
-              background: 'var(--bg2)',
-              padding: '32px 28px',
-              marginBottom: 28,
-              boxShadow: '0 8px 40px rgba(0,0,0,.5)',
-            }}
-          >
-            <h2
-              style={{
-                fontFamily: "'Anton', sans-serif",
-                fontSize: 22,
-                letterSpacing: '.04em',
-                color: 'var(--orange)',
-                marginBottom: 6,
-              }}
-            >
-              🌟 GIẢI CÁ NHÂN
-            </h2>
-            <p style={{ fontSize: 12, color: 'var(--dim)', marginBottom: 28 }}>
-              Nhập tên thành viên nhận giải
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-              {individualAwards.map((award) => (
-                <div key={award.key} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                  <div
+                  <h2
                     style={{
-                      minWidth: 140,
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: 'var(--text)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
+                      fontFamily: "'Anton', sans-serif",
+                      fontSize: 22,
+                      letterSpacing: '.04em',
+                      color: 'var(--gold)',
+                      marginBottom: 6,
                     }}
                   >
-                    <span style={{ fontSize: 20 }}>{award.emoji}</span>
-                    {award.label}
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Nhập tên..."
-                    value={data.individualAwards[award.key] || ''}
-                    onChange={(e) => updateIndividualAward(award.key, e.target.value)}
-                    style={inputStyle}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = 'var(--orange)';
-                      e.target.style.boxShadow = '0 0 16px rgba(251,140,5,.2)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = e.target.value
-                        ? 'rgba(251,140,5,.3)'
-                        : 'rgba(255,255,255,.1)';
-                      e.target.style.boxShadow = 'none';
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+                    🏆 GIẢI THƯỞNG
+                  </h2>
+                  <p style={{ fontSize: 12, color: 'var(--dim)', marginBottom: 28 }}>
+                    Nhập tên đội / cá nhân nhận giải
+                  </p>
 
-          {/* Actions */}
-          <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
-            <button
-              type="button"
-              onClick={handleSave}
-              style={{
-                padding: '14px 40px',
-                borderRadius: 10,
-                border: 'none',
-                background: saved ? '#5EAF7C' : 'var(--gold)',
-                color: '#050301',
-                fontFamily: "'Montserrat', sans-serif",
-                fontSize: 12,
-                fontWeight: 800,
-                letterSpacing: '.14em',
-                textTransform: 'uppercase',
-                cursor: 'pointer',
-                transition: 'all .3s',
-                boxShadow: saved ? '0 0 30px rgba(94,175,124,.4)' : '0 0 20px rgba(254,230,34,.3)',
-              }}
-            >
-              {saved ? '✓ ĐÃ LƯU' : '💾 LƯU GIẢI THƯỞNG'}
-            </button>
-            <button
-              type="button"
-              onClick={handleReset}
-              style={{
-                padding: '14px 28px',
-                borderRadius: 10,
-                border: '1px solid rgba(208,64,71,.3)',
-                background: 'rgba(208,64,71,.08)',
-                color: 'var(--apex)',
-                fontFamily: "'Montserrat', sans-serif",
-                fontSize: 12,
-                fontWeight: 800,
-                letterSpacing: '.14em',
-                textTransform: 'uppercase',
-                cursor: 'pointer',
-                transition: 'all .3s',
-              }}
-            >
-              🗑️ XÓA HẾT
-            </button>
-          </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                    {manualAwards.map((award) => (
+                      <div key={award.id} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                        <div style={{ minWidth: 160, fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>
+                          {award.name}
+                          {award.prize && (
+                            <div style={{ fontSize: 11, color: 'var(--dim)', fontWeight: 400 }}>{award.prize}</div>
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          placeholder={award.winnerType === 'TEAM' ? 'Nhập tên đội...' : 'Nhập tên...'}
+                          value={getDraft(award.id, award.winnerName)}
+                          onChange={(e) => setDraft(award.id, e.target.value)}
+                          style={inputStyle}
+                        />
+                        <button
+                          onClick={() =>
+                            handleSaveAward(award.id, { winnerName: getDraft(award.id, award.winnerName) })
+                          }
+                          disabled={updateMutation.isPending}
+                          style={{
+                            padding: '10px 18px',
+                            borderRadius: 8,
+                            border: 'none',
+                            background: 'var(--gold)',
+                            color: '#050301',
+                            fontFamily: "'Montserrat', sans-serif",
+                            fontSize: 11,
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          Lưu
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Auto Awards */}
+              {autoAwards.length > 0 && (
+                <div
+                  style={{
+                    borderRadius: 16,
+                    border: '1px solid rgba(251,140,5,.15)',
+                    background: 'var(--bg2)',
+                    padding: '32px 28px',
+                    marginBottom: 28,
+                    boxShadow: '0 8px 40px rgba(0,0,0,.5)',
+                  }}
+                >
+                  <h2
+                    style={{
+                      fontFamily: "'Anton', sans-serif",
+                      fontSize: 22,
+                      letterSpacing: '.04em',
+                      color: 'var(--orange)',
+                      marginBottom: 6,
+                    }}
+                  >
+                    ⚡ GIẢI TỰ ĐỘNG
+                  </h2>
+                  <p style={{ fontSize: 12, color: 'var(--dim)', marginBottom: 28 }}>
+                    Tính toán tự động từ điểm số BGK — chỉ Admin mới có thể kích hoạt
+                  </p>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                    {autoAwards.map((award) => (
+                      <div key={award.id} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                        <div style={{ minWidth: 160, fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>
+                          {award.name}
+                          {award.prize && (
+                            <div style={{ fontSize: 11, color: 'var(--dim)', fontWeight: 400 }}>{award.prize}</div>
+                          )}
+                        </div>
+                        <div
+                          style={{
+                            flex: 1,
+                            fontSize: 14,
+                            color: award.winnerName ? 'var(--gold)' : 'var(--dim)',
+                            fontStyle: award.winnerName ? 'normal' : 'italic',
+                          }}
+                        >
+                          {award.winnerName ?? 'Chưa tính'}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+                {user?.role === RoleType.ADMIN && (
+                  <button
+                    type="button"
+                    onClick={() => autoCalcMutation.mutate()}
+                    disabled={autoCalcMutation.isPending}
+                    style={{
+                      padding: '14px 40px',
+                      borderRadius: 10,
+                      border: 'none',
+                      background: autoCalcMutation.isPending ? 'rgba(89,115,179,.6)' : 'rgba(89,115,179,1)',
+                      color: '#fff',
+                      fontFamily: "'Montserrat', sans-serif",
+                      fontSize: 12,
+                      fontWeight: 800,
+                      letterSpacing: '.14em',
+                      textTransform: 'uppercase',
+                      cursor: autoCalcMutation.isPending ? 'not-allowed' : 'pointer',
+                      transition: 'all .3s',
+                      boxShadow: '0 0 20px rgba(89,115,179,.3)',
+                    }}
+                  >
+                    {autoCalcMutation.isPending ? 'Đang tính...' : '⚡ TÍNH GIẢI TỰ ĐỘNG'}
+                  </button>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </section>
 

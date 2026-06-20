@@ -56,6 +56,10 @@ export default function App() {
               </>
             }
           />
+        </Route>
+
+        {/* Awards — Admin + BTC FStyle only */}
+        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE]} />}>
           <Route
             path="/awards"
             element={
