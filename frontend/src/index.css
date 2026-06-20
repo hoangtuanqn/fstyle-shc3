@@ -103,6 +103,16 @@ body {
   50%     { opacity: .4; transform: scale(1.04); }
 }
 
+/* ── Toast styles ── */
+.toast-success {
+  border-color: rgba(46, 204, 113, 0.35) !important;
+  color: #2ecc71 !important;
+}
+.toast-error {
+  border-color: rgba(231, 76, 60, 0.4) !important;
+  color: #e74c3c !important;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .con { padding: 0 28px; }

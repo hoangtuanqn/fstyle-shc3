@@ -1,4 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router';
+
+import { RoleType } from '~/constants/enums';
+import ProtectedRoute from '~/layout/ProtectedRoute';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -12,6 +15,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public routes */}
         <Route
           path="/"
           element={
@@ -25,54 +29,62 @@ export default function App() {
           }
         />
         <Route path="/login" element={<Login />} />
-        <Route
-          path="/dashboard"
-          element={
-            <>
-              <Nav />
-              <main>
-                <Dashboard />
-              </main>
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/scoring"
-          element={
-            <>
-              <Nav />
-              <main>
-                <Scoring />
-              </main>
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/leaderboard"
-          element={
-            <>
-              <Nav />
-              <main>
-                <Leaderboard />
-              </main>
-              <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/awards"
-          element={
-            <>
-              <Nav />
-              <main>
-                <Awards />
-              </main>
-              <Footer />
-            </>
-          }
-        />
+
+        {/* Protected routes — all authenticated roles */}
+        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE, RoleType.MC, RoleType.MEMBER]} />}>
+          <Route
+            path="/dashboard"
+            element={
+              <>
+                <Nav />
+                <main>
+                  <Dashboard />
+                </main>
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/leaderboard"
+            element={
+              <>
+                <Nav />
+                <main>
+                  <Leaderboard />
+                </main>
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/awards"
+            element={
+              <>
+                <Nav />
+                <main>
+                  <Awards />
+                </main>
+                <Footer />
+              </>
+            }
+          />
+        </Route>
+
+        {/* Admin + BGK only */}
+        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE]} />}>
+          <Route
+            path="/scoring"
+            element={
+              <>
+                <Nav />
+                <main>
+                  <Scoring />
+                </main>
+                <Footer />
+              </>
+            }
+          />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
