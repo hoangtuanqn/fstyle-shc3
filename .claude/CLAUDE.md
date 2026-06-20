@@ -20,12 +20,12 @@ fstyle-shc3/
 │   ├── package.json
 │   ├── tsconfig.json           # strict, path alias ~/*, CommonJS target
 │   ├── nodemon.json            # tsx runner, watches src + .env
-│   ├── prisma/
-│   │   ├── schema.prisma       # MySQL models
-│   │   └── migrations/
+│   ├── drizzle.config.ts        # Drizzle Kit config
+│   ├── drizzle/                 # Generated migrations
 │   └── src/
 │       ├── index.ts            # Express app entry
-│       ├── configs/            # env, prisma, redis, socket
+│       ├── configs/            # env, db, redis, socket
+│       ├── db/                 # Drizzle schema files (*.schema.ts)
 │       ├── constants/          # enums, httpStatus, barems
 │       ├── controllers/        # Request handlers (*.controllers.ts)
 │       ├── services/           # Business logic (*.service.ts)
@@ -99,7 +99,7 @@ fstyle-shc3/
 ### Backend
 - **Express 5** — REST API framework
 - **TypeScript** — strict mode, path alias `~/*` → `src/*`, CommonJS output
-- **Prisma 6** — ORM with MySQL 8
+- **Drizzle ORM** — type-safe ORM with MySQL 8
 - **Redis 7** — caching + token store
 - **BullMQ** — background job queue (email, etc.)
 - **Socket.io** — WebSocket server
@@ -118,7 +118,7 @@ fstyle-shc3/
 ### Backend: 3-Layer + Routes
 
 ```
-Request → Route → Middleware → Controller → Service → Repository → Prisma/DB
+Request → Route → Middleware → Controller → Service → Repository → Drizzle/DB
                                                                   ↓
 Response ← Middleware (error/success) ← Controller ← Service ← Repository
 ```
@@ -126,7 +126,7 @@ Response ← Middleware (error/success) ← Controller ← Service ← Repositor
 - **Routes** define endpoints and chain middleware
 - **Controllers** handle HTTP request/response
 - **Services** contain business logic
-- **Repositories** handle Prisma queries only
+- **Repositories** handle Drizzle queries only
 - **Middlewares** handle auth verification, error formatting, success wrapping
 
 ### Frontend: Pages + Redux + React Query
@@ -268,8 +268,8 @@ docker compose up -d
 cd backend
 npm install
 cp .env.example .env          # Edit with your values
-npx prisma db push
-npx prisma generate
+npx drizzle-kit generate
+npx drizzle-kit migrate
 npm run dev                    # http://localhost:8000
 
 # 4. Frontend
@@ -317,10 +317,34 @@ import userRepository from '~/repositories/user.repository';
 ## User Roles
 
 System supports 4 roles with role-based routing:
-- **Admin** — full system access (manage candidates, users, rooms, reports)
-- **Judge** — scoring interface (barem scoring, room assignments)
-- **Mentor** — candidate guidance (barem scoring)
-- **Candidate** — submissions, team management, profile
+- **Admin (BTC F-Code)** — full system access: nhập điểm BGK, nhập giải thưởng, xem leaderboard + bảng thống kê, quản lý accounts
+- **BTC FStyle** — vote Nỗ lực (xuyên suốt các team), nhập giải thưởng thủ công, xem leaderboard
+- **MC** — xem leaderboard only
+- **Thành viên (4 đội thi)** — vote Giải Nỗ lực (trong team mình)
+
+> Không có đăng ký tự do — tất cả account do Admin (BTC F-Code) cấp.
+
+## Domain Docs
+
+Tài liệu nghiệp vụ nằm trong `/docs`. Đọc khi cần context về event rules, scoring, members, awards.
+
+| File | Nội dung |
+|------|----------|
+| [`docs/FSTYLE_SHOWCASE.md`](../docs/FSTYLE_SHOWCASE.md) | Tài liệu hệ thống tổng quan: timeline, roles, voting rules, scoring, leaderboard, kỹ thuật |
+| [`docs/SCORING_CRITERIA.md`](../docs/SCORING_CRITERIA.md) | Tiêu chí chấm điểm BGK — 6 hạng mục, tổng 100đ |
+| [`docs/AWARD.md`](../docs/AWARD.md) | Cơ cấu giải thưởng: 10 giải, cách tính điểm, lưu ý |
+| [`docs/MEMBERS.md`](../docs/MEMBERS.md) | Danh sách 4 team (42 thành viên) + BTC FStyle (4) + BTC F-Code (2), kèm email |
+| [`docs/TASK_FRONTEND_DONE.md`](../docs/TASK_FRONTEND_DONE.md) | Spec landing page (đã build) — components, hooks, CSS tokens, asset mapping |
+
+### Key Domain Rules (from docs)
+- **Voting period**: 29/6/2026 → 23:59 ngày 3/7/2026
+- **Showcase night**: 5/7/2026, 18:00, Hall A — FPT University HCM
+- **4 teams**: SHIRO KURO (10), Apex Aura (11), SLATT (11), ANTI-X (10)
+- **Scoring**: 3 BGK × 100đ/team → trung bình → xếp hạng tự động (Quán quân / Á quân / Khuyến khích)
+- **Giải Nỗ lực**: 40% vote thành viên + 30% BTC + 30% chuyên cần → BTC tự tính → nhập kết quả
+- **Giải Yêu thích**: 50% vote online fanpage + 50% vote trực tiếp → BTC FStyle nhập tay
+- **Giải Kỹ thuật/Biên đạo/Phong cách/Trưởng nhóm**: BTC nhập tay
+- **Realtime**: Socket.io push khi BTC nhập giải → leaderboard cập nhật tất cả client
 
 ## Harness: Landing Page Builder
 
