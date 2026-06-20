@@ -4,7 +4,7 @@
 
 1. Start infrastructure first: `docker compose up -d` (MySQL + Redis + phpMyAdmin)
 2. Backend runs on port 8000, frontend on port 5173
-3. Always run `npx prisma generate` after schema changes
+3. After schema changes: `npx drizzle-kit generate` + `npx drizzle-kit migrate`
 4. Use `npm run dev` in both backend/ and frontend/ for development
 
 ## Git Conventions
@@ -23,8 +23,8 @@
 ## Adding a New Feature (Full Stack)
 
 ### Backend
-1. Create Prisma model in `prisma/schema.prisma`
-2. Run `npx prisma db push` + `npx prisma generate`
+1. Create Drizzle table schema in `src/db/schema.ts`
+2. Run `npx drizzle-kit generate` + `npx drizzle-kit migrate`
 3. Create repository: `src/repositories/<feature>.repository.ts`
 4. Create service: `src/services/<feature>.service.ts`
 5. Create controller: `src/controllers/<feature>.controllers.ts`

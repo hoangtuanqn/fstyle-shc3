@@ -27,7 +27,7 @@ When adding new functionality, use these libraries by default. Do not introduce 
 | Concern | Library | Notes |
 |---------|---------|-------|
 | Framework | Express 5 | ESM modules, `type: "module"` |
-| ORM | Prisma 6 | MySQL provider, schema in `prisma/schema.prisma` |
+| ORM | Drizzle ORM | MySQL provider via mysql2, schema in `src/db/schema.ts`, config in `drizzle.config.ts` |
 | Database | MySQL 8 | Via Docker, port 3306 |
 | Cache | Redis 7 | Via Docker, port 6379. Use `ioredis` client |
 | Job queue | BullMQ | Redis-backed, workers in `src/workers/` |

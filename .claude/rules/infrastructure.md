@@ -44,7 +44,7 @@ Backend allows frontend origin only:
 ## Database
 
 - MySQL 8.0 via Docker
-- Managed by Prisma ORM
+- Managed by Drizzle ORM
 - Connection string in `DATABASE_URL` env var
 - Default: `mysql://root:challenge_3_fcode@localhost:3306/challenge_3_fcode`
 
