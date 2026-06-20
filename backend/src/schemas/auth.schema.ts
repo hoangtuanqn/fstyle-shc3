@@ -7,8 +7,3 @@ export const loginSchema = z.object({
   }),
 });
 
-export const refreshTokenSchema = z.object({
-  body: z.object({
-    refresh_token: z.string().trim().min(1, 'Refresh token không được để trống!'),
-  }),
-});

@@ -30,11 +30,7 @@ class AuthService {
 
     const { password: _, ...userWithoutPassword } = user;
 
-    return {
-      access_token: accessToken,
-      refresh_token: refreshToken,
-      ...userWithoutPassword,
-    };
+    return { accessToken, refreshToken, ...userWithoutPassword };
   };
 
   refreshToken = async (userId: string, currentRefreshToken: string) => {
@@ -57,7 +53,7 @@ class AuthService {
 
     const { accessToken, refreshToken } = await this.signAccessAndRefreshToken(userId, user.role);
 
-    return { access_token: accessToken, refresh_token: refreshToken };
+    return { accessToken, refreshToken };
   };
 
   logout = async (userId: string) => {
