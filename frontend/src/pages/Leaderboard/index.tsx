@@ -1,28 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { CSSProperties } from 'react';
 
-type AwardsData = {
-  teamAwards: Record<string, string>;
-  individualAwards: Record<string, string>;
-};
-
-const STORAGE_KEY = 'shc3-awards';
-
-const teamRanks = [
-  { key: 'first', label: 'Giải Nhất' },
-  { key: 'second', label: 'Giải Nhì' },
-  { key: 'third', label: 'Giải Ba' },
-  { key: 'fourth', label: 'Giải Tư' },
-  { key: 'favorite', label: 'Yêu Thích Nhất' },
-];
-
-const individualRanks = [
-  { key: 'best-performer', label: 'Best Performer' },
-  { key: 'best-dancer', label: 'Best Dancer' },
-  { key: 'best-face', label: 'Best Face' },
-  { key: 'best-energy', label: 'Best Energy' },
-  { key: 'best-creativity', label: 'Best Creativity' },
-];
+import LeaderboardApi from '~/api-requests/leaderboard.requests';
 
 const thStyle: CSSProperties = {
   padding: '14px 18px',
@@ -45,25 +24,19 @@ const tdStyle: CSSProperties = {
 };
 
 const Leaderboard = () => {
-  const [awards, setAwards] = useState<AwardsData>({ teamAwards: {}, individualAwards: {} });
+  const { data, isLoading } = useQuery({
+    queryKey: ['leaderboard'],
+    queryFn: LeaderboardApi.getLeaderboard,
+  });
 
-  useEffect(() => {
-    const load = () => {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) setAwards(JSON.parse(raw));
-      } catch {}
-    };
-    load();
-    window.addEventListener('storage', load);
-    return () => window.removeEventListener('storage', load);
-  }, []);
+  const rankings = data?.result?.rankings ?? [];
+  const awards = data?.result?.awards ?? [];
+  const hasAny = rankings.length > 0 || awards.some((a) => a.winnerName);
 
-  const ta = awards.teamAwards;
-  const ia = awards.individualAwards;
-  const hasTeam = Object.values(ta).some(Boolean);
-  const hasIndividual = Object.values(ia).some(Boolean);
-  const hasAny = hasTeam || hasIndividual;
+  if (isLoading)
+    return (
+      <div style={{ minHeight: '100vh', paddingTop: 108, textAlign: 'center', color: 'var(--dim)' }}>Đang tải...</div>
+    );
 
   return (
     <div style={{ minHeight: '100vh', paddingTop: 108 }}>
@@ -87,8 +60,8 @@ const Leaderboard = () => {
       {hasAny && (
         <section style={{ paddingBottom: 80 }}>
           <div className="con" style={{ maxWidth: 700, margin: '0 auto' }}>
-            {/* Team Awards Table */}
-            {hasTeam && (
+            {/* Rankings Table */}
+            {rankings.length > 0 && (
               <div
                 style={{
                   overflowX: 'auto',
@@ -101,26 +74,46 @@ const Leaderboard = () => {
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ background: 'rgba(251,140,5,.06)' }}>
-                      <th style={{ ...thStyle, width: '40%' }}>Hạng giải</th>
-                      <th style={thStyle}>Tên đội</th>
+                      <th style={{ ...thStyle, width: '8%' }}>Rank</th>
+                      <th style={thStyle}>Đội</th>
+                      <th style={{ ...thStyle, textAlign: 'right' }}>Judge Avg</th>
+                      <th style={{ ...thStyle, textAlign: 'right' }}>BTC</th>
+                      <th style={{ ...thStyle, textAlign: 'right' }}>Tổng</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {teamRanks.map((rank) => {
-                      const name = ta[rank.key];
-                      if (!name) return null;
+                    {rankings.map((row) => {
+                      const isTop3 = row.rank <= 3;
+                      const isFirst = row.rank === 1;
                       return (
-                        <tr key={rank.key}>
-                          <td style={{ ...tdStyle, fontWeight: 700 }}>{rank.label}</td>
+                        <tr key={row.team.id}>
                           <td
                             style={{
                               ...tdStyle,
-                              fontFamily: "'Anton', sans-serif",
-                              fontSize: 20,
-                              letterSpacing: '.03em',
+                              fontWeight: 800,
+                              fontSize: 18,
+                              color: isTop3 ? 'var(--orange)' : 'var(--dim)',
                             }}
                           >
-                            {name}
+                            #{row.rank}
+                          </td>
+                          <td style={tdStyle}>
+                            <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 18, letterSpacing: '.03em' }}>
+                              {row.team.name}
+                            </div>
+                            <div style={{ fontSize: 12, color: 'var(--dim)', marginTop: 2 }}>{row.team.concept}</div>
+                          </td>
+                          <td style={{ ...tdStyle, textAlign: 'right' }}>{row.judgeAvg}</td>
+                          <td style={{ ...tdStyle, textAlign: 'right' }}>{row.btcScore}</td>
+                          <td
+                            style={{
+                              ...tdStyle,
+                              textAlign: 'right',
+                              fontWeight: isFirst ? 800 : undefined,
+                              color: isFirst ? 'var(--orange)' : undefined,
+                            }}
+                          >
+                            {row.totalScore}
                           </td>
                         </tr>
                       );
@@ -130,8 +123,8 @@ const Leaderboard = () => {
               </div>
             )}
 
-            {/* Individual Awards Table */}
-            {hasIndividual && (
+            {/* Awards Table */}
+            {awards.length > 0 && (
               <div
                 style={{
                   overflowX: 'auto',
@@ -143,30 +136,27 @@ const Leaderboard = () => {
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ background: 'rgba(251,140,5,.06)' }}>
-                      <th style={{ ...thStyle, width: '40%' }}>Giải cá nhân</th>
-                      <th style={thStyle}>Tên</th>
+                      <th style={{ ...thStyle, width: '40%' }}>Giải</th>
+                      <th style={thStyle}>Tên đội/người nhận</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {individualRanks.map((rank) => {
-                      const name = ia[rank.key];
-                      if (!name) return null;
-                      return (
-                        <tr key={rank.key}>
-                          <td style={{ ...tdStyle, fontWeight: 700 }}>{rank.label}</td>
-                          <td
-                            style={{
-                              ...tdStyle,
-                              fontFamily: "'Anton', sans-serif",
-                              fontSize: 20,
-                              letterSpacing: '.03em',
-                            }}
-                          >
-                            {name}
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {awards.map((award) => (
+                      <tr key={award.id}>
+                        <td style={{ ...tdStyle, fontWeight: 700 }}>{award.name}</td>
+                        <td
+                          style={{
+                            ...tdStyle,
+                            fontFamily: award.winnerName ? "'Anton', sans-serif" : undefined,
+                            fontSize: award.winnerName ? 20 : undefined,
+                            letterSpacing: award.winnerName ? '.03em' : undefined,
+                            color: award.winnerName ? 'var(--text)' : 'var(--dim)',
+                          }}
+                        >
+                          {award.winnerName ?? 'Chưa công bố'}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
