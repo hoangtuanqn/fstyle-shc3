@@ -1,17 +1,50 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
-import ParticleCanvas from '../../components/ParticleCanvas';
+import { Link, useNavigate } from 'react-router';
+import { toast } from 'sonner';
+import axios from 'axios';
+
+import AuthApi from '~/api-requests/auth.requests';
+import ParticleCanvas from '~/components/ParticleCanvas';
+import { setUser } from '~/features/userSlice';
+import { useAppDispatch } from '~/hooks/useRedux';
+import LocalStorage from '~/utils/localStorage';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => setLoading(false), 1500);
+
+    try {
+      const data = await AuthApi.login({ email, password });
+      if (!data.result) {
+        toast.error('Phản hồi từ server không hợp lệ!');
+        return;
+      }
+      const { access_token, refresh_token, ...user } = data.result;
+
+      LocalStorage.setItem('access_token', access_token);
+      LocalStorage.setItem('refresh_token', refresh_token);
+      LocalStorage.setItem('role', user.role);
+
+      dispatch(setUser(user));
+      toast.success(data.message);
+      navigate('/dashboard', { replace: true });
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else {
+        toast.error('Có lỗi xảy ra, vui lòng thử lại!');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -8,8 +8,8 @@ services:
     image: mysql:8.0
     ports: ["3306:3306"]
     environment:
-      MYSQL_ROOT_PASSWORD: challenge_3_fcode
-      MYSQL_DATABASE: challenge_3_fcode
+      MYSQL_ROOT_PASSWORD: fstyle_crew
+      MYSQL_DATABASE: fstyle_crew
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -26,17 +26,18 @@ services:
 
 ## Ports
 
-| Service | Port | URL |
-|---------|------|-----|
-| Frontend (Vite) | 5173 | http://localhost:5173 |
-| Backend (Express) | 8000 | http://localhost:8000 |
-| MySQL | 3306 | mysql://localhost:3306 |
-| phpMyAdmin | 8080 | http://localhost:8080 |
-| Redis | 6379 | redis://localhost:6379 |
+| Service           | Port | URL                    |
+| ----------------- | ---- | ---------------------- |
+| Frontend (Vite)   | 5173 | http://localhost:5173  |
+| Backend (Express) | 8000 | http://localhost:8000  |
+| MySQL             | 3306 | mysql://localhost:3306 |
+| phpMyAdmin        | 8080 | http://localhost:8080  |
+| Redis             | 6379 | redis://localhost:6379 |
 
 ## CORS
 
 Backend allows frontend origin only:
+
 - Development: `http://localhost:5173`
 - Production: `process.env.CLIENT_URL`
 - `credentials: true` for cookie support
@@ -46,7 +47,7 @@ Backend allows frontend origin only:
 - MySQL 8.0 via Docker
 - Managed by Drizzle ORM
 - Connection string in `DATABASE_URL` env var
-- Default: `mysql://root:challenge_3_fcode@localhost:3306/challenge_3_fcode`
+- Default: `mysql://root:fstyle_crew@localhost:3306/fstyle_crew`
 
 ## Redis
 
