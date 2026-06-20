@@ -1,5 +1,12 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import type { CSSProperties } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+
+import VotingApi from '~/api-requests/voting.requests';
+import { RoleType } from '~/constants/enums';
+import useAuth from '~/hooks/useAuth';
+import type { CandidateType } from '~/types/voting';
 
 type TeamInfo = {
   id: string;
@@ -45,46 +52,45 @@ const teamMap: Record<string, TeamInfo> = {
   },
 };
 
-type Member = {
-  id: string;
-  name: string;
-  role: string;
-  teamId: string;
-  avatar: string;
-  votes: number;
-};
-
-const initialMembers: Member[] = [
-  { id: '1', name: 'Minh Khoa', role: 'Leader', teamId: 'shiro', avatar: '/assets/images/avatar-emptiness.png', votes: 12 },
-  { id: '2', name: 'Thu Hà', role: 'Dancer', teamId: 'shiro', avatar: '/assets/images/avatar-emptiness.png', votes: 8 },
-  { id: '3', name: 'Đức Anh', role: 'Choreographer', teamId: 'shiro', avatar: '/assets/images/avatar-emptiness.png', votes: 15 },
-  { id: '4', name: 'Hoàng Yến', role: 'Leader', teamId: 'apex', avatar: '/assets/images/avatar-inner-conflict.png', votes: 20 },
-  { id: '5', name: 'Quốc Bảo', role: 'Dancer', teamId: 'apex', avatar: '/assets/images/avatar-inner-conflict.png', votes: 6 },
-  { id: '6', name: 'Ngọc Trâm', role: 'Performer', teamId: 'apex', avatar: '/assets/images/avatar-inner-conflict.png', votes: 11 },
-  { id: '7', name: 'Thanh Tùng', role: 'Leader', teamId: 'slatt', avatar: '/assets/images/avatar-awakening.png', votes: 18 },
-  { id: '8', name: 'Mai Linh', role: 'Dancer', teamId: 'slatt', avatar: '/assets/images/avatar-awakening.png', votes: 9 },
-  { id: '9', name: 'Phúc An', role: 'Vocalist', teamId: 'slatt', avatar: '/assets/images/avatar-awakening.png', votes: 14 },
-  { id: '10', name: 'Khánh Vy', role: 'Leader', teamId: 'anti', avatar: '/assets/images/avatar-letting-go.png', votes: 22 },
-  { id: '11', name: 'Hải Đăng', role: 'Dancer', teamId: 'anti', avatar: '/assets/images/avatar-letting-go.png', votes: 7 },
-  { id: '12', name: 'Bảo Ngọc', role: 'Performer', teamId: 'anti', avatar: '/assets/images/avatar-letting-go.png', votes: 16 },
+const teamFilters = [
+  { id: 'all', label: 'TẤT CẢ', color: 'var(--gold)' },
+  { id: 'shiro', label: 'SHIRO KURO', color: 'var(--shiro)' },
+  { id: 'apex', label: 'APEX AURA', color: 'var(--apex)' },
+  { id: 'slatt', label: 'SLATT', color: 'var(--slatt)' },
+  { id: 'anti', label: 'ANTI', color: 'var(--anti)' },
 ];
 
 const VoteCard = ({
-  member,
-  onVote,
+  candidate,
+  isVoted,
+  onToggleVote,
 }: {
-  member: Member;
-  onVote: (id: string) => void;
+  candidate: CandidateType;
+  isVoted: boolean;
+  onToggleVote: (id: string) => void;
 }) => {
   const [hover, setHover] = useState(false);
   const [voting, setVoting] = useState(false);
-  const team = teamMap[member.teamId];
+
+  // Resolve team info: fallback to teamMap by teamId, then use candidate's own color fields
+  const teamId = candidate.teamId ?? '';
+  const fallbackTeam = teamMap[teamId];
+  const team: TeamInfo = fallbackTeam ?? {
+    id: teamId,
+    name: candidate.teamName ?? teamId.toUpperCase(),
+    color: candidate.teamColor ?? 'var(--gold)',
+    glowColor: 'rgba(200,200,200,.25)',
+    glowHover: 'rgba(200,200,200,.45)',
+    topBar: 'linear-gradient(90deg,#444,#ddd,#444)',
+  };
 
   const handleVote = () => {
     setVoting(true);
-    onVote(member.id);
+    onToggleVote(candidate.id);
     setTimeout(() => setVoting(false), 600);
   };
+
+  const voted = isVoted;
 
   const cardStyle: CSSProperties = {
     position: 'relative',
@@ -119,8 +125,8 @@ const VoteCard = ({
         }}
       >
         <img
-          src={member.avatar}
-          alt={member.name}
+          src="/assets/images/avatar-emptiness.png"
+          alt={candidate.name}
           style={{
             width: '100%',
             height: '100%',
@@ -161,7 +167,7 @@ const VoteCard = ({
               lineHeight: 1,
             }}
           >
-            {member.votes}
+            {candidate.voteCount}
           </span>
         </div>
 
@@ -199,7 +205,7 @@ const VoteCard = ({
             color: 'var(--text)',
           }}
         >
-          {member.name}
+          {candidate.name}
         </h3>
         <p
           style={{
@@ -211,7 +217,7 @@ const VoteCard = ({
             marginBottom: 16,
           }}
         >
-          {member.role}
+          {team.name}
         </p>
 
         <button
@@ -227,70 +233,115 @@ const VoteCard = ({
             fontWeight: 800,
             letterSpacing: '.18em',
             textTransform: 'uppercase',
-            color: voting ? '#050301' : 'var(--gold)',
-            background: voting
-              ? 'var(--gold)'
-              : 'rgba(254,230,34,.08)',
-            border: voting ? '1px solid var(--gold)' : '1px solid rgba(254,230,34,.25)',
-            boxShadow: voting
-              ? '0 0 30px rgba(254,230,34,.5)'
-              : '0 0 10px rgba(254,230,34,.1)',
+            color: voted ? '#050301' : voting ? '#050301' : 'var(--gold)',
+            background: voted ? 'var(--gold)' : voting ? 'var(--gold)' : 'rgba(254,230,34,.08)',
+            border: voted || voting ? '1px solid var(--gold)' : '1px solid rgba(254,230,34,.25)',
+            boxShadow:
+              voted || voting ? '0 0 30px rgba(254,230,34,.5)' : '0 0 10px rgba(254,230,34,.1)',
             transform: voting ? 'scale(0.96)' : 'scale(1)',
             transition: 'all .3s cubic-bezier(.22,.8,.42,1)',
           }}
           onMouseEnter={(e) => {
-            if (!voting) {
+            if (!voting && !voted) {
               e.currentTarget.style.background = 'rgba(254,230,34,.15)';
               e.currentTarget.style.boxShadow = '0 0 20px rgba(254,230,34,.3)';
             }
           }}
           onMouseLeave={(e) => {
-            if (!voting) {
+            if (!voting && !voted) {
               e.currentTarget.style.background = 'rgba(254,230,34,.08)';
               e.currentTarget.style.boxShadow = '0 0 10px rgba(254,230,34,.1)';
             }
           }}
         >
-          {voting ? '✦ ĐÃ VOTE ✦' : '★ VOTE'}
+          {voted ? '✦ ĐÃ VOTE ✦' : '★ VOTE'}
         </button>
       </div>
     </div>
   );
 };
 
-const teamFilters = [
-  { id: 'all', label: 'TẤT CẢ', color: 'var(--gold)' },
-  { id: 'shiro', label: 'SHIRO KURO', color: 'var(--shiro)' },
-  { id: 'apex', label: 'APEX AURA', color: 'var(--apex)' },
-  { id: 'slatt', label: 'SLATT', color: 'var(--slatt)' },
-  { id: 'anti', label: 'ANTI', color: 'var(--anti)' },
-];
-
 const Dashboard = () => {
-  const [members, setMembers] = useState<Member[]>(initialMembers);
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [activeFilter, setActiveFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'votes' | 'name'>('votes');
 
-  const handleVote = useCallback((id: string) => {
-    setMembers((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, votes: m.votes + 1 } : m)),
-    );
-  }, []);
+  const { data: candidatesRes, isLoading } = useQuery({
+    queryKey: ['voting-candidates'],
+    queryFn: VotingApi.getCandidates,
+  });
 
-  const filtered = members
-    .filter((m) => activeFilter === 'all' || m.teamId === activeFilter)
+  const { data: myVotesRes } = useQuery({
+    queryKey: ['voting-my-votes'],
+    queryFn: VotingApi.getMyVotes,
+    enabled: user?.role === RoleType.MEMBER || user?.role === RoleType.BTC_FSTYLE,
+  });
+
+  const voteMutation = useMutation({
+    mutationFn: VotingApi.vote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['voting-candidates'] });
+      queryClient.invalidateQueries({ queryKey: ['voting-my-votes'] });
+      toast.success('Vote thành công!');
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || 'Có lỗi xảy ra!');
+    },
+  });
+
+  const unvoteMutation = useMutation({
+    mutationFn: VotingApi.removeVote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['voting-candidates'] });
+      queryClient.invalidateQueries({ queryKey: ['voting-my-votes'] });
+      toast.success('Đã hủy vote!');
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || 'Có lỗi xảy ra!');
+    },
+  });
+
+  const candidates = (candidatesRes?.result ?? []).map((c) => ({ ...c, voteCount: Number(c.voteCount) }));
+  const myVotedIds = new Set((myVotesRes?.result ?? []).map((v) => v.candidateId));
+
+  const handleToggleVote = (candidateId: string) => {
+    if (myVotedIds.has(candidateId)) {
+      unvoteMutation.mutate(candidateId);
+    } else {
+      voteMutation.mutate(candidateId);
+    }
+  };
+
+  const filtered = candidates
+    .filter((c) => activeFilter === 'all' || c.teamId === activeFilter)
     .sort((a, b) => {
-      if (sortBy === 'votes') return b.votes - a.votes;
+      if (sortBy === 'votes') return b.voteCount - a.voteCount;
       return a.name.localeCompare(b.name, 'vi');
     });
 
-  const totalVotes = members.reduce((sum, m) => sum + m.votes, 0);
+  const totalVotes = candidates.reduce((sum, c) => sum + c.voteCount, 0);
 
-  const teamStats = Object.entries(teamMap).map(([id, team]) => {
-    const teamVotes = members.filter((m) => m.teamId === id).reduce((s, m) => s + m.votes, 0);
-    return { ...team, votes: teamVotes };
-  });
-  teamStats.sort((a, b) => b.votes - a.votes);
+  // Build team stats from candidate data; group by teamId and use teamMap for display info
+  const teamStatsMap: Record<string, { id: string; votes: number; name: string; color: string; glowColor: string }> = {};
+  for (const c of candidates) {
+    const tid = c.teamId ?? '';
+    if (!tid) continue;
+    if (!teamStatsMap[tid]) {
+      const mapped = teamMap[tid];
+      teamStatsMap[tid] = {
+        id: tid,
+        votes: 0,
+        name: mapped?.name ?? c.teamName ?? tid.toUpperCase(),
+        color: mapped?.color ?? c.teamColor ?? 'var(--gold)',
+        glowColor: mapped?.glowColor ?? 'rgba(200,200,200,.25)',
+      };
+    }
+    teamStatsMap[tid].votes += c.voteCount;
+  }
+  const teamStats = Object.values(teamStatsMap).sort((a, b) => b.votes - a.votes);
+
+  const isMember = user?.role === RoleType.MEMBER;
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', paddingTop: 68 }}>
@@ -353,90 +404,92 @@ const Dashboard = () => {
       </section>
 
       {/* Team stats bar */}
-      <section style={{ paddingBottom: 32 }}>
-        <div className="con">
-          <div
-            className="team-stats-grid"
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}
-          >
-            {teamStats.map((team, i) => (
-              <div
-                key={team.id}
-                style={{
-                  padding: '16px 18px',
-                  background: 'var(--bg2)',
-                  border: `1px solid ${i === 0 ? team.color : 'rgba(255,255,255,.06)'}`,
-                  borderRadius: 14,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  boxShadow: i === 0 ? `0 0 24px ${team.glowColor}` : 'none',
-                  transition: 'box-shadow .3s',
-                }}
-              >
-                <div>
-                  <div
-                    style={{
-                      fontSize: 9,
-                      fontWeight: 800,
-                      letterSpacing: '.2em',
-                      textTransform: 'uppercase',
-                      color: team.color,
-                      marginBottom: 4,
-                    }}
-                  >
-                    {i === 0 && '👑 '}
-                    {team.name}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "'Anton', sans-serif",
-                      fontSize: 26,
-                      color: 'var(--text)',
-                    }}
-                  >
-                    {team.votes}
-                    <span style={{ fontSize: 12, color: 'var(--dim)', marginLeft: 6, fontFamily: 'Montserrat' }}>
-                      votes
-                    </span>
-                  </div>
-                </div>
-                {/* Mini progress bar */}
+      {teamStats.length > 0 && (
+        <section style={{ paddingBottom: 32 }}>
+          <div className="con">
+            <div
+              className="team-stats-grid"
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}
+            >
+              {teamStats.map((team, i) => (
                 <div
+                  key={team.id}
                   style={{
-                    width: 50,
-                    height: 50,
-                    borderRadius: '50%',
-                    background: `conic-gradient(${team.color} ${(team.votes / Math.max(totalVotes, 1)) * 360}deg, rgba(255,255,255,.06) 0deg)`,
+                    padding: '16px 18px',
+                    background: 'var(--bg2)',
+                    border: `1px solid ${i === 0 ? team.color : 'rgba(255,255,255,.06)'}`,
+                    borderRadius: 14,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    justifyContent: 'space-between',
+                    boxShadow: i === 0 ? `0 0 24px ${team.glowColor}` : 'none',
+                    transition: 'box-shadow .3s',
                   }}
                 >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: 9,
+                        fontWeight: 800,
+                        letterSpacing: '.2em',
+                        textTransform: 'uppercase',
+                        color: team.color,
+                        marginBottom: 4,
+                      }}
+                    >
+                      {i === 0 && '👑 '}
+                      {team.name}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "'Anton', sans-serif",
+                        fontSize: 26,
+                        color: 'var(--text)',
+                      }}
+                    >
+                      {team.votes}
+                      <span style={{ fontSize: 12, color: 'var(--dim)', marginLeft: 6, fontFamily: 'Montserrat' }}>
+                        votes
+                      </span>
+                    </div>
+                  </div>
+                  {/* Mini progress ring */}
                   <div
                     style={{
-                      width: 38,
-                      height: 38,
+                      width: 50,
+                      height: 50,
                       borderRadius: '50%',
-                      background: 'var(--bg2)',
+                      background: `conic-gradient(${team.color} ${(team.votes / Math.max(totalVotes, 1)) * 360}deg, rgba(255,255,255,.06) 0deg)`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: 11,
-                      fontWeight: 800,
-                      color: team.color,
                     }}
                   >
-                    {totalVotes > 0 ? Math.round((team.votes / totalVotes) * 100) : 0}%
+                    <div
+                      style={{
+                        width: 38,
+                        height: 38,
+                        borderRadius: '50%',
+                        background: 'var(--bg2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 11,
+                        fontWeight: 800,
+                        color: team.color,
+                      }}
+                    >
+                      {totalVotes > 0 ? Math.round((team.votes / totalVotes) * 100) : 0}%
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Filters */}
+      {/* Filters — only show team tabs for non-MEMBER roles */}
       <section style={{ paddingBottom: 40 }}>
         <div className="con">
           <div
@@ -448,36 +501,38 @@ const Dashboard = () => {
               gap: 14,
             }}
           >
-            {/* Team filter chips */}
-            <div className="filter-chips" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {teamFilters.map((f) => (
-                <button
-                  key={f.id}
-                  type="button"
-                  onClick={() => setActiveFilter(f.id)}
-                  style={{
-                    padding: '8px 18px',
-                    borderRadius: 10,
-                    border:
-                      activeFilter === f.id
-                        ? `1px solid ${f.color}`
-                        : '1px solid rgba(255,255,255,.1)',
-                    background:
-                      activeFilter === f.id ? 'rgba(254,230,34,.08)' : 'rgba(255,255,255,.03)',
-                    color: activeFilter === f.id ? f.color : 'var(--dim)',
-                    fontSize: 10,
-                    fontWeight: 800,
-                    letterSpacing: '.18em',
-                    textTransform: 'uppercase',
-                    fontFamily: "'Montserrat', sans-serif",
-                    cursor: 'pointer',
-                    transition: 'all .25s',
-                  }}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
+            {/* Team filter chips — hidden for MEMBER role */}
+            {!isMember && (
+              <div className="filter-chips" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {teamFilters.map((f) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => setActiveFilter(f.id)}
+                    style={{
+                      padding: '8px 18px',
+                      borderRadius: 10,
+                      border:
+                        activeFilter === f.id
+                          ? `1px solid ${f.color}`
+                          : '1px solid rgba(255,255,255,.1)',
+                      background:
+                        activeFilter === f.id ? 'rgba(254,230,34,.08)' : 'rgba(255,255,255,.03)',
+                      color: activeFilter === f.id ? f.color : 'var(--dim)',
+                      fontSize: 10,
+                      fontWeight: 800,
+                      letterSpacing: '.18em',
+                      textTransform: 'uppercase',
+                      fontFamily: "'Montserrat', sans-serif",
+                      cursor: 'pointer',
+                      transition: 'all .25s',
+                    }}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Sort toggle */}
             <div style={{ display: 'flex', gap: 6 }}>
@@ -527,20 +582,7 @@ const Dashboard = () => {
       {/* Vote cards grid */}
       <section style={{ paddingBottom: 80 }}>
         <div className="con">
-          <div
-            className="vote-grid"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: 20,
-            }}
-          >
-            {filtered.map((member) => (
-              <VoteCard key={member.id} member={member} onVote={handleVote} />
-            ))}
-          </div>
-
-          {filtered.length === 0 && (
+          {isLoading ? (
             <div
               style={{
                 textAlign: 'center',
@@ -549,8 +591,41 @@ const Dashboard = () => {
                 fontSize: 14,
               }}
             >
-              Không có thành viên nào trong đội này.
+              Đang tải...
             </div>
+          ) : (
+            <>
+              <div
+                className="vote-grid"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: 20,
+                }}
+              >
+                {filtered.map((candidate) => (
+                  <VoteCard
+                    key={candidate.id}
+                    candidate={candidate}
+                    isVoted={myVotedIds.has(candidate.id)}
+                    onToggleVote={handleToggleVote}
+                  />
+                ))}
+              </div>
+
+              {filtered.length === 0 && (
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '60px 0',
+                    color: 'var(--dim)',
+                    fontSize: 14,
+                  }}
+                >
+                  Không có thành viên nào trong đội này.
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
