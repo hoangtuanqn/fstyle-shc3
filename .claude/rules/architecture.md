@@ -3,7 +3,7 @@
 ## Backend: 3-Layer Architecture
 
 ```
-Route → Middleware → Controller → Service → Repository → Prisma
+Route → Middleware → Controller → Service → Repository → Drizzle
 ```
 
 ### Layer Responsibilities
@@ -45,10 +45,10 @@ export const getAll = async (req: Request, res: Response, next: NextFunction) =>
 - May call other services, Redis, queues
 
 **Repositories** (`src/repositories/*.repository.ts`)
-- Prisma queries only
+- Drizzle queries only
 - No business logic
-- Return raw Prisma results
-- One repository per Prisma model
+- Return raw query results
+- One repository per DB table
 
 ### Error Handling
 
