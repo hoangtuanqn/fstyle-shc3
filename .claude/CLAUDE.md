@@ -83,6 +83,7 @@ fstyle-shc3/
 ## Tech Stack
 
 ### Frontend
+
 - **React 19** + **React Router 7** — SPA with role-based routing
 - **Vite 7** — build tool with React plugin + Babel React Compiler
 - **TypeScript** — strict mode, path alias `~/*` → `src/*`
@@ -97,6 +98,7 @@ fstyle-shc3/
 - **clsx + tailwind-merge + cva** — conditional class utilities
 
 ### Backend
+
 - **Express 5** — REST API framework
 - **TypeScript** — strict mode, path alias `~/*` → `src/*`, CommonJS output
 - **Drizzle ORM** — type-safe ORM with MySQL 8
@@ -109,6 +111,7 @@ fstyle-shc3/
 - **express-rate-limit** — rate limiting
 
 ### Infrastructure
+
 - **Docker Compose**: MySQL 8 (port 3306), phpMyAdmin (port 8080), Redis 7 (port 6379)
 - **No CI/CD pipelines** — manual deployment
 - **No pre-commit hooks** — Prettier run manually
@@ -145,20 +148,22 @@ App.tsx (Router)
 ## Naming Conventions
 
 ### Files
-| Location | Convention | Example |
-|----------|-----------|---------|
-| Backend controllers | `entity.controllers.ts` | `user.controllers.ts` |
-| Backend services | `entity.service.ts` | `team.service.ts` |
-| Backend repositories | `entity.repository.ts` | `judge.repository.ts` |
-| Backend routes | `entity.routes.ts` | `auth.routes.ts` |
-| Frontend pages | `PascalCase/index.tsx` | `Login/index.tsx` |
-| Frontend components | `PascalCase.tsx` | `NavLink.tsx` |
-| Frontend hooks | `camelCase.ts` | `useAuth.ts` |
-| Frontend API | `entity.requests.ts` | `auth.requests.ts` |
-| Frontend Redux | `entitySlice.ts` | `userSlice.ts` |
-| shadcn/ui | `kebab-case.tsx` | `alert-dialog.tsx` |
+
+| Location             | Convention              | Example               |
+| -------------------- | ----------------------- | --------------------- |
+| Backend controllers  | `entity.controllers.ts` | `user.controllers.ts` |
+| Backend services     | `entity.service.ts`     | `team.service.ts`     |
+| Backend repositories | `entity.repository.ts`  | `judge.repository.ts` |
+| Backend routes       | `entity.routes.ts`      | `auth.routes.ts`      |
+| Frontend pages       | `PascalCase/index.tsx`  | `Login/index.tsx`     |
+| Frontend components  | `PascalCase.tsx`        | `NavLink.tsx`         |
+| Frontend hooks       | `camelCase.ts`          | `useAuth.ts`          |
+| Frontend API         | `entity.requests.ts`    | `auth.requests.ts`    |
+| Frontend Redux       | `entitySlice.ts`        | `userSlice.ts`        |
+| shadcn/ui            | `kebab-case.tsx`        | `alert-dialog.tsx`    |
 
 ### Code
+
 - **Functions/variables**: camelCase — `handleSwitchRole`, `showUserMenu`
 - **React components**: PascalCase — `Header`, `ProtectedRoute`
 - **Types/interfaces**: PascalCase with suffix — `UserType`, `LoginInput`, `LoginResponse`
@@ -167,6 +172,7 @@ App.tsx (Router)
 - **Classes**: PascalCase — `AuthService`, `UserRepository`, `AlgoJwt`
 
 ### Imports order
+
 1. External libs (`express`, `react`, `@tanstack/react-query`)
 2. Internal configs (`~/configs/*`)
 3. Constants (`~/constants/*`)
@@ -179,41 +185,55 @@ App.tsx (Router)
 ## Code Patterns
 
 ### Backend route definition
+
 ```typescript
-router.post('/login', validate(loginSchema), authController.login);
-router.get('/get-info', middlewareAuth.auth, authController.getInfo);
-router.put('/update', middlewareAuth.auth, isRole([RoleType.ADMIN]), adminController.update);
+router.post("/login", validate(loginSchema), authController.login);
+router.get("/get-info", middlewareAuth.auth, authController.getInfo);
+router.put(
+  "/update",
+  middlewareAuth.auth,
+  isRole([RoleType.ADMIN]),
+  adminController.update,
+);
 ```
 
 ### Backend response format
+
 ```typescript
 return res.status(HTTP_STATUS.OK).json(
   new ResponseClient({
-    message: 'Đăng nhập thành công!',
-    result: { ...user, access_token, refresh_token }
-  })
+    message: "Đăng nhập thành công!",
+    result: { ...user, access_token, refresh_token },
+  }),
 );
 ```
 
 ### Backend error handling
+
 ```typescript
 throw new ErrorWithStatus({
-  message: 'Token không hợp lệ!',
+  message: "Token không hợp lệ!",
   status: HTTP_STATUS.UNAUTHORIZED,
 });
 ```
 
 ### Frontend API client class
+
 ```typescript
 class AuthApi {
   static login = async ({ email, password, role }: LoginInput) => {
-    const response = await privateApi.post<LoginResponse>('/auth/login', { email, password, role });
+    const response = await privateApi.post<LoginResponse>("/auth/login", {
+      email,
+      password,
+      role,
+    });
     return response?.data || [];
   };
 }
 ```
 
 ### Frontend Redux slice
+
 ```typescript
 export const getInfo = createAsyncThunk('user/getInfo', async () => {
   return await AuthApi.getInfo();
@@ -230,15 +250,17 @@ export const userSlice = createSlice({
 ```
 
 ### Frontend Axios interceptor (auto refresh token)
+
 ```typescript
 privateApi.interceptors.request.use((config) => {
-  const token = LocalStorage.getItem('access_token');
+  const token = LocalStorage.getItem("access_token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 ```
 
 ### Frontend protected route
+
 ```typescript
 <Route element={<ProtectedRoute allowedRoles={[RoleType.ADMIN]} />}>
   <Route path="/admin/*" element={<AdminLayout />} />
@@ -257,6 +279,7 @@ privateApi.interceptors.request.use((config) => {
 ## Development
 
 ### Setup
+
 ```bash
 # 1. Root
 npm install
@@ -279,33 +302,39 @@ npm run dev                    # http://localhost:5173
 ```
 
 ### Environment variables
+
 **Backend** (`.env`):
+
 - `PORT=8000`
-- `DATABASE_URL=mysql://root:challenge_3_fcode@localhost:3306/challenge_3_fcode`
+- `DATABASE_URL=mysql://root:fstyle_crew@localhost:3306/fstyle_crew`
 - `JWT_SECURE` — JWT signing secret
 - `REDIS_HOST=localhost`, `REDIS_PORT=6379`
 - `CLIENT_URL=http://localhost:5173`
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` — Gmail SMTP
 
 **Frontend** (`.env.development`):
+
 - `VITE_API_BACKEND_API=http://localhost:8000/api/v1`
 - `VITE_API_BACKEND=http://localhost:8000`
 
 ### Scripts
-| Script | Location | What it does |
-|--------|----------|-------------|
-| `npm run dev` | frontend | Start Vite dev server |
-| `npm run build` | frontend | TypeScript check + Vite build |
-| `npm run lint` | frontend | ESLint check |
-| `npm run dev` | backend | Nodemon with tsx (auto-reload) |
-| `npm run build` | backend | `tsc && tsc-alias` |
-| `npm start` | backend | Production mode (`node dist/index.js`) |
+
+| Script          | Location | What it does                           |
+| --------------- | -------- | -------------------------------------- |
+| `npm run dev`   | frontend | Start Vite dev server                  |
+| `npm run build` | frontend | TypeScript check + Vite build          |
+| `npm run lint`  | frontend | ESLint check                           |
+| `npm run dev`   | backend  | Nodemon with tsx (auto-reload)         |
+| `npm run build` | backend  | `tsc && tsc-alias`                     |
+| `npm start`     | backend  | Production mode (`node dist/index.js`) |
 
 ### Path aliases
+
 Both frontend and backend use `~/*` → `src/*`:
+
 ```typescript
-import { RoleType } from '~/constants/enums';
-import userRepository from '~/repositories/user.repository';
+import { RoleType } from "~/constants/enums";
+import userRepository from "~/repositories/user.repository";
 ```
 
 ## Formatting
@@ -317,6 +346,7 @@ import userRepository from '~/repositories/user.repository';
 ## User Roles
 
 System supports 4 roles with role-based routing:
+
 - **Admin (BTC F-Code)** — full system access: nhập điểm BGK, nhập giải thưởng, xem leaderboard + bảng thống kê, quản lý accounts
 - **BTC FStyle** — vote Nỗ lực (xuyên suốt các team), nhập giải thưởng thủ công, xem leaderboard
 - **MC** — xem leaderboard only
@@ -328,15 +358,16 @@ System supports 4 roles with role-based routing:
 
 Tài liệu nghiệp vụ nằm trong `/docs`. Đọc khi cần context về event rules, scoring, members, awards.
 
-| File | Nội dung |
-|------|----------|
-| [`docs/FSTYLE_SHOWCASE.md`](../docs/FSTYLE_SHOWCASE.md) | Tài liệu hệ thống tổng quan: timeline, roles, voting rules, scoring, leaderboard, kỹ thuật |
-| [`docs/SCORING_CRITERIA.md`](../docs/SCORING_CRITERIA.md) | Tiêu chí chấm điểm BGK — 6 hạng mục, tổng 100đ |
-| [`docs/AWARD.md`](../docs/AWARD.md) | Cơ cấu giải thưởng: 10 giải, cách tính điểm, lưu ý |
-| [`docs/MEMBERS.md`](../docs/MEMBERS.md) | Danh sách 4 team (42 thành viên) + BTC FStyle (4) + BTC F-Code (2), kèm email |
-| [`docs/TASK_FRONTEND_DONE.md`](../docs/TASK_FRONTEND_DONE.md) | Spec landing page (đã build) — components, hooks, CSS tokens, asset mapping |
+| File                                                          | Nội dung                                                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| [`docs/FSTYLE_SHOWCASE.md`](../docs/FSTYLE_SHOWCASE.md)       | Tài liệu hệ thống tổng quan: timeline, roles, voting rules, scoring, leaderboard, kỹ thuật |
+| [`docs/SCORING_CRITERIA.md`](../docs/SCORING_CRITERIA.md)     | Tiêu chí chấm điểm BGK — 6 hạng mục, tổng 100đ                                             |
+| [`docs/AWARD.md`](../docs/AWARD.md)                           | Cơ cấu giải thưởng: 10 giải, cách tính điểm, lưu ý                                         |
+| [`docs/MEMBERS.md`](../docs/MEMBERS.md)                       | Danh sách 4 team (42 thành viên) + BTC FStyle (4) + BTC F-Code (2), kèm email              |
+| [`docs/TASK_FRONTEND_DONE.md`](../docs/TASK_FRONTEND_DONE.md) | Spec landing page (đã build) — components, hooks, CSS tokens, asset mapping                |
 
 ### Key Domain Rules (from docs)
+
 - **Voting period**: 29/6/2026 → 23:59 ngày 3/7/2026
 - **Showcase night**: 5/7/2026, 18:00, Hall A — FPT University HCM
 - **4 teams**: SHIRO KURO (10), Apex Aura (11), SLATT (11), ANTI-X (10)
