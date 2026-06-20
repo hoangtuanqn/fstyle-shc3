@@ -45,14 +45,17 @@ class VotingService {
       if (!voter.teamId || candidate.teamId !== voter.teamId) {
         throw new ErrorWithStatus({ message: 'Chỉ được vote thành viên trong team!', status: HTTP_STATUS.FORBIDDEN });
       }
-      const existingVotes = await votingRepository.findVotesByVoter(userId);
+      const existingVotes = await votingRepository.findVotesByVoterAndTeam(userId, voter.teamId!);
       if (existingVotes.length >= MAX_VOTES_PER_SCOPE) {
         throw new ErrorWithStatus({ message: `Tối đa ${MAX_VOTES_PER_SCOPE} lượt vote!`, status: HTTP_STATUS.BAD_REQUEST });
       }
     }
 
     if (role === RoleType.BTC_FSTYLE) {
-      const candidateTeamId = candidate.teamId!;
+      if (!candidate.teamId) {
+        throw new ErrorWithStatus({ message: 'Ứng viên chưa thuộc đội nào!', status: HTTP_STATUS.BAD_REQUEST });
+      }
+      const candidateTeamId = candidate.teamId;
       const teamVotes = await votingRepository.findVotesByVoterAndTeam(userId, candidateTeamId);
       if (teamVotes.length >= MAX_VOTES_PER_SCOPE) {
         throw new ErrorWithStatus({
