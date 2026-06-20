@@ -10,6 +10,11 @@ const links = [
   { id: 'club', label: 'CLB' },
 ];
 
+const pageLinks = [
+  { to: '/leaderboard', label: 'Leaderboard' },
+  { to: '/awards', label: 'BTC' },
+];
+
 const Nav = () => {
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
@@ -82,6 +87,27 @@ const Nav = () => {
           >
             {link.label}
           </button>
+        ))}
+        <span style={{ width: 1, height: 18, background: 'rgba(255,255,255,.12)' }} />
+        {pageLinks.map((pl) => (
+          <Link
+            key={pl.to}
+            to={pl.to}
+            onMouseEnter={() => setHovered(pl.to)}
+            onMouseLeave={() => setHovered(null)}
+            style={{
+              fontSize: 11,
+              fontWeight: 800,
+              letterSpacing: '.18em',
+              textTransform: 'uppercase',
+              color: hovered === pl.to ? 'var(--gold)' : 'var(--dim)',
+              transition: 'color .25s',
+              fontFamily: 'Montserrat, sans-serif',
+              textDecoration: 'none',
+            }}
+          >
+            {pl.label}
+          </Link>
         ))}
       </div>
 
