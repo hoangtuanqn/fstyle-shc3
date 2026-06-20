@@ -7,7 +7,7 @@
       "Bash(git log *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(npx prisma *)",
+      "Bash(npx drizzle-kit *)",
       "Read(**)",
       "Edit(**)",
       "Write(**)"
