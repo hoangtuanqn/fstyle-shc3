@@ -321,3 +321,14 @@ System supports 4 roles with role-based routing:
 - **Judge** — scoring interface (barem scoring, room assignments)
 - **Mentor** — candidate guidance (barem scoring)
 - **Candidate** — submissions, team management, profile
+
+## Harness: Landing Page Builder
+
+**Goal:** Build Heatwave SHC3 APOCALYPSE landing page with parallel sub-agents from TASK.md specs.
+
+**Trigger:** Landing page build/rebuild requests → use `build-landing-page` skill. Simple questions about components → answer directly.
+
+**Change Log:**
+| Date | Change | Target | Reason |
+|------|--------|--------|--------|
+| 2026-06-20 | Initial build | All | New harness for landing page |
