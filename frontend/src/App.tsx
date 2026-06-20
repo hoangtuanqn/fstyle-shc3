@@ -5,6 +5,8 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Scoring from './pages/Scoring';
+import Leaderboard from './pages/Leaderboard';
+import Awards from './pages/Awards';
 
 export default function App() {
   return (
@@ -42,6 +44,30 @@ export default function App() {
               <Nav />
               <main>
                 <Scoring />
+              </main>
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/leaderboard"
+          element={
+            <>
+              <Nav />
+              <main>
+                <Leaderboard />
+              </main>
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/awards"
+          element={
+            <>
+              <Nav />
+              <main>
+                <Awards />
               </main>
               <Footer />
             </>
