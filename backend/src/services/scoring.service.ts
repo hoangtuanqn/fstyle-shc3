@@ -1,3 +1,4 @@
+import { getIO } from '~/configs/socket';
 import scoringRepository from '~/repositories/scoring.repository';
 
 type JudgeScoreRow = {
@@ -46,10 +47,12 @@ class ScoringService {
       performance: data.performance,
       costume: data.costume,
     });
+    getIO().emit('scores:updated', { teamId, type: 'judge' });
   };
 
   saveBtcScore = async (teamId: string, discipline: number) => {
     await scoringRepository.upsertBtcScore(teamId, discipline);
+    getIO().emit('scores:updated', { teamId, type: 'btc' });
   };
 
   getStatistics = async () => {

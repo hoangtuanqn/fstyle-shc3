@@ -6,6 +6,7 @@ import type { CSSProperties } from 'react';
 import AwardApi from '~/api-requests/award.requests';
 import { RoleType } from '~/constants/enums';
 import useAuth from '~/hooks/useAuth';
+import useSocket from '~/hooks/useSocket';
 
 import type { UpdateAwardInput } from '~/types/award';
 
@@ -24,6 +25,8 @@ const inputStyle: CSSProperties = {
 
 
 const Awards = () => {
+  useSocket();
+
   const { user } = useAuth();
   const queryClient = useQueryClient();
 

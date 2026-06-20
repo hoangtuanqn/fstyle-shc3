@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { CSSProperties } from 'react';
 
 import LeaderboardApi from '~/api-requests/leaderboard.requests';
+import useSocket from '~/hooks/useSocket';
 
 const thStyle: CSSProperties = {
   padding: '14px 18px',
@@ -24,6 +25,8 @@ const tdStyle: CSSProperties = {
 };
 
 const Leaderboard = () => {
+  useSocket();
+
   const { data, isLoading } = useQuery({
     queryKey: ['leaderboard'],
     queryFn: LeaderboardApi.getLeaderboard,

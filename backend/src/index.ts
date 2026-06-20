@@ -5,11 +5,14 @@ import express from 'express';
 import http from 'http';
 
 import { env } from '~/configs/env';
+import { initSocket } from '~/configs/socket';
 import { defaultErrorHandler } from '~/middlewares/error.middlewares';
 import rootRouter from '~/routes/root.routes';
 
 const app = express();
 const server = http.createServer(app);
+
+initSocket(server);
 
 app.use(express.json());
 app.use(cookieParser());

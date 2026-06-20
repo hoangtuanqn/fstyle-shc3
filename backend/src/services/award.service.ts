@@ -1,3 +1,4 @@
+import { getIO } from '~/configs/socket';
 import { HTTP_STATUS } from '~/constants/httpStatus';
 import { ErrorWithStatus } from '~/rules/error';
 import awardRepository from '~/repositories/award.repository';
@@ -20,7 +21,9 @@ class AwardService {
       throw new ErrorWithStatus({ message: 'Không thể chỉnh sửa giải tự động!', status: HTTP_STATUS.BAD_REQUEST });
     }
     await awardRepository.updateWinner(awardId, data);
-    return await awardRepository.findById(awardId);
+    const updated = await awardRepository.findById(awardId);
+    getIO().emit('awards:updated', { awardId, award: updated });
+    return updated;
   };
 
   autoCalculate = async () => {
@@ -37,6 +40,7 @@ class AwardService {
       });
     }
 
+    getIO().emit('awards:updated', { type: 'auto-calculate' });
     return await awardRepository.findAll();
   };
 }
