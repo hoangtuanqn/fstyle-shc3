@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import VotingApi from '~/api-requests/voting.requests';
 import { RoleType } from '~/constants/enums';
 import useAuth from '~/hooks/useAuth';
+import useSocket from '~/hooks/useSocket';
 import type { CandidateType } from '~/types/voting';
 
 type TeamInfo = {
@@ -262,6 +263,8 @@ const VoteCard = ({
 };
 
 const Dashboard = () => {
+  useSocket();
+
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [activeFilter, setActiveFilter] = useState('all');
