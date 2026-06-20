@@ -48,101 +48,35 @@ const Login = () => {
   };
 
   return (
-    <section
-      style={{
-        position: 'relative',
-        width: '100%',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        padding: '40px 20px',
-      }}
-    >
+    <section className="relative flex min-h-screen w-full items-center justify-center overflow-hidden px-5 py-10">
       {/* Background layers */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: "url('/assets/images/bggg.png') center top / cover no-repeat",
-          animation: 'hzoom 22s ease-in-out infinite alternate',
-          filter: 'saturate(1.2) contrast(1.05) brightness(0.4)',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(to bottom, rgba(5,3,1,.6) 0%, rgba(5,3,1,.85) 50%, rgba(5,3,1,.95) 100%)',
-        }}
-      />
+      <div className="absolute inset-0 animate-hzoom bg-[url('/assets/images/bggg.png')] bg-cover bg-top saturate-[1.2] contrast-[1.05] brightness-[0.4]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(5,3,1,.6)_0%,rgba(5,3,1,.85)_50%,rgba(5,3,1,.95)_100%)]" />
       <ParticleCanvas />
 
       {/* Form card */}
       <form
         onSubmit={handleSubmit}
-        style={{
-          position: 'relative',
-          zIndex: 10,
-          width: '100%',
-          maxWidth: 420,
-          background: 'rgba(10,7,3,0.88)',
-          border: '1px solid rgba(254,230,34,.18)',
-          borderRadius: 16,
-          padding: '48px 36px 40px',
-          boxShadow: '0 0 80px rgba(254,230,34,.08), 0 24px 60px rgba(0,0,0,.6)',
-          animation: 'fu .6s both',
-        }}
+        className="relative z-10 w-full max-w-[420px] animate-fu rounded-2xl border border-[rgba(254,230,34,.18)] bg-[rgba(10,7,3,0.88)] px-9 pt-12 pb-10 shadow-[0_0_80px_rgba(254,230,34,.08),0_24px_60px_rgba(0,0,0,.6)]"
       >
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        <div className="mb-8 text-center">
           <Link to="/">
             <img
               src="/assets/images/logo-ngang.png"
               alt="FStyle Crew"
-              style={{ height: 36, maxWidth: '100%', display: 'inline-block', marginBottom: 18 }}
+              className="mb-[18px] inline-block h-9 max-w-full"
             />
           </Link>
-          <h1
-            style={{
-              fontFamily: 'Anton, sans-serif',
-              fontSize: 28,
-              letterSpacing: '.04em',
-              color: 'var(--gold)',
-              textShadow: '0 0 24px rgba(254,230,34,.4)',
-              margin: 0,
-            }}
-          >
+          <h1 className="font-anton text-[28px] tracking-[.04em] text-gold [text-shadow:0_0_24px_rgba(254,230,34,.4)]">
             ĐĂNG NHẬP
           </h1>
-          <p
-            style={{
-              fontSize: 12,
-              color: 'var(--dim)',
-              marginTop: 8,
-              letterSpacing: '.04em',
-            }}
-          >
-            Heatwave Showcase #3 — APOCALYPSE
-          </p>
+          <p className="mt-2 text-[12px] tracking-[.04em] text-dim">Heatwave Showcase #3 — APOCALYPSE</p>
         </div>
 
         {/* Email */}
-        <div style={{ marginBottom: 20 }}>
-          <label
-            style={{
-              display: 'block',
-              fontSize: 10,
-              fontWeight: 800,
-              letterSpacing: '.3em',
-              color: 'var(--orange)',
-              textTransform: 'uppercase',
-              marginBottom: 8,
-            }}
-          >
-            Email
-          </label>
+        <div className="mb-5">
+          <label className="mb-2 block text-[10px] font-[800] uppercase tracking-[.3em] text-orange">Email</label>
           <input
             type="email"
             value={email}
@@ -151,45 +85,14 @@ const Login = () => {
             required
             autoComplete="email"
             autoFocus
-            style={{
-              width: '100%',
-              padding: '14px 16px',
-              background: 'rgba(0,0,0,.5)',
-              border: '1px solid rgba(254,230,34,.16)',
-              borderRadius: 10,
-              color: 'var(--text)',
-              fontSize: 14,
-              fontFamily: 'Montserrat, sans-serif',
-              outline: 'none',
-              transition: 'border-color .25s, box-shadow .25s',
-            }}
-            onFocus={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(254,230,34,.45)';
-              e.currentTarget.style.boxShadow = '0 0 16px rgba(254,230,34,.12)';
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(254,230,34,.16)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
+            className="w-full rounded-[10px] border border-[rgba(254,230,34,.16)] bg-[rgba(0,0,0,.5)] px-4 py-[14px] font-montserrat text-[14px] text-text outline-none transition-[border-color,box-shadow] duration-[250ms] focus:border-[rgba(254,230,34,.45)] focus:shadow-[0_0_16px_rgba(254,230,34,.12)]"
           />
         </div>
 
         {/* Password */}
-        <div style={{ marginBottom: 28 }}>
-          <label
-            style={{
-              display: 'block',
-              fontSize: 10,
-              fontWeight: 800,
-              letterSpacing: '.3em',
-              color: 'var(--orange)',
-              textTransform: 'uppercase',
-              marginBottom: 8,
-            }}
-          >
-            Mật khẩu
-          </label>
-          <div style={{ position: 'relative' }}>
+        <div className="mb-7">
+          <label className="mb-2 block text-[10px] font-[800] uppercase tracking-[.3em] text-orange">Mật khẩu</label>
+          <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
@@ -197,47 +100,12 @@ const Login = () => {
               placeholder="••••••••"
               required
               autoComplete="current-password"
-              style={{
-                width: '100%',
-                padding: '14px 48px 14px 16px',
-                background: 'rgba(0,0,0,.5)',
-                border: '1px solid rgba(254,230,34,.16)',
-                borderRadius: 10,
-                color: 'var(--text)',
-                fontSize: 14,
-                fontFamily: 'Montserrat, sans-serif',
-                outline: 'none',
-                transition: 'border-color .25s, box-shadow .25s',
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(254,230,34,.45)';
-                e.currentTarget.style.boxShadow = '0 0 16px rgba(254,230,34,.12)';
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(254,230,34,.16)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
+              className="w-full rounded-[10px] border border-[rgba(254,230,34,.16)] bg-[rgba(0,0,0,.5)] py-[14px] pr-12 pl-4 font-montserrat text-[14px] text-text outline-none transition-[border-color,box-shadow] duration-[250ms] focus:border-[rgba(254,230,34,.45)] focus:shadow-[0_0_16px_rgba(254,230,34,.12)]"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              style={{
-                position: 'absolute',
-                right: 14,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: 'var(--dim)',
-                fontSize: 13,
-                fontFamily: 'Montserrat, sans-serif',
-                fontWeight: 600,
-                letterSpacing: '.05em',
-                transition: 'color .2s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--gold)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--dim)')}
+              className="absolute right-[14px] top-1/2 -translate-y-1/2 cursor-pointer border-none bg-none font-montserrat text-[13px] font-semibold tracking-[.05em] text-dim transition-colors duration-200 hover:text-gold"
             >
               {showPassword ? 'ẨN' : 'HIỆN'}
             </button>
@@ -248,77 +116,30 @@ const Login = () => {
         <button
           type="submit"
           disabled={loading}
-          style={{
-            width: '100%',
-            padding: '15px 0',
-            background: loading ? 'rgba(254,230,34,.15)' : 'var(--gold)',
-            border: 'none',
-            borderRadius: 10,
-            color: loading ? 'var(--gold)' : '#050301',
-            fontSize: 13,
-            fontWeight: 800,
-            fontFamily: 'Montserrat, sans-serif',
-            letterSpacing: '.2em',
-            textTransform: 'uppercase',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            transition: 'background .3s, transform .15s, box-shadow .3s',
-            boxShadow: loading ? 'none' : '0 0 30px rgba(254,230,34,.3)',
-          }}
-          onMouseEnter={(e) => {
-            if (!loading) {
-              e.currentTarget.style.background = '#ffe94a';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-              e.currentTarget.style.boxShadow = '0 0 40px rgba(254,230,34,.5)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!loading) {
-              e.currentTarget.style.background = 'var(--gold)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 0 30px rgba(254,230,34,.3)';
-            }
-          }}
+          className={`w-full rounded-[10px] border-none py-[15px] font-montserrat text-[13px] font-[800] uppercase tracking-[.2em] transition-[background,transform,box-shadow] duration-300 ${
+            loading
+              ? 'cursor-not-allowed bg-[rgba(254,230,34,.15)] text-gold shadow-none'
+              : 'cursor-pointer bg-gold text-[#050301] shadow-[0_0_30px_rgba(254,230,34,.3)] hover:bg-[#ffe94a] hover:-translate-y-px hover:shadow-[0_0_40px_rgba(254,230,34,.5)]'
+          }`}
         >
           {loading ? 'Đang xử lý...' : 'Đăng nhập'}
         </button>
 
         {/* Back to home */}
-        <div style={{ marginTop: 24, textAlign: 'center' }}>
+        <div className="mt-6 text-center">
           <Link
             to="/"
-            style={{
-              fontSize: 12,
-              color: 'var(--dim)',
-              textDecoration: 'none',
-              letterSpacing: '.04em',
-              transition: 'color .2s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--gold)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--dim)')}
+            className="text-[12px] tracking-[.04em] text-dim no-underline transition-colors duration-200 hover:text-gold"
           >
             ← Quay về trang chủ
           </Link>
         </div>
 
         {/* Footer */}
-        <div
-          style={{
-            marginTop: 20,
-            textAlign: 'center',
-            fontSize: 11,
-            color: 'var(--dim)',
-            letterSpacing: '.04em',
-          }}
-        >
+        <div className="mt-5 text-center text-[11px] tracking-[.04em] text-dim">
           © 2026 F-Code Club · FPT University HCM
         </div>
       </form>
-
-      <style>{`
-        input::placeholder {
-          color: rgba(242, 237, 224, 0.25);
-        }
-      `}</style>
     </section>
   );
 };

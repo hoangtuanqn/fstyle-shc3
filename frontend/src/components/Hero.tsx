@@ -20,87 +20,26 @@ const Hero = () => {
   ];
 
   const colon = (
-    <span
-      style={{
-        fontFamily: 'Anton, sans-serif',
-        fontSize: 40,
-        color: 'var(--gold)',
-        animation: 'cb 1s step-end infinite',
-        lineHeight: 1,
-        margin: '0 2px',
-      }}
-    >
-      :
-    </span>
+    <span className="font-anton text-[40px] text-gold animate-colon-blink leading-none mx-[2px]">:</span>
   );
 
   return (
-    <section
-      id="hero"
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '100vh',
-        minHeight: 740,
-        overflow: 'hidden',
-      }}
-    >
+    <section id="hero" className="relative w-full h-screen min-h-[740px] overflow-hidden">
       {/* Layer 1 — background */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: "url('/assets/images/bggg.png') center top / cover no-repeat",
-          animation: 'hzoom 22s ease-in-out infinite alternate',
-          filter: 'saturate(1.2) contrast(1.05)',
-        }}
-      />
+      <div className="absolute inset-0 bg-[url('/assets/images/bggg.png')] bg-center bg-top bg-cover bg-no-repeat animate-hzoom saturate-[1.2] contrast-[1.05]" />
       {/* Layer 2 — overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: "url('/assets/images/vungtoi.png') center bottom / cover no-repeat",
-          opacity: 0.6,
-        }}
-      />
+      <div className="absolute inset-0 bg-[url('/assets/images/vungtoi.png')] bg-center bg-bottom bg-cover bg-no-repeat opacity-60" />
       {/* Layer 3 — gradient */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(to bottom, rgba(5,3,1,.15) 0%, rgba(5,3,1,.02) 20%, rgba(5,3,1,.12) 55%, rgba(5,3,1,.94) 100%)',
-        }}
-      />
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(5,3,1,.15)_0%,rgba(5,3,1,.02)_20%,rgba(5,3,1,.12)_55%,rgba(5,3,1,.94)_100%)]" />
       {/* Layer 4 — particles */}
       <ParticleCanvas />
 
       {/* Content */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 10,
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-          padding: '0 24px',
-        }}
-      >
+      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
         {/* 1. Eyebrow */}
         <span
-          style={{
-            fontSize: 11,
-            fontWeight: 800,
-            letterSpacing: '.42em',
-            color: 'var(--orange)',
-            textTransform: 'uppercase',
-            textShadow: '0 0 20px rgba(251,140,5,.8)',
-            animation: 'fu .9s .1s both',
-          }}
+          className="text-[11px] font-extrabold tracking-[.42em] text-orange uppercase animate-fu"
+          style={{ textShadow: '0 0 20px rgba(251,140,5,.8)', animationDelay: '.1s' }}
         >
           FStyle Crew · Never Stop Trying!
         </span>
@@ -109,126 +48,53 @@ const Hero = () => {
         <img
           src="/assets/images/typography-apocalypse-gold.png"
           alt="APOCALYPSE"
+          className="w-[min(580px,84vw)] mt-[22px] animate-fu"
           style={{
-            width: 'min(580px, 84vw)',
-            marginTop: 22,
             filter: 'drop-shadow(0 0 60px rgba(254,230,34,.7)) drop-shadow(0 0 20px rgba(251,140,5,.5))',
-            animation: 'fu 1s .3s both',
+            animationDelay: '.3s',
           }}
         />
 
         {/* 3. Tagline */}
         <p
-          style={{
-            fontSize: 14,
-            fontStyle: 'italic',
-            color: 'rgba(242,237,224,.7)',
-            marginTop: 18,
-            animation: 'fu .9s .5s both',
-          }}
+          className="text-[14px] italic text-[rgba(242,237,224,.7)] mt-[18px] animate-fu"
+          style={{ animationDelay: '.5s' }}
         >
           The category is DANCE or APOCALYPSE
         </p>
 
         {/* 4. Meta bar */}
         <div
-          className="hero-meta"
-          style={{
-            display: 'flex',
-            background: 'rgba(0,0,0,.45)',
-            border: '1px solid rgba(254,230,34,.28)',
-            borderRadius: 12,
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-            overflow: 'hidden',
-            marginTop: 34,
-            animation: 'fu .9s .7s both',
-          }}
+          className="flex max-sm:flex-col max-sm:w-[min(280px,84vw)] bg-[rgba(0,0,0,.45)] border border-[rgba(254,230,34,.28)] rounded-xl backdrop-blur-[8px] overflow-hidden mt-[34px] animate-fu"
+          style={{ animationDelay: '.7s' }}
         >
           {metaItems.map((item, i) => (
             <div
               key={item.label}
-              style={{
-                padding: '14px 26px',
-                borderRight: i < metaItems.length - 1 ? '1px solid rgba(254,230,34,.18)' : 'none',
-                textAlign: 'center',
-              }}
+              className={`py-[14px] px-[26px] text-center max-sm:border-r-0 ${
+                i < metaItems.length - 1
+                  ? 'border-r border-r-[rgba(254,230,34,.18)] max-sm:border-b max-sm:border-b-[rgba(254,230,34,.18)]'
+                  : ''
+              }`}
             >
-              <div
-                style={{
-                  fontSize: 9,
-                  fontWeight: 800,
-                  letterSpacing: '.3em',
-                  color: 'var(--orange)',
-                  textTransform: 'uppercase',
-                  marginBottom: 6,
-                }}
-              >
-                {item.label}
-              </div>
-              <div
-                style={{
-                  fontFamily: 'Anton, sans-serif',
-                  fontSize: 17,
-                  color: 'var(--gold)',
-                  textShadow: '0 0 16px rgba(254,230,34,.5)',
-                }}
-              >
-                {item.value}
-              </div>
+              <div className="label-upper text-orange mb-[6px] tracking-[.3em]">{item.label}</div>
+              <div className="font-anton text-[17px] text-gold gold-glow">{item.value}</div>
             </div>
           ))}
         </div>
 
         {/* 5. Countdown */}
         <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            marginTop: 36,
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            animation: 'fu .9s .9s both',
-          }}
+          className="flex items-center gap-[6px] mt-9 flex-wrap justify-center animate-fu"
+          style={{ animationDelay: '.9s' }}
         >
           {countItems.map((item, i) => (
-            <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  minWidth: 72,
-                  padding: '14px 10px',
-                  background: 'rgba(0,0,0,.4)',
-                  border: '1px solid rgba(254,230,34,.22)',
-                  borderRadius: 10,
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: 'Anton, sans-serif',
-                    fontSize: 40,
-                    lineHeight: 1,
-                    color: 'var(--gold)',
-                    textShadow: '0 0 20px rgba(254,230,34,.6)',
-                  }}
-                >
+            <div key={item.label} className="flex items-center gap-[6px]">
+              <div className="flex flex-col items-center min-w-[72px] py-[14px] px-[10px] bg-[rgba(0,0,0,.4)] border border-[rgba(254,230,34,.22)] rounded-[10px]">
+                <span className="font-anton text-[40px] leading-none text-gold" style={{ textShadow: '0 0 20px rgba(254,230,34,.6)' }}>
                   {item.value}
                 </span>
-                <span
-                  style={{
-                    fontSize: 9,
-                    fontWeight: 800,
-                    letterSpacing: '.24em',
-                    color: 'var(--dim)',
-                    textTransform: 'uppercase',
-                    marginTop: 8,
-                  }}
-                >
-                  {item.label}
-                </span>
+                <span className="label-upper text-dim mt-2 tracking-[.24em]">{item.label}</span>
               </div>
               {i < countItems.length - 1 && colon}
             </div>
@@ -236,57 +102,11 @@ const Hero = () => {
         </div>
 
         {/* 6. Scroll indicator */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 28,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 10,
-          }}
-        >
-          <span
-            style={{
-              fontSize: 9,
-              fontWeight: 800,
-              letterSpacing: '.3em',
-              color: 'var(--dim)',
-              textTransform: 'uppercase',
-            }}
-          >
-            Cuộn xuống
-          </span>
-          <span
-            style={{
-              width: 12,
-              height: 12,
-              borderRight: '2px solid var(--gold)',
-              borderBottom: '2px solid var(--gold)',
-              display: 'block',
-              animation: 'ab 2s ease-in-out infinite',
-            }}
-          />
+        <div className="absolute bottom-7 left-1/2 -translate-x-1/2 flex flex-col items-center gap-[10px]">
+          <span className="label-upper text-dim tracking-[.3em]">Cuộn xuống</span>
+          <span className="block w-3 h-3 border-r-2 border-b-2 border-gold animate-arrow-bounce" />
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 600px) {
-          .hero-meta {
-            flex-direction: column;
-            width: min(280px, 84vw);
-          }
-          .hero-meta > div {
-            border-right: none !important;
-            border-bottom: 1px solid rgba(254,230,34,.18);
-          }
-          .hero-meta > div:last-child {
-            border-bottom: none;
-          }
-        }
-      `}</style>
     </section>
   );
 };

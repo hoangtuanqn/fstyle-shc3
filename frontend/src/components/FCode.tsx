@@ -38,79 +38,20 @@ const FCode = () => {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <section id="fcode" className="sec" style={{ background: 'var(--bg)' }}>
+    <section id="fcode" className="sec bg-bg">
       <div className="con">
-        <div
-          className="fcode-grid"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '280px 1fr',
-            gap: 72,
-            alignItems: 'center',
-          }}
-        >
+        <div className="grid grid-cols-[280px_1fr] gap-[72px] items-center max-lg:grid-cols-1 max-lg:gap-12">
           {/* LEFT — Logo block */}
-          <div
-            className="rv"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 18,
-            }}
-          >
-            <div
-              style={{
-                width: 148,
-                height: 148,
-                borderRadius: 20,
-                background: 'rgba(254,230,34,.04)',
-                border: '1px solid rgba(254,230,34,.18)',
-                boxShadow: '0 0 40px rgba(254,230,34,.06)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 18,
-              }}
-            >
-              <img
-                src="/assets/pptx-images/image1.png"
-                alt="F-Code"
-                style={{ objectFit: 'contain', width: '100%', height: '100%' }}
-              />
+          <div className="rv flex flex-col items-center gap-[18px]">
+            <div className="w-[148px] h-[148px] rounded-[20px] bg-[rgba(254,230,34,.04)] border border-[rgba(254,230,34,.18)] shadow-[0_0_40px_rgba(254,230,34,.06)] flex items-center justify-center p-[18px]">
+              <img src="/assets/pptx-images/image1.png" alt="F-Code" className="object-contain w-full h-full" />
             </div>
 
-            <div
-              style={{
-                fontFamily: 'Anton, sans-serif',
-                fontSize: 28,
-                color: 'var(--text)',
-                letterSpacing: '.08em',
-              }}
-            >
-              F-CODE
-            </div>
+            <div className="font-anton text-[28px] text-text tracking-[.08em]">F-CODE</div>
 
-            <div style={{ fontStyle: 'italic', fontSize: 12, color: 'var(--dim)' }}>
-              "Code the dream"
-            </div>
+            <div className="italic text-[12px] text-dim">"Code the dream"</div>
 
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                borderRadius: 100,
-                padding: '8px 18px',
-                fontSize: 10,
-                fontWeight: 800,
-                letterSpacing: '.22em',
-                textTransform: 'uppercase',
-                color: 'var(--gold)',
-                border: '1px solid rgba(254,230,34,.2)',
-                background: 'rgba(254,230,34,.04)',
-              }}
-            >
+            <div className="inline-flex items-center gap-2 rounded-full px-[18px] py-2 text-[10px] font-extrabold tracking-[.22em] uppercase text-gold border border-[rgba(254,230,34,.2)] bg-[rgba(254,230,34,.04)]">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               </svg>
@@ -122,22 +63,14 @@ const FCode = () => {
           <div className="rv d2">
             <span className="ey">Đối Tác Công Nghệ</span>
             <h2 className="st">
-              CLB <em>F-Code</em>
+              CLB <em className="st-em">F-Code</em>
             </h2>
-            <p
-              style={{
-                fontSize: 16,
-                lineHeight: 1.85,
-                color: 'var(--dim)',
-                margin: '20px 0 28px',
-                maxWidth: 620,
-              }}
-            >
-              CLB F-Code đóng vai trò đơn vị kiểm toán độc lập và cung cấp nền tảng công nghệ chấm điểm
-              cho Heatwave Showcase #3, đảm bảo kết quả minh bạch và công bằng tuyệt đối.
+            <p className="text-[16px] leading-[1.85] text-dim my-5 mb-7 max-w-[620px]">
+              CLB F-Code đóng vai trò đơn vị kiểm toán độc lập và cung cấp nền tảng công nghệ chấm điểm cho Heatwave
+              Showcase #3, đảm bảo kết quả minh bạch và công bằng tuyệt đối.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div className="flex flex-col gap-[14px]">
               {features.map((f, i) => {
                 const isHover = hovered === i;
                 return (
@@ -145,45 +78,17 @@ const FCode = () => {
                     key={f.title}
                     onMouseEnter={() => setHovered(i)}
                     onMouseLeave={() => setHovered(null)}
+                    className="flex items-center gap-4 px-[18px] py-4 rounded-xl transition-[border-color,background,transform] duration-300"
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 16,
-                      padding: '16px 18px',
-                      borderRadius: 12,
                       border: `1px solid ${isHover ? 'rgba(254,230,34,.2)' : 'rgba(255,255,255,.07)'}`,
                       background: isHover ? 'rgba(254,230,34,.03)' : 'rgba(255,255,255,.02)',
-                      transition: 'border-color .3s, background .3s, transform .35s',
                       transform: isHover ? 'translateX(6px)' : 'translateX(0)',
                     }}
                   >
-                    <div
-                      style={{
-                        flexShrink: 0,
-                        width: 44,
-                        height: 44,
-                        borderRadius: 12,
-                        background: 'rgba(254,230,34,.07)',
-                        border: '1px solid rgba(254,230,34,.18)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      {f.icon}
-                    </div>
+                    <div className="icon-box">{f.icon}</div>
                     <div>
-                      <div
-                        style={{
-                          fontSize: 15,
-                          fontWeight: 700,
-                          color: 'var(--text)',
-                          marginBottom: 4,
-                        }}
-                      >
-                        {f.title}
-                      </div>
-                      <div style={{ fontSize: 13, color: 'var(--dim)', lineHeight: 1.6 }}>{f.desc}</div>
+                      <div className="text-[15px] font-bold text-text mb-1">{f.title}</div>
+                      <div className="text-[13px] text-dim leading-[1.6]">{f.desc}</div>
                     </div>
                   </div>
                 );
@@ -192,12 +97,6 @@ const FCode = () => {
           </div>
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 1024px) {
-          .fcode-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
-        }
-      `}</style>
     </section>
   );
 };

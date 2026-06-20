@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import type { CSSProperties } from 'react';
 
 type SubCriteria = {
   name: string;
@@ -209,39 +208,16 @@ const criteriaData: Criteria[] = [
 
 const totalMax = criteriaData.reduce((s, c) => s + c.maxScore, 0);
 
-const thStyle: CSSProperties = {
-  padding: '14px 16px',
-  textAlign: 'left',
-  fontWeight: 800,
-  fontSize: 11,
-  letterSpacing: '.14em',
-  textTransform: 'uppercase',
-  color: 'var(--orange)',
-  borderBottom: '2px solid rgba(251,140,5,.3)',
-  whiteSpace: 'nowrap',
-};
-
-const tdBase: CSSProperties = {
-  padding: '12px 16px',
-  fontSize: 13,
-  color: 'var(--text)',
-  borderBottom: '1px solid rgba(255,255,255,.06)',
-  verticalAlign: 'top',
-  lineHeight: 1.5,
-};
-
 const Scoring = () => {
-  const [scores, setScores] = useState<Record<string, number | ''>>(
-    () => {
-      const init: Record<string, number | ''> = {};
-      criteriaData.forEach((cat) => {
-        cat.subs.forEach((_, subIdx) => {
-          init[`${cat.id}-${subIdx}`] = '';
-        });
+  const [scores, setScores] = useState<Record<string, number | ''>>(() => {
+    const init: Record<string, number | ''> = {};
+    criteriaData.forEach((cat) => {
+      cat.subs.forEach((_, subIdx) => {
+        init[`${cat.id}-${subIdx}`] = '';
       });
-      return init;
-    },
-  );
+    });
+    return init;
+  });
 
   const handleScoreChange = (key: string, value: string, max: number) => {
     if (value === '') {
@@ -270,44 +246,51 @@ const Scoring = () => {
   );
 
   return (
-    <div style={{ minHeight: '100vh', paddingTop: 108 }}>
+    <div className="min-h-screen pt-[108px]">
       {/* Header */}
-      <section style={{ paddingBottom: 48 }}>
-        <div className="con" style={{ textAlign: 'center' }}>
+      <section className="pb-12">
+        <div className="con text-center">
           <span className="ey">🔥 Heatwave SHC3 Apocalypse</span>
-          <h1 className="st" style={{ marginBottom: 12 }}>
-            TIÊU CHÍ <em>ĐÁNH GIÁ</em>
+          <h1 className="st mb-3">
+            TIÊU CHÍ <em className="st-em">ĐÁNH GIÁ</em>
           </h1>
-          <p style={{ color: 'var(--dim)', fontSize: 14, maxWidth: 600, margin: '0 auto' }}>
+          <p className="text-dim text-[14px] max-w-[600px] mx-auto">
             Bảng tiêu chí đánh giá onsite — Tổng điểm tối đa: {totalMax} điểm
           </p>
         </div>
       </section>
 
       {/* Table */}
-      <section style={{ paddingBottom: 80 }}>
+      <section className="pb-20">
         <div className="con">
-          <div
-            className="scoring-table-wrap"
-            style={{
-              overflowX: 'auto',
-              borderRadius: 16,
-              border: '1px solid rgba(255,255,255,.08)',
-              background: 'var(--bg2)',
-              boxShadow: '0 8px 40px rgba(0,0,0,.5)',
-            }}
-          >
-            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 1050 }}>
+          <div className="scrollbar-gold overflow-x-auto rounded-2xl border border-[rgba(255,255,255,.08)] bg-bg2 shadow-[0_8px_40px_rgba(0,0,0,.5)]">
+            <table className="w-full border-collapse min-w-[1050px]">
               <thead>
-                <tr style={{ background: 'rgba(251,140,5,.06)' }}>
-                  <th style={{ ...thStyle, width: '16%' }}>Điểm lớn</th>
-                  <th style={{ ...thStyle, width: '5%', textAlign: 'center' }}>Tối đa</th>
-                  <th style={{ ...thStyle, width: '14%' }}>Điểm con</th>
-                  <th style={{ ...thStyle, width: '5%', textAlign: 'center' }}>Tối đa</th>
-                  <th style={{ ...thStyle, width: '20%' }}>Cộng điểm khi…</th>
-                  <th style={{ ...thStyle, width: '20%' }}>Trừ điểm khi…</th>
-                  <th style={{ ...thStyle, width: '8%', textAlign: 'center' }}>Chấm điểm</th>
-                  <th style={{ ...thStyle, width: '7%', textAlign: 'center' }}>Đánh giá</th>
+                <tr className="bg-[rgba(251,140,5,.06)]">
+                  <th className="px-4 py-3.5 text-left font-[800] text-[11px] tracking-[.14em] uppercase text-orange border-b-2 border-[rgba(251,140,5,.3)] whitespace-nowrap w-[16%]">
+                    Điểm lớn
+                  </th>
+                  <th className="px-4 py-3.5 text-center font-[800] text-[11px] tracking-[.14em] uppercase text-orange border-b-2 border-[rgba(251,140,5,.3)] whitespace-nowrap w-[5%]">
+                    Tối đa
+                  </th>
+                  <th className="px-4 py-3.5 text-left font-[800] text-[11px] tracking-[.14em] uppercase text-orange border-b-2 border-[rgba(251,140,5,.3)] whitespace-nowrap w-[14%]">
+                    Điểm con
+                  </th>
+                  <th className="px-4 py-3.5 text-center font-[800] text-[11px] tracking-[.14em] uppercase text-orange border-b-2 border-[rgba(251,140,5,.3)] whitespace-nowrap w-[5%]">
+                    Tối đa
+                  </th>
+                  <th className="px-4 py-3.5 text-left font-[800] text-[11px] tracking-[.14em] uppercase text-orange border-b-2 border-[rgba(251,140,5,.3)] whitespace-nowrap w-[20%]">
+                    Cộng điểm khi…
+                  </th>
+                  <th className="px-4 py-3.5 text-left font-[800] text-[11px] tracking-[.14em] uppercase text-orange border-b-2 border-[rgba(251,140,5,.3)] whitespace-nowrap w-[20%]">
+                    Trừ điểm khi…
+                  </th>
+                  <th className="px-4 py-3.5 text-center font-[800] text-[11px] tracking-[.14em] uppercase text-orange border-b-2 border-[rgba(251,140,5,.3)] whitespace-nowrap w-[8%]">
+                    Chấm điểm
+                  </th>
+                  <th className="px-4 py-3.5 text-center font-[800] text-[11px] tracking-[.14em] uppercase text-orange border-b-2 border-[rgba(251,140,5,.3)] whitespace-nowrap w-[7%]">
+                    Đánh giá
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -320,7 +303,7 @@ const Scoring = () => {
                     return (
                       <tr
                         key={key}
-                        style={{ transition: 'background .2s' }}
+                        className="transition-colors duration-200"
                         onMouseEnter={(e) => {
                           (e.currentTarget as HTMLTableRowElement).style.background =
                             cat.accentGlow.replace(/[\d.]+\)$/, '0.04)');
@@ -333,11 +316,8 @@ const Scoring = () => {
                           <>
                             <td
                               rowSpan={cat.subs.length}
+                              className="px-4 py-3 font-anton text-[16px] tracking-[.03em] align-top leading-[1.5]"
                               style={{
-                                ...tdBase,
-                                fontFamily: "'Anton', sans-serif",
-                                fontSize: 16,
-                                letterSpacing: '.03em',
                                 color: cat.accent,
                                 background: cat.accentGlow,
                                 borderBottom: `1px solid ${catBorderColor}`,
@@ -348,11 +328,8 @@ const Scoring = () => {
                             </td>
                             <td
                               rowSpan={cat.subs.length}
+                              className="px-4 py-3 font-anton text-[20px] text-center align-top leading-[1.5]"
                               style={{
-                                ...tdBase,
-                                fontFamily: "'Anton', sans-serif",
-                                fontSize: 20,
-                                textAlign: 'center',
                                 color: cat.accent,
                                 textShadow: `0 0 14px ${cat.accent}66`,
                                 background: cat.accentGlow,
@@ -363,33 +340,19 @@ const Scoring = () => {
                             </td>
                           </>
                         )}
-                        <td
-                          style={{
-                            ...tdBase,
-                            fontWeight: 600,
-                            color: 'var(--text)',
-                          }}
-                        >
+                        <td className="px-4 py-3 text-[13px] text-text border-b border-[rgba(255,255,255,.06)] align-top leading-[1.5] font-semibold">
                           {sub.name}
                         </td>
-                        <td
-                          style={{
-                            ...tdBase,
-                            fontFamily: "'Anton', sans-serif",
-                            fontSize: 16,
-                            textAlign: 'center',
-                            color: 'var(--dim)',
-                          }}
-                        >
+                        <td className="px-4 py-3 font-anton text-[16px] text-center text-dim border-b border-[rgba(255,255,255,.06)] align-top leading-[1.5]">
                           {sub.maxScore}
                         </td>
-                        <td style={{ ...tdBase, fontSize: 12, color: '#5EAF7C' }}>
-                          <span style={{ opacity: 0.85 }}>＋</span> {sub.plus}
+                        <td className="px-4 py-3 text-[12px] text-[#5EAF7C] border-b border-[rgba(255,255,255,.06)] align-top leading-[1.5]">
+                          <span className="opacity-85">＋</span> {sub.plus}
                         </td>
-                        <td style={{ ...tdBase, fontSize: 12, color: '#D04047' }}>
-                          <span style={{ opacity: 0.85 }}>−</span> {sub.minus}
+                        <td className="px-4 py-3 text-[12px] text-[#D04047] border-b border-[rgba(255,255,255,.06)] align-top leading-[1.5]">
+                          <span className="opacity-85">−</span> {sub.minus}
                         </td>
-                        <td style={{ ...tdBase, textAlign: 'center', verticalAlign: 'middle' }}>
+                        <td className="px-4 py-3 text-center align-middle border-b border-[rgba(255,255,255,.06)]">
                           <input
                             type="number"
                             min={0}
@@ -398,20 +361,11 @@ const Scoring = () => {
                             value={scores[key]}
                             onChange={(e) => handleScoreChange(key, e.target.value, sub.maxScore)}
                             placeholder={`/${sub.maxScore}`}
+                            className="no-spinner w-16 px-1.5 py-2 rounded-lg font-anton text-[18px] text-center outline-none transition-[border-color,background,box-shadow] duration-200"
                             style={{
-                              width: 64,
-                              padding: '8px 6px',
-                              borderRadius: 8,
-                              border: `1px solid ${
-                                scores[key] !== '' ? `${cat.accent}66` : 'rgba(255,255,255,.12)'
-                              }`,
+                              border: `1px solid ${scores[key] !== '' ? `${cat.accent}66` : 'rgba(255,255,255,.12)'}`,
                               background: scores[key] !== '' ? `${cat.accent}0D` : 'rgba(255,255,255,.04)',
-                              color: scores[key] !== '' ? cat.accent : 'var(--dim)',
-                              fontFamily: "'Anton', sans-serif",
-                              fontSize: 18,
-                              textAlign: 'center',
-                              outline: 'none',
-                              transition: 'border-color .2s, background .2s, box-shadow .2s',
+                              color: scores[key] !== '' ? cat.accent : 'var(--color-dim)',
                               boxShadow: scores[key] !== '' ? `0 0 12px ${cat.accent}1A` : 'none',
                             }}
                             onFocus={(e) => {
@@ -429,40 +383,18 @@ const Scoring = () => {
                         {isFirstRow && (
                           <td
                             rowSpan={cat.subs.length}
+                            className="px-4 py-3 text-[11px] font-bold text-center uppercase tracking-[.12em] align-middle leading-[1.5]"
                             style={{
-                              ...tdBase,
-                              fontSize: 11,
-                              fontWeight: 700,
-                              textAlign: 'center',
-                              textTransform: 'uppercase',
-                              letterSpacing: '.12em',
-                              verticalAlign: 'middle',
                               background: cat.accentGlow,
                               borderBottom: `1px solid ${catBorderColor}`,
                             }}
                           >
                             {cat.evaluator === 'BTC' ? (
-                              <span
-                                style={{
-                                  padding: '4px 10px',
-                                  borderRadius: 6,
-                                  background: 'rgba(251,140,5,.1)',
-                                  border: '1px solid rgba(251,140,5,.25)',
-                                  color: 'var(--orange)',
-                                }}
-                              >
+                              <span className="px-2.5 py-1 rounded-md bg-[rgba(251,140,5,.1)] border border-[rgba(251,140,5,.25)] text-orange">
                                 BTC
                               </span>
                             ) : (
-                              <span
-                                style={{
-                                  padding: '4px 10px',
-                                  borderRadius: 6,
-                                  background: 'rgba(254,230,34,.08)',
-                                  border: '1px solid rgba(254,230,34,.2)',
-                                  color: 'var(--gold)',
-                                }}
-                              >
+                              <span className="px-2.5 py-1 rounded-md bg-[rgba(254,230,34,.08)] border border-[rgba(254,230,34,.2)] text-gold">
                                 BGK
                               </span>
                             )}
@@ -473,133 +405,69 @@ const Scoring = () => {
                   }),
                 )}
                 {/* Category subtotals */}
-                <tr
-                  style={{
-                    background: 'rgba(254,230,34,.05)',
-                    borderTop: '2px solid rgba(254,230,34,.2)',
-                  }}
-                >
-                  <td
-                    style={{
-                      ...tdBase,
-                      fontFamily: "'Anton', sans-serif",
-                      fontSize: 14,
-                      color: 'var(--dim)',
-                      borderBottom: '1px solid rgba(254,230,34,.15)',
-                      paddingTop: 16,
-                      paddingBottom: 16,
-                    }}
-                  >
+                <tr className="bg-[rgba(254,230,34,.05)] border-t-2 border-t-[rgba(254,230,34,.2)]">
+                  <td className="px-4 py-4 font-anton text-[14px] text-dim border-b border-b-[rgba(254,230,34,.15)] align-top leading-[1.5]">
                     ĐIỂM TỪNG MỤC
                   </td>
-                  <td style={{ ...tdBase, borderBottom: '1px solid rgba(254,230,34,.15)' }} />
+                  <td className="px-4 py-3 text-[13px] text-text border-b border-b-[rgba(254,230,34,.15)] align-top leading-[1.5]" />
                   <td
                     colSpan={5}
-                    style={{
-                      ...tdBase,
-                      borderBottom: '1px solid rgba(254,230,34,.15)',
-                      paddingTop: 14,
-                      paddingBottom: 14,
-                    }}
+                    className="px-4 py-3.5 border-b border-b-[rgba(254,230,34,.15)] align-top leading-[1.5]"
                   >
-                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    <div className="flex gap-2.5 flex-wrap">
                       {criteriaData.map((cat) => (
                         <div
                           key={cat.id}
+                          className="px-3.5 py-1.5 rounded-lg flex items-center gap-2"
                           style={{
-                            padding: '6px 14px',
-                            borderRadius: 8,
                             background: cat.accentGlow,
                             border: `1px solid ${cat.accent}33`,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 8,
                           }}
                         >
-                          <span style={{ fontSize: 11, color: cat.accent, fontWeight: 700 }}>
+                          <span className="text-[11px] font-bold" style={{ color: cat.accent }}>
                             {cat.id}.
                           </span>
                           <span
+                            className="font-anton text-[18px]"
                             style={{
-                              fontFamily: "'Anton', sans-serif",
-                              fontSize: 18,
                               color: cat.accent,
                               textShadow: `0 0 10px ${cat.accent}44`,
                             }}
                           >
                             {categoryTotals[cat.id]}
                           </span>
-                          <span style={{ fontSize: 11, color: 'var(--dim)' }}>/ {cat.maxScore}</span>
+                          <span className="text-[11px] text-dim">/ {cat.maxScore}</span>
                         </div>
                       ))}
                     </div>
                   </td>
-                  <td style={{ ...tdBase, borderBottom: '1px solid rgba(254,230,34,.15)' }} />
+                  <td className="px-4 py-3 text-[13px] text-text border-b border-b-[rgba(254,230,34,.15)] align-top leading-[1.5]" />
                 </tr>
                 {/* Grand total */}
-                <tr style={{ background: 'rgba(254,230,34,.06)' }}>
-                  <td
-                    style={{
-                      ...tdBase,
-                      fontFamily: "'Anton', sans-serif",
-                      fontSize: 22,
-                      color: 'var(--gold)',
-                      borderBottom: 'none',
-                      textTransform: 'uppercase',
-                      borderLeft: '3px solid var(--gold)',
-                    }}
-                  >
+                <tr className="bg-[rgba(254,230,34,.06)]">
+                  <td className="px-4 py-3 font-anton text-[22px] text-gold border-b-0 uppercase border-l-[3px] border-l-gold align-top leading-[1.5]">
                     Tổng cộng
                   </td>
-                  <td
-                    style={{
-                      ...tdBase,
-                      fontFamily: "'Anton', sans-serif",
-                      fontSize: 24,
-                      textAlign: 'center',
-                      color: 'var(--gold)',
-                      textShadow: '0 0 20px rgba(254,230,34,.6)',
-                      borderBottom: 'none',
-                    }}
-                  >
+                  <td className="px-4 py-3 font-anton text-[24px] text-center text-gold [text-shadow:0_0_20px_rgba(254,230,34,.6)] border-b-0 align-top leading-[1.5]">
                     {totalMax}
                   </td>
-                  <td colSpan={4} style={{ ...tdBase, borderBottom: 'none' }} />
+                  <td colSpan={4} className="px-4 py-3 text-[13px] text-text border-b-0 align-top leading-[1.5]" />
                   <td
+                    className="px-4 py-3 font-anton text-[26px] text-center border-b-0 align-top leading-[1.5]"
                     style={{
-                      ...tdBase,
-                      fontFamily: "'Anton', sans-serif",
-                      fontSize: 26,
-                      textAlign: 'center',
-                      borderBottom: 'none',
-                      color: grandTotal > 0 ? 'var(--gold)' : 'var(--dim)',
+                      color: grandTotal > 0 ? 'var(--color-gold)' : 'var(--color-dim)',
                       textShadow: grandTotal > 0 ? '0 0 24px rgba(254,230,34,.6)' : 'none',
                     }}
                   >
                     {grandTotal}
                   </td>
-                  <td style={{ ...tdBase, borderBottom: 'none' }} />
+                  <td className="px-4 py-3 text-[13px] text-text border-b-0 align-top leading-[1.5]" />
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
-
-      <style>{`
-        .scoring-table-wrap::-webkit-scrollbar { height: 6px; }
-        .scoring-table-wrap::-webkit-scrollbar-track { background: rgba(255,255,255,.03); }
-        .scoring-table-wrap::-webkit-scrollbar-thumb { background: rgba(254,230,34,.2); border-radius: 3px; }
-        .scoring-table-wrap input[type="number"]::-webkit-outer-spin-button,
-        .scoring-table-wrap input[type="number"]::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-        .scoring-table-wrap input[type="number"] { -moz-appearance: textfield; }
-        @media (max-width: 768px) {
-          .con { padding: 0 20px !important; }
-        }
-      `}</style>
     </div>
   );
 };

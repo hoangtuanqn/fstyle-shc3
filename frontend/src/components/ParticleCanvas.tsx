@@ -81,17 +81,7 @@ const ParticleCanvas = () => {
     };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        pointerEvents: 'none',
-        zIndex: 1,
-      }}
-    />
-  );
+  return <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 z-[1]" />;
 };
 
 export default ParticleCanvas;

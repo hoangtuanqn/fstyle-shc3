@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 const CalendarIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -25,13 +25,6 @@ const TeamsIcon = () => (
   </svg>
 );
 
-const paragraphStyle: CSSProperties = {
-  fontSize: '16px',
-  lineHeight: 1.85,
-  color: 'var(--dim)',
-  marginBottom: '18px',
-};
-
 type InfoRowProps = {
   icon: ReactNode;
   title: string;
@@ -39,57 +32,35 @@ type InfoRowProps = {
 };
 
 const InfoRow = ({ icon, title, sub }: InfoRowProps) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '12px 0' }}>
-    <div
-      style={{
-        flexShrink: 0,
-        width: '44px',
-        height: '44px',
-        borderRadius: '12px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'rgba(254,230,34,.07)',
-        border: '1px solid rgba(254,230,34,.18)',
-      }}
-    >
-      {icon}
-    </div>
+  <div className="flex items-center gap-4 py-3">
+    <div className="icon-box">{icon}</div>
     <div>
-      <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)' }}>{title}</div>
-      <div style={{ fontSize: '13px', color: 'var(--dim)', marginTop: '2px' }}>{sub}</div>
+      <div className="text-[15px] font-bold text-text">{title}</div>
+      <div className="mt-0.5 text-[13px] text-dim">{sub}</div>
     </div>
   </div>
 );
 
 const About = () => {
   return (
-    <section id="event" className="sec" style={{ background: 'var(--bg)' }}>
-      <div
-        className="con about-grid"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '80px',
-          alignItems: 'center',
-        }}
-      >
+    <section id="event" className="sec bg-bg">
+      <div className="con grid grid-cols-2 items-center gap-20 max-lg:grid-cols-1 max-lg:gap-14">
         {/* CỘT TRÁI */}
         <div className="rv">
           <span className="ey">Về Sự Kiện</span>
-          <h2 className="st" style={{ marginBottom: '28px' }}>
-            Heatwave Showcase <em>#3</em>
+          <h2 className="st mb-7">
+            Heatwave Showcase <em className="st-em">#3</em>
           </h2>
 
-          <p style={paragraphStyle}>
+          <p className="paragraph">
             Heatwave Showcase là sự kiện thường niên quy mô lớn nhất của FStyle Crew — nơi các vũ công thể hiện đam mê,
             bản lĩnh và tinh thần không ngừng cố gắng trên sân khấu lớn.
           </p>
-          <p style={paragraphStyle}>
+          <p className="paragraph">
             Mùa 3 mang chủ đề APOCALYPSE — lấy cảm hứng từ Sách Khải Huyền, nơi bốn đội thi hiện thân cho bốn Kỵ Sĩ
             mang theo những trạng thái cảm xúc tận cùng của con người.
           </p>
-          <p style={{ ...paragraphStyle, marginBottom: '34px' }}>
+          <p className="paragraph mb-[34px]">
             Sụp đổ không phải là kết thúc — mà là khởi đầu cho sự tái sinh.
           </p>
 
@@ -111,59 +82,27 @@ const About = () => {
         </div>
 
         {/* CỘT PHẢI */}
-        <div className="rv d2" style={{ position: 'relative' }}>
+        <div className="rv d2 relative">
           <img
             src="/assets/images/manh-vo.png"
             alt=""
             aria-hidden="true"
-            style={{
-              position: 'absolute',
-              top: '-40px',
-              right: '-20px',
-              width: '100px',
-              opacity: 0.9,
-              zIndex: 2,
-              animation: 'fs 7s ease-in-out infinite',
-              pointerEvents: 'none',
-            }}
+            className="absolute -top-10 -right-5 z-2 w-[100px] animate-float-shard opacity-90 pointer-events-none"
           />
           <img
             src="/assets/images/artboard1.png"
             alt="Heatwave Showcase #3 APOCALYPSE"
-            style={{
-              width: '100%',
-              display: 'block',
-              borderRadius: '20px',
-              boxShadow: '0 0 80px rgba(254,230,34,.2)',
-              border: '1px solid rgba(254,230,34,.22)',
-            }}
+            className="block w-full rounded-[20px] shadow-[0_0_80px_rgba(254,230,34,.2)] border border-[rgba(254,230,34,.22)]"
           />
           <img
             src="/assets/images/manhvo-do.png"
             alt=""
             aria-hidden="true"
-            style={{
-              position: 'absolute',
-              bottom: '-36px',
-              left: '-22px',
-              width: '90px',
-              opacity: 0.85,
-              zIndex: 2,
-              animation: 'fs 9s 3s ease-in-out infinite',
-              pointerEvents: 'none',
-            }}
+            className="absolute -bottom-9 -left-[22px] z-2 w-[90px] opacity-85 pointer-events-none"
+            style={{ animation: 'fs 9s 3s ease-in-out infinite' }}
           />
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 1024px) {
-          .about-grid {
-            grid-template-columns: 1fr !important;
-            gap: 56px !important;
-          }
-        }
-      `}</style>
     </section>
   );
 };

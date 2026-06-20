@@ -53,82 +53,43 @@ const ShowcaseNight = () => {
   const [hoveredJudge, setHoveredJudge] = useState<number | null>(null);
 
   return (
-    <section className="sec" style={{ background: 'var(--bg2)' }}>
+    <section className="sec bg-bg2">
       <div className="con">
         <span className="ey rv">Đêm Diễn</span>
         <h2 className="st rv">
-          Showcase <em>Night</em>
+          Showcase <em className="st-em">Night</em>
         </h2>
 
-        <div
-          className="sn-grid"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 64,
-            marginTop: 52,
-          }}
-        >
+        <div className="mt-[52px] grid grid-cols-2 gap-16 max-lg:grid-cols-1 max-lg:gap-12">
           {/* LEFT — Program */}
           <div className="rv">
-            <div
-              style={{
-                fontSize: 12,
-                fontWeight: 800,
-                letterSpacing: '.2em',
-                color: 'var(--orange)',
-                textTransform: 'uppercase',
-                marginBottom: 18,
-              }}
-            >
-              Chương Trình Biểu Diễn
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="sub-label mb-[18px]">Chương Trình Biểu Diễn</div>
+            <div className="flex flex-col gap-2.5">
               {performances.map((p, i) => (
                 <div
                   key={p.num}
                   onMouseEnter={() => setHoveredRow(i)}
                   onMouseLeave={() => setHoveredRow(null)}
+                  className="flex items-center gap-4 rounded-xl bg-[rgba(255,255,255,.03)] px-[18px] py-[14px] transition-[border-color] duration-300"
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 16,
-                    padding: '14px 18px',
-                    borderRadius: 12,
-                    background: 'rgba(255,255,255,.03)',
                     border: `1px solid ${hoveredRow === i ? 'rgba(254,230,34,.2)' : 'rgba(255,255,255,.07)'}`,
-                    transition: 'border-color .3s',
                   }}
                 >
                   <span
-                    style={{
-                      fontFamily: 'Anton, sans-serif',
-                      fontSize: 20,
-                      color: p.teamColor || 'var(--dim)',
-                      minWidth: 30,
-                    }}
+                    className="min-w-[30px] font-anton text-[20px]"
+                    style={{ color: p.teamColor || 'var(--dim)' }}
                   >
                     {p.num}
                   </span>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>{p.name}</div>
-                    <div style={{ fontSize: 12.5, color: 'var(--dim)', marginTop: 3 }}>{p.by}</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[15px] font-bold text-text">{p.name}</div>
+                    <div className="mt-[3px] text-[12.5px] text-dim">{p.by}</div>
                   </div>
                   <span
+                    className="whitespace-nowrap rounded-full px-[11px] py-[5px] text-[10px] font-extrabold uppercase tracking-[.1em]"
                     style={{
-                      fontSize: 10,
-                      fontWeight: 800,
-                      letterSpacing: '.1em',
-                      textTransform: 'uppercase',
-                      padding: '5px 11px',
-                      borderRadius: 100,
-                      whiteSpace: 'nowrap',
                       color: p.teamColor || p.tagColor || 'var(--dim)',
-                      background:
-                        p.tagBg ||
-                        (p.teamColor
-                          ? 'rgba(255,255,255,.04)'
-                          : 'rgba(255,255,255,.04)'),
+                      background: p.tagBg || 'rgba(255,255,255,.04)',
                       border: `1px solid ${p.teamColor || p.tagColor || 'rgba(255,255,255,.12)'}`,
                     }}
                   >
@@ -141,116 +102,53 @@ const ShowcaseNight = () => {
 
           {/* RIGHT — Judges + Vote */}
           <div className="rv d2">
-            <div
-              style={{
-                fontSize: 12,
-                fontWeight: 800,
-                letterSpacing: '.2em',
-                color: 'var(--orange)',
-                textTransform: 'uppercase',
-                marginBottom: 18,
-              }}
-            >
-              Ban Giám Khảo
-            </div>
+            <div className="sub-label mb-[18px]">Ban Giám Khảo</div>
 
-            <div
-              className="judges-grid"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: 16,
-              }}
-            >
+            <div className="grid grid-cols-3 gap-4 max-sm:grid-cols-2">
               {judges.map((j, i) => (
                 <div
                   key={j.name}
                   onMouseEnter={() => setHoveredJudge(i)}
                   onMouseLeave={() => setHoveredJudge(null)}
+                  className="overflow-hidden rounded-[14px] bg-[rgba(255,255,255,.03)] border border-[rgba(255,255,255,.07)] transition-transform duration-400 ease-[cubic-bezier(.22,.8,.42,1)]"
                   style={{
-                    borderRadius: 14,
-                    overflow: 'hidden',
-                    background: 'rgba(255,255,255,.03)',
-                    border: '1px solid rgba(255,255,255,.07)',
                     transform: hoveredJudge === i ? 'translateY(-6px)' : 'translateY(0)',
-                    transition: 'transform .4s cubic-bezier(.22,.8,.42,1)',
                   }}
                 >
-                  <div style={{ aspectRatio: '1 / 1', overflow: 'hidden' }}>
+                  <div className="aspect-square overflow-hidden">
                     <img
                       src={j.img}
                       alt={j.name}
+                      className="block h-full w-full object-cover object-top transition-[filter] duration-400"
                       style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        objectPosition: 'center top',
                         filter: hoveredJudge === i ? 'grayscale(0%)' : 'grayscale(30%)',
-                        transition: 'filter .4s',
-                        display: 'block',
                       }}
                     />
                   </div>
-                  <div style={{ padding: '14px 12px 16px', textAlign: 'center' }}>
-                    <div style={{ fontFamily: 'Anton, sans-serif', fontSize: 18, color: 'var(--text)' }}>
-                      {j.name}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 9,
-                        fontWeight: 800,
-                        letterSpacing: '.16em',
-                        textTransform: 'uppercase',
-                        color: 'var(--orange)',
-                        margin: '6px 0 3px',
-                      }}
-                    >
+                  <div className="px-3 pb-4 pt-[14px] text-center">
+                    <div className="font-anton text-[18px] text-text">{j.name}</div>
+                    <div className="mx-0 mb-[3px] mt-[6px] text-[9px] font-extrabold uppercase tracking-[.16em] text-orange">
                       {j.role}
                     </div>
-                    <div style={{ fontSize: 11.5, color: 'var(--dim)' }}>{j.crew}</div>
+                    <div className="text-[11.5px] text-dim">{j.crew}</div>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Vote box */}
-            <div
-              style={{
-                marginTop: 24,
-                border: '1px solid rgba(254,230,34,.15)',
-                background: 'rgba(254,230,34,.05)',
-                borderRadius: 14,
-                padding: '22px 26px',
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: 'Anton, sans-serif',
-                  fontSize: 20,
-                  color: 'var(--gold)',
-                  textShadow: '0 0 18px rgba(254,230,34,.4)',
-                  marginBottom: 8,
-                }}
-              >
+            <div className="mt-6 rounded-[14px] border border-[rgba(254,230,34,.15)] bg-[rgba(254,230,34,.05)] px-[26px] py-[22px]">
+              <div className="mb-2 font-anton text-[20px] text-gold [text-shadow:0_0_18px_rgba(254,230,34,.4)]">
                 🏆 Team Được Yêu Thích Nhất
               </div>
-              <div style={{ fontSize: 13.5, color: 'var(--dim)', lineHeight: 1.7 }}>
-                Giải bình chọn dựa trên 50% vote online từ khán giả và 50% bình chọn trực tiếp tại đêm
-                diễn. Hãy cùng cổ vũ cho team bạn yêu thích nhất!
+              <div className="text-[13.5px] leading-[1.7] text-dim">
+                Giải bình chọn dựa trên 50% vote online từ khán giả và 50% bình chọn trực tiếp tại đêm diễn. Hãy cùng
+                cổ vũ cho team bạn yêu thích nhất!
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 1024px) {
-          .sn-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
-        }
-        @media (max-width: 600px) {
-          .judges-grid { grid-template-columns: repeat(2, 1fr) !important; }
-        }
-      `}</style>
     </section>
   );
 };

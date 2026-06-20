@@ -17,7 +17,6 @@ const pageLinks = [
 
 const Nav = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [hovered, setHovered] = useState<string | null>(null);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 60);
@@ -35,18 +34,8 @@ const Nav = () => {
 
   return (
     <nav
+      className="fixed top-0 left-0 right-0 z-[1000] flex items-center justify-between px-14 max-lg:px-7 h-[68px] transition-all duration-350"
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 56px',
-        height: 68,
-        transition: 'background .35s, backdrop-filter .35s, border-color .35s',
         background: scrolled ? 'rgba(5,3,1,0.9)' : 'transparent',
         backdropFilter: scrolled ? 'blur(16px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
@@ -59,114 +48,44 @@ const Nav = () => {
           e.preventDefault();
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
-        style={{ display: 'flex', alignItems: 'center' }}
+        className="flex items-center"
       >
-        <img src="/assets/images/logo-ngang.png" height={40} alt="FStyle Crew" style={{ display: 'block', height: 40 }} />
+        <img src="/assets/images/logo-ngang.png" height={40} alt="FStyle Crew" className="block h-10" />
       </a>
 
-      <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
+      <div className="flex items-center gap-[30px] max-lg:hidden">
         {links.map((link) => (
           <button
             key={link.id}
             type="button"
             onClick={() => handleClick(link.id)}
-            onMouseEnter={() => setHovered(link.id)}
-            onMouseLeave={() => setHovered(null)}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: 11,
-              fontWeight: 800,
-              letterSpacing: '.18em',
-              textTransform: 'uppercase',
-              color: hovered === link.id ? 'var(--gold)' : 'var(--dim)',
-              transition: 'color .25s',
-              fontFamily: 'Montserrat, sans-serif',
-            }}
+            className="bg-transparent border-none cursor-pointer text-[11px] font-extrabold tracking-[.18em] uppercase text-dim hover:text-gold transition-colors duration-250 font-montserrat"
           >
             {link.label}
           </button>
         ))}
-        <span style={{ width: 1, height: 18, background: 'rgba(255,255,255,.12)' }} />
+        <span className="w-px h-[18px] bg-[rgba(255,255,255,.12)]" />
         {pageLinks.map((pl) => (
           <Link
             key={pl.to}
             to={pl.to}
-            onMouseEnter={() => setHovered(pl.to)}
-            onMouseLeave={() => setHovered(null)}
-            style={{
-              fontSize: 11,
-              fontWeight: 800,
-              letterSpacing: '.18em',
-              textTransform: 'uppercase',
-              color: hovered === pl.to ? 'var(--gold)' : 'var(--dim)',
-              transition: 'color .25s',
-              fontFamily: 'Montserrat, sans-serif',
-              textDecoration: 'none',
-            }}
+            className="text-[11px] font-extrabold tracking-[.18em] uppercase text-dim hover:text-gold transition-colors duration-250 font-montserrat no-underline"
           >
             {pl.label}
           </Link>
         ))}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-        <div
-          className="nav-date"
-          style={{
-            fontFamily: 'Anton, sans-serif',
-            color: 'var(--gold)',
-            fontSize: 18,
-            letterSpacing: '.04em',
-            textShadow: '0 0 18px rgba(254,230,34,.6)',
-          }}
-        >
-          05.07.2026
-        </div>
+      <div className="flex items-center gap-6">
+        <div className="font-anton text-gold text-[18px] tracking-[.04em] gold-glow max-lg:hidden">05.07.2026</div>
 
         <Link
           to="/login"
-          className="nav-login"
-          style={{
-            padding: '8px 22px',
-            background: 'var(--gold)',
-            border: 'none',
-            borderRadius: 6,
-            color: '#050301',
-            fontSize: 11,
-            fontWeight: 800,
-            fontFamily: 'Montserrat, sans-serif',
-            letterSpacing: '.14em',
-            textTransform: 'uppercase',
-            textDecoration: 'none',
-            cursor: 'pointer',
-            transition: 'background .25s, box-shadow .25s, transform .15s',
-            boxShadow: '0 0 20px rgba(254,230,34,.25)',
-            display: 'inline-block',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#ffe94a';
-            e.currentTarget.style.transform = 'translateY(-1px)';
-            e.currentTarget.style.boxShadow = '0 0 30px rgba(254,230,34,.45)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'var(--gold)';
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 0 20px rgba(254,230,34,.25)';
-          }}
+          className="py-2 px-[22px] bg-gold border-none rounded-md text-[#050301] text-[11px] font-extrabold font-montserrat tracking-[.14em] uppercase no-underline cursor-pointer transition-all duration-250 shadow-[0_0_20px_rgba(254,230,34,.25)] inline-block hover:bg-[#ffe94a] hover:-translate-y-px hover:shadow-[0_0_30px_rgba(254,230,34,.45)]"
         >
           Đăng nhập
         </Link>
       </div>
-
-      <style>{`
-        @media (max-width: 1024px) {
-          nav { padding: 0 28px !important; }
-          .nav-links,
-          .nav-date { display: none !important; }
-        }
-      `}</style>
     </nav>
   );
 };

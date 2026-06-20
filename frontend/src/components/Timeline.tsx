@@ -41,85 +41,48 @@ const events: TimelineEvent[] = [
 
 const Timeline = () => {
   return (
-    <section className="sec" style={{ background: 'var(--bg3)' }}>
+    <section className="sec bg-bg3">
       <div className="con">
         <span className="ey rv">Lộ Trình</span>
-        <h2 className="st rv" style={{ marginBottom: 48 }}>
-          Hành Trình <em>SHC3</em>
+        <h2 className="st rv mb-12">
+          Hành Trình <em className="st-em">SHC3</em>
         </h2>
 
-        <div
-          className="rv d1"
-          style={{
-            position: 'relative',
-            paddingLeft: 36,
-          }}
-        >
+        <div className="rv d1 relative pl-9">
           {/* Vertical line */}
           <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: 2,
-              background: 'linear-gradient(to bottom, var(--orange), var(--gold), transparent)',
-            }}
+            className="absolute left-0 top-0 bottom-0 w-[2px]"
+            style={{ background: 'linear-gradient(to bottom, var(--color-orange), var(--color-gold), transparent)' }}
           />
 
-          {events.map((ev) => {
-            const dotSize = ev.highlight ? 18 : 14;
-            return (
+          {events.map((ev) => (
+            <div key={ev.name} className="relative mb-7">
+              {/* Dot */}
               <div
-                key={ev.name}
+                className="absolute top-[6px] rounded-full bg-gold"
                 style={{
-                  position: 'relative',
-                  marginBottom: 28,
+                  left: ev.highlight ? -45 : -43,
+                  width: ev.highlight ? 18 : 14,
+                  height: ev.highlight ? 18 : 14,
+                  boxShadow: ev.highlight
+                    ? '0 0 22px rgba(254,230,34,1)'
+                    : '0 0 14px rgba(254,230,34,.8)',
+                }}
+              />
+
+              <div className="sub-label mb-[7px] text-[11px]">{ev.date}</div>
+              <div
+                className="mb-[6px] font-anton text-[20px]"
+                style={{
+                  color: ev.highlight ? 'var(--color-gold)' : 'var(--color-text)',
+                  textShadow: ev.highlight ? '0 0 24px rgba(254,230,34,.6)' : 'none',
                 }}
               >
-                {/* Dot */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: ev.highlight ? -45 : -43,
-                    top: 6,
-                    width: dotSize,
-                    height: dotSize,
-                    borderRadius: '50%',
-                    background: 'var(--gold)',
-                    boxShadow: ev.highlight
-                      ? '0 0 22px rgba(254,230,34,1)'
-                      : '0 0 14px rgba(254,230,34,.8)',
-                  }}
-                />
-
-                <div
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 800,
-                    letterSpacing: '.2em',
-                    color: 'var(--orange)',
-                    textTransform: 'uppercase',
-                    marginBottom: 7,
-                  }}
-                >
-                  {ev.date}
-                </div>
-                <div
-                  style={{
-                    fontFamily: 'Anton, sans-serif',
-                    fontSize: 20,
-                    color: ev.highlight ? 'var(--gold)' : 'var(--text)',
-                    textShadow: ev.highlight ? '0 0 24px rgba(254,230,34,.6)' : 'none',
-                    marginBottom: 6,
-                  }}
-                >
-                  {ev.name}
-                </div>
-                <div style={{ fontSize: 13, color: 'var(--dim)', lineHeight: 1.65 }}>{ev.desc}</div>
+                {ev.name}
               </div>
-            );
-          })}
+              <div className="text-[13px] leading-[1.65] text-dim">{ev.desc}</div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

@@ -22,19 +22,7 @@ const ProtectedRoute = ({ roleAccess }: ProtectedRouteProps) => {
 
   if (isLoading && hasToken) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '100vh',
-          background: 'var(--bg)',
-          color: 'var(--gold)',
-          fontFamily: 'Montserrat, sans-serif',
-          fontSize: 14,
-          letterSpacing: '.1em',
-        }}
-      >
+      <div className="flex items-center justify-center min-h-screen bg-bg text-gold font-montserrat text-sm tracking-[.1em]">
         Đang tải...
       </div>
     );

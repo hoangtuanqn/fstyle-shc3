@@ -55,40 +55,28 @@ const Partners = () => {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <section id="partners" className="sec" style={{ background: 'var(--bg2)' }}>
+    <section id="partners" className="sec bg-bg2">
       <div className="con">
-        <div className="rv" style={{ textAlign: 'center', marginBottom: 56 }}>
+        <div className="rv mb-14 text-center">
           <span className="ey">Đồng Hành Cùng SHC3</span>
           <h2 className="st">
-            Đối Tác <em>&amp; Tài Trợ</em>
+            Đối Tác <em className="st-em">&amp; Tài Trợ</em>
           </h2>
         </div>
 
-        <div
-          className="partners-grid"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 20,
-          }}
-        >
+        <div className="grid grid-cols-4 gap-5 max-lg:grid-cols-2 max-sm:grid-cols-1">
           {partners.map((p, i) => {
             const isHover = hovered === i;
             return (
               <div
                 key={p.name}
-                className={`rv d${(i % 4) + 1}`}
+                className={`rv d${(i % 4) + 1} rounded-2xl bg-[rgba(255,255,255,.03)] px-5 pb-6 pt-7 text-center transition-[transform,box-shadow] duration-400 ease-[cubic-bezier(.22,.8,.42,1)]`}
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
                 style={{
-                  borderRadius: 16,
-                  background: 'rgba(255,255,255,.03)',
                   border: p.highlight
                     ? '1px solid rgba(46,204,113,.25)'
                     : '1px solid rgba(255,255,255,.07)',
-                  padding: '28px 20px 24px',
-                  textAlign: 'center',
-                  transition: 'transform .4s cubic-bezier(.22,.8,.42,1), box-shadow .4s',
                   transform: isHover ? 'translateY(-8px)' : 'translateY(0)',
                   boxShadow: isHover
                     ? `0 16px 48px ${p.hoverGlow}`
@@ -98,65 +86,27 @@ const Partners = () => {
                 }}
               >
                 <div
-                  style={{
-                    width: 100,
-                    height: 100,
-                    borderRadius: '50%',
-                    background: p.logoBg,
-                    padding: 6,
-                    margin: '0 auto 18px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
+                  className="mx-auto mb-[18px] flex h-[100px] w-[100px] items-center justify-center rounded-full p-1.5"
+                  style={{ background: p.logoBg }}
                 >
-                  <img
-                    src={p.logo}
-                    alt={p.name}
-                    style={{ objectFit: 'contain', width: '100%', height: '100%', borderRadius: '50%' }}
-                  />
+                  <img src={p.logo} alt={p.name} className="h-full w-full rounded-full object-contain" />
                 </div>
 
-                <h3
-                  style={{
-                    fontFamily: 'Anton, sans-serif',
-                    fontSize: 22,
-                    letterSpacing: '.03em',
-                    marginBottom: 8,
-                    color: 'var(--text)',
-                  }}
-                >
-                  {p.name}
-                </h3>
+                <h3 className="mb-2 font-anton text-[22px] tracking-[.03em] text-text">{p.name}</h3>
 
                 <div
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 800,
-                    letterSpacing: '.22em',
-                    textTransform: 'uppercase',
-                    color: p.roleColor,
-                    marginBottom: 12,
-                  }}
+                  className="mb-3 text-[10px] font-extrabold uppercase tracking-[.22em]"
+                  style={{ color: p.roleColor }}
                 >
                   {p.role}
                 </div>
 
-                <p style={{ fontSize: 12.5, lineHeight: 1.68, color: 'var(--dim)' }}>{p.desc}</p>
+                <p className="text-[12.5px] leading-[1.68] text-dim">{p.desc}</p>
               </div>
             );
           })}
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 1024px) {
-          .partners-grid { grid-template-columns: repeat(2, 1fr) !important; }
-        }
-        @media (max-width: 600px) {
-          .partners-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </section>
   );
 };

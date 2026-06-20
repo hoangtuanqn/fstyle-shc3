@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import type { CSSProperties } from 'react';
 
 type AwardsData = {
   teamAwards: Record<string, string>;
@@ -24,26 +23,6 @@ const individualRanks = [
   { key: 'best-creativity', label: 'Best Creativity' },
 ];
 
-const thStyle: CSSProperties = {
-  padding: '14px 18px',
-  textAlign: 'left',
-  fontWeight: 800,
-  fontSize: 11,
-  letterSpacing: '.14em',
-  textTransform: 'uppercase',
-  color: 'var(--orange)',
-  borderBottom: '2px solid rgba(251,140,5,.3)',
-  whiteSpace: 'nowrap',
-};
-
-const tdStyle: CSSProperties = {
-  padding: '14px 18px',
-  fontSize: 15,
-  color: 'var(--text)',
-  borderBottom: '1px solid rgba(255,255,255,.06)',
-  verticalAlign: 'middle',
-};
-
 const Leaderboard = () => {
   const [awards, setAwards] = useState<AwardsData>({ teamAwards: {}, individualAwards: {} });
 
@@ -66,43 +45,39 @@ const Leaderboard = () => {
   const hasAny = hasTeam || hasIndividual;
 
   return (
-    <div style={{ minHeight: '100vh', paddingTop: 108 }}>
-      <section style={{ paddingBottom: 48 }}>
-        <div className="con" style={{ textAlign: 'center' }}>
+    <div className="min-h-screen pt-[108px]">
+      <section className="pb-12">
+        <div className="con text-center">
           <span className="ey">🔥 Heatwave SHC3 Apocalypse</span>
-          <h1 className="st" style={{ marginBottom: 12 }}>
-            BẢNG XẾP <em>HẠNG</em>
+          <h1 className="st mb-3">
+            BẢNG XẾP <em className="st-em">HẠNG</em>
           </h1>
         </div>
       </section>
 
       {!hasAny && (
-        <section style={{ paddingBottom: 80 }}>
-          <div className="con" style={{ textAlign: 'center' }}>
-            <p style={{ color: 'var(--dim)', fontSize: 15 }}>Chưa có kết quả — BTC chưa công bố giải thưởng.</p>
+        <section className="pb-20">
+          <div className="con text-center">
+            <p className="text-dim text-[15px]">Chưa có kết quả — BTC chưa công bố giải thưởng.</p>
           </div>
         </section>
       )}
 
       {hasAny && (
-        <section style={{ paddingBottom: 80 }}>
-          <div className="con" style={{ maxWidth: 700, margin: '0 auto' }}>
+        <section className="pb-20">
+          <div className="con max-w-[700px] mx-auto">
             {/* Team Awards Table */}
             {hasTeam && (
-              <div
-                style={{
-                  overflowX: 'auto',
-                  borderRadius: 12,
-                  border: '1px solid rgba(255,255,255,.08)',
-                  background: 'var(--bg2)',
-                  marginBottom: 36,
-                }}
-              >
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <div className="overflow-x-auto rounded-xl border border-[rgba(255,255,255,.08)] bg-bg2 mb-9">
+                <table className="w-full border-collapse">
                   <thead>
-                    <tr style={{ background: 'rgba(251,140,5,.06)' }}>
-                      <th style={{ ...thStyle, width: '40%' }}>Hạng giải</th>
-                      <th style={thStyle}>Tên đội</th>
+                    <tr className="bg-[rgba(251,140,5,.06)]">
+                      <th className="px-[18px] py-3.5 text-left font-[800] text-[11px] tracking-[.14em] uppercase text-orange border-b-2 border-[rgba(251,140,5,.3)] whitespace-nowrap w-[40%]">
+                        Hạng giải
+                      </th>
+                      <th className="px-[18px] py-3.5 text-left font-[800] text-[11px] tracking-[.14em] uppercase text-orange border-b-2 border-[rgba(251,140,5,.3)] whitespace-nowrap">
+                        Tên đội
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -111,15 +86,10 @@ const Leaderboard = () => {
                       if (!name) return null;
                       return (
                         <tr key={rank.key}>
-                          <td style={{ ...tdStyle, fontWeight: 700 }}>{rank.label}</td>
-                          <td
-                            style={{
-                              ...tdStyle,
-                              fontFamily: "'Anton', sans-serif",
-                              fontSize: 20,
-                              letterSpacing: '.03em',
-                            }}
-                          >
+                          <td className="px-[18px] py-3.5 text-[15px] text-text border-b border-[rgba(255,255,255,.06)] align-middle font-bold">
+                            {rank.label}
+                          </td>
+                          <td className="px-[18px] py-3.5 text-[15px] text-text border-b border-[rgba(255,255,255,.06)] align-middle font-anton text-[20px] tracking-[.03em]">
                             {name}
                           </td>
                         </tr>
@@ -132,19 +102,16 @@ const Leaderboard = () => {
 
             {/* Individual Awards Table */}
             {hasIndividual && (
-              <div
-                style={{
-                  overflowX: 'auto',
-                  borderRadius: 12,
-                  border: '1px solid rgba(255,255,255,.08)',
-                  background: 'var(--bg2)',
-                }}
-              >
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <div className="overflow-x-auto rounded-xl border border-[rgba(255,255,255,.08)] bg-bg2">
+                <table className="w-full border-collapse">
                   <thead>
-                    <tr style={{ background: 'rgba(251,140,5,.06)' }}>
-                      <th style={{ ...thStyle, width: '40%' }}>Giải cá nhân</th>
-                      <th style={thStyle}>Tên</th>
+                    <tr className="bg-[rgba(251,140,5,.06)]">
+                      <th className="px-[18px] py-3.5 text-left font-[800] text-[11px] tracking-[.14em] uppercase text-orange border-b-2 border-[rgba(251,140,5,.3)] whitespace-nowrap w-[40%]">
+                        Giải cá nhân
+                      </th>
+                      <th className="px-[18px] py-3.5 text-left font-[800] text-[11px] tracking-[.14em] uppercase text-orange border-b-2 border-[rgba(251,140,5,.3)] whitespace-nowrap">
+                        Tên
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -153,15 +120,10 @@ const Leaderboard = () => {
                       if (!name) return null;
                       return (
                         <tr key={rank.key}>
-                          <td style={{ ...tdStyle, fontWeight: 700 }}>{rank.label}</td>
-                          <td
-                            style={{
-                              ...tdStyle,
-                              fontFamily: "'Anton', sans-serif",
-                              fontSize: 20,
-                              letterSpacing: '.03em',
-                            }}
-                          >
+                          <td className="px-[18px] py-3.5 text-[15px] text-text border-b border-[rgba(255,255,255,.06)] align-middle font-bold">
+                            {rank.label}
+                          </td>
+                          <td className="px-[18px] py-3.5 text-[15px] text-text border-b border-[rgba(255,255,255,.06)] align-middle font-anton text-[20px] tracking-[.03em]">
                             {name}
                           </td>
                         </tr>
@@ -174,12 +136,6 @@ const Leaderboard = () => {
           </div>
         </section>
       )}
-
-      <style>{`
-        @media (max-width: 600px) {
-          .con { padding: 0 16px !important; }
-        }
-      `}</style>
     </div>
   );
 };
