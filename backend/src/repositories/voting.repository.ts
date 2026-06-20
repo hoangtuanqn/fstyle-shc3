@@ -1,6 +1,7 @@
 import { and, eq, sql } from 'drizzle-orm';
 
 import { db } from '~/configs/db';
+import { RoleType } from '~/constants/enums';
 import { effortVotes, teams, users } from '~/db/schema';
 
 class VotingRepository {
@@ -32,7 +33,7 @@ class VotingRepository {
         voteCount: sql<number>`(SELECT COUNT(*) FROM effort_votes WHERE candidate_id = ${users.id})`,
       })
       .from(users)
-      .where(and(eq(users.teamId, teamId), eq(users.role, 'MEMBER')));
+      .where(and(eq(users.teamId, teamId), eq(users.role, RoleType.MEMBER)));
   };
 
   findAllCandidatesGrouped = async () => {
@@ -47,7 +48,7 @@ class VotingRepository {
       })
       .from(users)
       .innerJoin(teams, eq(users.teamId, teams.id))
-      .where(eq(users.role, 'MEMBER'))
+      .where(eq(users.role, RoleType.MEMBER))
       .orderBy(teams.displayOrder);
   };
 
