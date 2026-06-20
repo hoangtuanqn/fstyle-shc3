@@ -285,8 +285,8 @@ const Dashboard = () => {
       queryClient.invalidateQueries({ queryKey: ['voting-my-votes'] });
       toast.success('Vote thành công!');
     },
-    onError: (err: any) => {
-      toast.error(err?.response?.data?.message || 'Có lỗi xảy ra!');
+    onError: (err: unknown) => {
+      toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Có lỗi xảy ra!');
     },
   });
 
@@ -297,8 +297,8 @@ const Dashboard = () => {
       queryClient.invalidateQueries({ queryKey: ['voting-my-votes'] });
       toast.success('Đã hủy vote!');
     },
-    onError: (err: any) => {
-      toast.error(err?.response?.data?.message || 'Có lỗi xảy ra!');
+    onError: (err: unknown) => {
+      toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Có lỗi xảy ra!');
     },
   });
 
