@@ -25,7 +25,7 @@ const Footer = () => {
             <img
               src="/assets/images/logo-ngang.png"
               alt="FStyle Crew"
-              style={{ height: 28, opacity: 0.9, display: 'block', marginBottom: 16 }}
+              style={{ height: 28, maxWidth: 160, objectFit: 'contain', opacity: 0.9, display: 'block', marginBottom: 16 }}
             />
             <div style={{ display: 'flex', gap: 8 }}>
               {teamDots.map((c, i) => (
