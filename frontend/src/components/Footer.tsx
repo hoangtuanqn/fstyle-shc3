@@ -25,6 +25,7 @@ const Footer = () => {
             <img
               src="/assets/images/logo-ngang.png"
               alt="FStyle Crew"
+              className="footer-logo-top"
               style={{ height: 28, opacity: 0.9, display: 'block', marginBottom: 16 }}
             />
             <div style={{ display: 'flex', gap: 8 }}>
@@ -109,6 +110,7 @@ const Footer = () => {
         @media (max-width: 600px) {
           .footer-top { flex-direction: column; }
           .footer-top > div:last-child { text-align: left !important; }
+          .footer-logo-top { max-width: 140px; height: auto !important; object-fit: contain; }
         }
       `}</style>
     </footer>

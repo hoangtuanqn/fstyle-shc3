@@ -275,6 +275,12 @@ const Scoring = () => {
   });
 
   useEffect(() => {
+    if (teamsRes?.result?.length && !selectedTeamId) {
+      setSelectedTeamId(teamsRes.result[0].id);
+    }
+  }, [teamsRes, selectedTeamId]);
+
+  useEffect(() => {
     if (!teamScoresRes?.result) return;
     const judgeRow = teamScoresRes.result.judgeScores.find((s) => s.judgeNumber === selectedJudge);
     if (judgeRow) {
