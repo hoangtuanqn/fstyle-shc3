@@ -1,18 +1,21 @@
+export type AwardWinner = {
+  slot: number;
+  winnerTeamId: string | null;
+  winnerUserId: string | null;
+  winnerName: string | null;
+};
+
 export type AwardType = {
   id: string;
   name: string;
   type: 'AUTO' | 'MANUAL';
   winnerType: 'TEAM' | 'INDIVIDUAL';
-  winnerTeamId: string | null;
-  winnerUserId: string | null;
-  winnerName: string | null;
   quantity: number;
   prize: string | null;
   displayOrder: number;
+  winners: AwardWinner[];
 };
 
 export type UpdateAwardInput = {
-  winnerTeamId?: string | null;
-  winnerUserId?: string | null;
-  winnerName?: string | null;
+  winners: AwardWinner[];
 };
