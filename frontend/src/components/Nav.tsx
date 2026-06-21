@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 
+import useAuth from '~/hooks/useAuth';
+
 const links = [
   { id: 'about', label: 'Sự Kiện' },
   { id: 'concept', label: 'Concept' },
@@ -16,6 +18,7 @@ const pageLinks = [
 ];
 
 const Nav = () => {
+  const { isAuthenticated, user, logout } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -125,39 +128,84 @@ const Nav = () => {
           05.07.2026
         </div>
 
-        <Link
-          to="/login"
-          className="nav-login"
-          style={{
-            padding: '8px 22px',
-            background: 'var(--gold)',
-            border: 'none',
-            borderRadius: 6,
-            color: '#050301',
-            fontSize: 11,
-            fontWeight: 800,
-            fontFamily: 'Montserrat, sans-serif',
-            letterSpacing: '.14em',
-            textTransform: 'uppercase',
-            textDecoration: 'none',
-            cursor: 'pointer',
-            transition: 'background .25s, box-shadow .25s, transform .15s',
-            boxShadow: '0 0 20px rgba(254,230,34,.25)',
-            display: 'inline-block',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#ffe94a';
-            e.currentTarget.style.transform = 'translateY(-1px)';
-            e.currentTarget.style.boxShadow = '0 0 30px rgba(254,230,34,.45)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'var(--gold)';
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 0 20px rgba(254,230,34,.25)';
-          }}
-        >
-          Đăng nhập
-        </Link>
+        {isAuthenticated && user ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 800,
+                fontFamily: 'Montserrat, sans-serif',
+                letterSpacing: '.1em',
+                textTransform: 'uppercase',
+                color: 'var(--gold)',
+              }}
+            >
+              {user.name}
+            </span>
+            <button
+              onClick={logout}
+              className="nav-login"
+              style={{
+                padding: '8px 18px',
+                background: 'transparent',
+                border: '1px solid rgba(254,230,34,.4)',
+                borderRadius: 6,
+                color: 'var(--gold)',
+                fontSize: 11,
+                fontWeight: 800,
+                fontFamily: 'Montserrat, sans-serif',
+                letterSpacing: '.14em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                transition: 'background .25s, border-color .25s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(254,230,34,.1)';
+                e.currentTarget.style.borderColor = 'rgba(254,230,34,.7)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.borderColor = 'rgba(254,230,34,.4)';
+              }}
+            >
+              Đăng xuất
+            </button>
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            className="nav-login"
+            style={{
+              padding: '8px 22px',
+              background: 'var(--gold)',
+              border: 'none',
+              borderRadius: 6,
+              color: '#050301',
+              fontSize: 11,
+              fontWeight: 800,
+              fontFamily: 'Montserrat, sans-serif',
+              letterSpacing: '.14em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              cursor: 'pointer',
+              transition: 'background .25s, box-shadow .25s, transform .15s',
+              boxShadow: '0 0 20px rgba(254,230,34,.25)',
+              display: 'inline-block',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#ffe94a';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.boxShadow = '0 0 30px rgba(254,230,34,.45)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'var(--gold)';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(254,230,34,.25)';
+            }}
+          >
+            Đăng nhập
+          </Link>
+        )}
       </div>
 
       <style>{`
