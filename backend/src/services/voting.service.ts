@@ -65,6 +65,11 @@ class VotingService {
       }
     }
 
+    const alreadyVoted = await votingRepository.findVoteByVoterAndCandidate(userId, candidateId);
+    if (alreadyVoted) {
+      throw new ErrorWithStatus({ message: 'Bạn đã vote ứng viên này rồi!', status: HTTP_STATUS.CONFLICT });
+    }
+
     await votingRepository.createVote(userId, candidateId);
   };
 

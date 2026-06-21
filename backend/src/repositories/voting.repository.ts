@@ -52,6 +52,14 @@ class VotingRepository {
       .orderBy(teams.displayOrder);
   };
 
+  findVoteByVoterAndCandidate = async (voterId: string, candidateId: string) => {
+    const [row] = await db
+      .select({ id: effortVotes.id })
+      .from(effortVotes)
+      .where(and(eq(effortVotes.voterId, voterId), eq(effortVotes.candidateId, candidateId)));
+    return row ?? null;
+  };
+
   createVote = async (voterId: string, candidateId: string) => {
     await db.insert(effortVotes).values({ voterId, candidateId });
   };
