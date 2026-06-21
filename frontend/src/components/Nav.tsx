@@ -88,7 +88,7 @@ const Nav = () => {
           }}
           style={{ display: 'flex', alignItems: 'center' }}
         >
-          <img src="/assets/images/logo-ngang.png" alt="FStyle Crew" style={{ display: 'block', height: 40, maxWidth: 160, objectFit: 'contain' }} />
+          <img src="/assets/images/logo-ngang.png" alt="FStyle Crew" className="nav-logo" style={{ display: 'block', height: 40 }} />
         </a>
 
         {/* Desktop nav links */}
@@ -475,6 +475,7 @@ const Nav = () => {
           .nav-date,
           .nav-right { display: none !important; }
           .nav-hamburger { display: flex; }
+          .nav-logo { max-width: 140px; height: auto !important; object-fit: contain; }
         }
         @media (min-width: 1025px) {
           .nav-mobile-menu { display: none !important; }
