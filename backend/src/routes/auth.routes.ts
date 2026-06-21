@@ -10,6 +10,6 @@ const authRouter = Router();
 authRouter.post('/login', validate(loginSchema), authController.login);
 authRouter.post('/logout', middlewareAuth.auth, authController.logout);
 authRouter.get('/get-info', middlewareAuth.auth, authController.getInfo);
-authRouter.post('/refresh', middlewareAuth.extractUserFromExpiredToken, authController.refreshToken);
+authRouter.post('/refresh', authController.refreshToken);
 
 export default authRouter;

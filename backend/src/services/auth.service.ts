@@ -33,9 +33,23 @@ class AuthService {
     return { accessToken, refreshToken, ...userWithoutPassword };
   };
 
-  refreshToken = async (userId: string, currentRefreshToken: string) => {
-    const storedToken = await redisClient.get(`refresh_token:${userId}`);
+  refreshToken = async (currentRefreshToken: string) => {
+    if (!currentRefreshToken) {
+      throw new ErrorWithStatus({
+        message: 'Refresh token không được cung cấp!',
+        status: HTTP_STATUS.UNAUTHORIZED,
+      });
+    }
 
+    const userId = await redisClient.get(`refresh_token_user:${currentRefreshToken}`);
+    if (!userId) {
+      throw new ErrorWithStatus({
+        message: 'Refresh token không hợp lệ hoặc đã hết hạn!',
+        status: HTTP_STATUS.UNAUTHORIZED,
+      });
+    }
+
+    const storedToken = await redisClient.get(`refresh_token:${userId}`);
     if (!storedToken || storedToken !== currentRefreshToken) {
       throw new ErrorWithStatus({
         message: 'Refresh token không hợp lệ!',
@@ -51,12 +65,18 @@ class AuthService {
       });
     }
 
+    await redisClient.del(`refresh_token_user:${currentRefreshToken}`);
+
     const { accessToken, refreshToken } = await this.signAccessAndRefreshToken(userId, user.role);
 
     return { accessToken, refreshToken };
   };
 
   logout = async (userId: string) => {
+    const tokenValue = await redisClient.get(`refresh_token:${userId}`);
+    if (tokenValue) {
+      await redisClient.del(`refresh_token_user:${tokenValue}`);
+    }
     await redisClient.del(`refresh_token:${userId}`);
   };
 
@@ -85,6 +105,7 @@ class AuthService {
     ]);
 
     await redisClient.set(`refresh_token:${userId}`, refreshToken, 'EX', ExpiresInTokenType.RefreshToken);
+    await redisClient.set(`refresh_token_user:${refreshToken}`, userId, 'EX', ExpiresInTokenType.RefreshToken);
 
     return { accessToken, refreshToken };
   };
