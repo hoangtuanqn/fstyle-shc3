@@ -15,18 +15,17 @@ const COOKIE_OPTIONS = {
 function setAuthCookies(res: Response, accessToken: string, refreshToken: string) {
   res.cookie('access_token', accessToken, {
     ...COOKIE_OPTIONS,
-    maxAge: ExpiresInTokenType.AccessToken * 1000,
+    maxAge: ExpiresInTokenType.RefreshToken * 1000,
   });
   res.cookie('refresh_token', refreshToken, {
     ...COOKIE_OPTIONS,
     maxAge: ExpiresInTokenType.RefreshToken * 1000,
-    path: '/api/v1/auth',
   });
 }
 
 function clearAuthCookies(res: Response) {
   res.clearCookie('access_token', COOKIE_OPTIONS);
-  res.clearCookie('refresh_token', { ...COOKIE_OPTIONS, path: '/api/v1/auth' });
+  res.clearCookie('refresh_token', COOKIE_OPTIONS);
 }
 
 class AuthController {
@@ -67,7 +66,7 @@ class AuthController {
   refreshToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const currentRefreshToken = req.cookies.refresh_token;
-      const { accessToken, refreshToken } = await authService.refreshToken(req.userId!, currentRefreshToken);
+      const { accessToken, refreshToken } = await authService.refreshToken(currentRefreshToken);
       setAuthCookies(res, accessToken, refreshToken);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Làm mới token thành công!' }));
     } catch (err) {
