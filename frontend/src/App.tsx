@@ -30,8 +30,8 @@ export default function App() {
         />
         <Route path="/login" element={<Login />} />
 
-        {/* Protected routes — all authenticated roles */}
-        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE, RoleType.MC, RoleType.MEMBER]} />}>
+        {/* Dashboard (voting) — members + BTC FStyle only */}
+        <Route element={<ProtectedRoute roleAccess={[RoleType.MEMBER, RoleType.BTC_FSTYLE]} />}>
           <Route
             path="/dashboard"
             element={
@@ -44,6 +44,10 @@ export default function App() {
               </>
             }
           />
+        </Route>
+
+        {/* Leaderboard — all authenticated roles */}
+        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE, RoleType.MC, RoleType.MEMBER]} />}>
           <Route
             path="/leaderboard"
             element={
