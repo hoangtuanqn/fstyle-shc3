@@ -302,11 +302,30 @@ const Login = () => {
             marginTop: 20,
             textAlign: 'center',
             fontSize: 11,
-            color: 'var(--dim)',
-            letterSpacing: '.04em',
+            color: 'rgba(242,237,224,.22)',
           }}
         >
-          © 2026 F-Code Club · FPT University HCM
+          <div>© 2026 FStyle Crew · FPT University HCM</div>
+          <div style={{ color: 'rgba(242,237,224,.4)', marginTop: 6 }}>
+            Phát triển bởi{' '}
+            <a
+              href="https://www.facebook.com/fcodeclub"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 700 }}
+            >
+              F-Code
+            </a>{' '}
+            x{' '}
+            <a
+              href="https://www.facebook.com/mstsoftware.vn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 700 }}
+            >
+              MST Software
+            </a>
+          </div>
         </div>
       </form>
 
