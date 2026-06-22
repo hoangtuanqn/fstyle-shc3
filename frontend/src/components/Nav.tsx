@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
+import { RoleType } from '~/constants/enums';
 import useAuth from '~/hooks/useAuth';
 
 const links = [
@@ -12,9 +13,9 @@ const links = [
   { id: 'club', label: 'CLB' },
 ];
 
-const pageLinks = [
-  { to: '/leaderboard', label: 'Leaderboard' },
-  { to: '/awards', label: 'BTC' },
+const allPageLinks = [
+  { to: '/leaderboard', label: 'Leaderboard', roles: [RoleType.ADMIN, RoleType.MC] },
+  { to: '/awards', label: 'BTC', roles: [RoleType.ADMIN, RoleType.BTC_FSTYLE] },
 ];
 
 const Nav = () => {
@@ -24,6 +25,9 @@ const Nav = () => {
   const [hovered, setHovered] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const userRole = user?.role ?? '';
+  const pageLinks = allPageLinks.filter((pl) => pl.roles.includes(userRole as RoleType));
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 60);
@@ -116,27 +120,31 @@ const Nav = () => {
               {link.label}
             </button>
           ))}
-          <span style={{ width: 1, height: 18, background: 'rgba(255,255,255,.12)' }} />
-          {pageLinks.map((pl) => (
-            <Link
-              key={pl.to}
-              to={pl.to}
-              onMouseEnter={() => setHovered(pl.to)}
-              onMouseLeave={() => setHovered(null)}
-              style={{
-                fontSize: 11,
-                fontWeight: 800,
-                letterSpacing: '.18em',
-                textTransform: 'uppercase',
-                color: hovered === pl.to ? 'var(--gold)' : 'var(--dim)',
-                transition: 'color .25s',
-                fontFamily: 'Montserrat, sans-serif',
-                textDecoration: 'none',
-              }}
-            >
-              {pl.label}
-            </Link>
-          ))}
+          {pageLinks.length > 0 && (
+            <>
+              <span style={{ width: 1, height: 18, background: 'rgba(255,255,255,.12)' }} />
+              {pageLinks.map((pl) => (
+                <Link
+                  key={pl.to}
+                  to={pl.to}
+                  onMouseEnter={() => setHovered(pl.to)}
+                  onMouseLeave={() => setHovered(null)}
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 800,
+                    letterSpacing: '.18em',
+                    textTransform: 'uppercase',
+                    color: hovered === pl.to ? 'var(--gold)' : 'var(--dim)',
+                    transition: 'color .25s',
+                    fontFamily: 'Montserrat, sans-serif',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {pl.label}
+                </Link>
+              ))}
+            </>
+          )}
         </div>
 
         {/* Desktop right section */}
@@ -347,37 +355,39 @@ const Nav = () => {
         </div>
 
         {/* Page links */}
-        <div style={{ marginBottom: 32 }}>
-          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,.25)', marginBottom: 16 }}>
-            Trang
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            {pageLinks.map((pl) => (
-              <Link
-                key={pl.to}
-                to={pl.to}
-                onClick={() => setMenuOpen(false)}
-                style={{
-                  display: 'block',
-                  padding: '12px 0',
-                  fontSize: 22,
-                  fontWeight: 800,
-                  letterSpacing: '.06em',
-                  textTransform: 'uppercase',
-                  color: 'var(--text)',
-                  fontFamily: 'Montserrat, sans-serif',
-                  textDecoration: 'none',
-                  borderBottom: '1px solid rgba(255,255,255,.06)',
-                  transition: 'color .2s',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--gold)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
-              >
-                {pl.label}
-              </Link>
-            ))}
+        {pageLinks.length > 0 && (
+          <div style={{ marginBottom: 32 }}>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,.25)', marginBottom: 16 }}>
+              Trang
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {pageLinks.map((pl) => (
+                <Link
+                  key={pl.to}
+                  to={pl.to}
+                  onClick={() => setMenuOpen(false)}
+                  style={{
+                    display: 'block',
+                    padding: '12px 0',
+                    fontSize: 22,
+                    fontWeight: 800,
+                    letterSpacing: '.06em',
+                    textTransform: 'uppercase',
+                    color: 'var(--text)',
+                    fontFamily: 'Montserrat, sans-serif',
+                    textDecoration: 'none',
+                    borderBottom: '1px solid rgba(255,255,255,.06)',
+                    transition: 'color .2s',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--gold)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
+                >
+                  {pl.label}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Auth section */}
         <div style={{ marginTop: 'auto', paddingTop: 24, borderTop: '1px solid rgba(255,255,255,.08)' }}>
