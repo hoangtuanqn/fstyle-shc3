@@ -45,7 +45,40 @@ const Leaderboard = () => {
     <div style={{ minHeight: '100vh', paddingTop: 108 }}>
       <section style={{ paddingBottom: 48 }}>
         <div className="con" style={{ textAlign: 'center' }}>
-          <span className="ey">🔥 Heatwave SHC3 Apocalypse</span>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 10,
+              marginBottom: 18,
+            }}
+          >
+            <span
+              style={{
+                width: 40,
+                height: 1,
+                background: 'linear-gradient(90deg, transparent, var(--orange))',
+              }}
+            />
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 800,
+                letterSpacing: '.4em',
+                textTransform: 'uppercase',
+                color: 'var(--orange)',
+              }}
+            >
+              LIVE RESULTS
+            </span>
+            <span
+              style={{
+                width: 40,
+                height: 1,
+                background: 'linear-gradient(90deg, var(--orange), transparent)',
+              }}
+            />
+          </div>
           <h1 className="st" style={{ marginBottom: 12 }}>
             BẢNG XẾP <em>HẠNG</em>
           </h1>
@@ -145,24 +178,31 @@ const Leaderboard = () => {
                   </thead>
                   <tbody>
                     {awards.map((award) => {
-                      const winnerNames = award.winners
-                        .map((w) => w.winnerName)
-                        .filter(Boolean)
-                        .join(', ');
+                      const winnerNames = award.winners.map((w) => w.winnerName).filter(Boolean);
                       const hasDisplay = winnerNames.length > 0;
+                      const winnerStyle: CSSProperties = {
+                        fontFamily: "'Anton', sans-serif",
+                        fontSize: 20,
+                        letterSpacing: '.03em',
+                        color: 'var(--text)',
+                      };
                       return (
                         <tr key={award.id}>
                           <td style={{ ...tdStyle, fontWeight: 700 }}>{award.name}</td>
-                          <td
-                            style={{
-                              ...tdStyle,
-                              fontFamily: hasDisplay ? "'Anton', sans-serif" : undefined,
-                              fontSize: hasDisplay ? 20 : undefined,
-                              letterSpacing: hasDisplay ? '.03em' : undefined,
-                              color: hasDisplay ? 'var(--text)' : 'var(--dim)',
-                            }}
-                          >
-                            {hasDisplay ? winnerNames : 'Chưa công bố'}
+                          <td style={{ ...tdStyle, ...(hasDisplay ? {} : { color: 'var(--dim)' }) }}>
+                            {!hasDisplay && 'Chưa công bố'}
+                            {hasDisplay && winnerNames.length === 1 && (
+                              <span style={winnerStyle}>{winnerNames[0]}</span>
+                            )}
+                            {hasDisplay && winnerNames.length >= 2 && (
+                              <ol style={{ margin: 0, paddingLeft: 20, listStyleType: 'decimal' }}>
+                                {winnerNames.map((name, i) => (
+                                  <li key={i} style={{ ...winnerStyle, fontSize: 17, marginBottom: i < winnerNames.length - 1 ? 4 : 0 }}>
+                                    {name}
+                                  </li>
+                                ))}
+                              </ol>
+                            )}
                           </td>
                         </tr>
                       );
