@@ -1,17 +1,17 @@
-import { BrowserRouter, Routes, Route } from 'react-router';
+import { BrowserRouter, Routes, Route } from "react-router";
 
-import { RoleType } from '~/constants/enums';
-import useScrollToTop from '~/hooks/useScrollToTop';
-import ProtectedRoute from '~/layout/ProtectedRoute';
-import Nav from './components/Nav';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Scoring from './pages/Scoring';
-import Leaderboard from './pages/Leaderboard';
-import VotingLeaderboard from './pages/VotingLeaderboard';
-import Awards from './pages/Awards';
+import { RoleType } from "~/constants/enums";
+import useScrollToTop from "~/hooks/useScrollToTop";
+import ProtectedRoute from "~/layout/ProtectedRoute";
+import Nav from "./components/Nav";
+import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Scoring from "./pages/Scoring";
+import Leaderboard from "./pages/Leaderboard";
+import VotingLeaderboard from "./pages/VotingLeaderboard";
+import Awards from "./pages/Awards";
 
 const ScrollToTop = () => {
   useScrollToTop();
@@ -38,8 +38,14 @@ export default function App() {
         />
         <Route path="/login" element={<Login />} />
 
-        {/* Dashboard (voting) — members + BTC FStyle only */}
-        <Route element={<ProtectedRoute roleAccess={[RoleType.MEMBER, RoleType.BTC_FSTYLE]} />}>
+        {/* Dashboard (voting) - members + BTC FStyle only */}
+        <Route
+          element={
+            <ProtectedRoute
+              roleAccess={[RoleType.MEMBER, RoleType.BTC_FSTYLE]}
+            />
+          }
+        >
           <Route
             path="/dashboard"
             element={
@@ -54,8 +60,12 @@ export default function App() {
           />
         </Route>
 
-        {/* Leaderboard — Admin + MC only */}
-        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.MC]} />}>
+        {/* Leaderboard - Admin + MC only */}
+        <Route
+          element={
+            <ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.MC]} />
+          }
+        >
           <Route
             path="/leaderboard"
             element={
@@ -70,8 +80,14 @@ export default function App() {
           />
         </Route>
 
-        {/* Voting Leaderboard — Admin + BTC FStyle + MC */}
-        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE, RoleType.MC]} />}>
+        {/* Voting Leaderboard - Admin + BTC FStyle + MC */}
+        <Route
+          element={
+            <ProtectedRoute
+              roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE, RoleType.MC]}
+            />
+          }
+        >
           <Route
             path="/voting-leaderboard"
             element={
@@ -86,8 +102,14 @@ export default function App() {
           />
         </Route>
 
-        {/* Awards — Admin + BTC FStyle only */}
-        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE]} />}>
+        {/* Awards - Admin + BTC FStyle only */}
+        <Route
+          element={
+            <ProtectedRoute
+              roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE]}
+            />
+          }
+        >
           <Route
             path="/awards"
             element={

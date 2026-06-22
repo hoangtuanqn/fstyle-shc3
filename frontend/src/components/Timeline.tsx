@@ -60,7 +60,7 @@ const Timeline = () => {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <section className="sec" style={{ background: 'var(--bg3)' }}>
+    <section id="timeline" className="sec" style={{ background: 'var(--bg3)' }}>
       <div className="con">
         <div className="rv" style={{ textAlign: 'center', marginBottom: 56 }}>
           <span className="ey">Lộ Trình</span>
