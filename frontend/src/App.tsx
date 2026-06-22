@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router';
 
 import { RoleType } from '~/constants/enums';
+import useScrollToTop from '~/hooks/useScrollToTop';
 import ProtectedRoute from '~/layout/ProtectedRoute';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
@@ -12,9 +13,15 @@ import Leaderboard from './pages/Leaderboard';
 import VotingLeaderboard from './pages/VotingLeaderboard';
 import Awards from './pages/Awards';
 
+const ScrollToTop = () => {
+  useScrollToTop();
+  return null;
+};
+
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Public routes */}
         <Route
