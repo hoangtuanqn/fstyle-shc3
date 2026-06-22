@@ -30,9 +30,12 @@ class VotingRepository {
         id: users.id,
         name: users.name,
         teamId: users.teamId,
+        teamName: teams.name,
+        teamColor: teams.color,
         voteCount: sql<number>`(SELECT COUNT(*) FROM effort_votes WHERE candidate_id = ${users.id})`,
       })
       .from(users)
+      .innerJoin(teams, eq(users.teamId, teams.id))
       .where(and(eq(users.teamId, teamId), eq(users.role, RoleType.MEMBER)));
   };
 

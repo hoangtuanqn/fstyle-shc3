@@ -100,8 +100,25 @@ const Footer = () => {
           <div style={{ fontSize: 11, color: 'rgba(242,237,224,.22)' }}>
             © 2026 FStyle Crew · FPT University HCM Campus · All rights reserved
           </div>
-          <div style={{ fontSize: 11, color: 'rgba(242,237,224,.18)', marginTop: 6 }}>
-            Phần mềm được phát triển bởi CLB F-Code
+          <div style={{ fontSize: 12, color: 'rgba(242,237,224,.4)', marginTop: 10 }}>
+            Website được phát triển bởi CLB{' '}
+            <a
+              href="https://www.facebook.com/fcodeclub"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 700 }}
+            >
+              F-Code
+            </a>
+            {' '}x Đơn vị{' '}
+            <a
+              href="https://www.facebook.com/mstsoftware.vn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 700 }}
+            >
+              MST Software
+            </a>
           </div>
         </div>
       </div>

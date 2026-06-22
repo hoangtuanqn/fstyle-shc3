@@ -246,6 +246,11 @@ const Scoring = () => {
 
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [selectedJudge, setSelectedJudge] = useState<1 | 2 | 3>(1);
+
+  const handleSelectTeam = (teamId: string) => {
+    setSelectedTeamId(teamId);
+    setSelectedJudge(1);
+  };
   const [subScores, setSubScores] = useState<Record<string, number>>({});
 
   const getSubKey = (catId: number, subIdx: number) => `${catId}-${subIdx}`;
@@ -276,55 +281,64 @@ const Scoring = () => {
   }, [teamsRes, selectedTeamId]);
 
   useEffect(() => {
-    setSubScores({});
-  }, [selectedTeamId, selectedJudge]);
+    if (!teamScoresRes?.result) {
+      setSubScores({});
+      return;
+    }
+    const { judgeScores: judgeRows, btcScore } = teamScoresRes.result;
+    const judgeRow = judgeRows.find((r) => r.judgeNumber === selectedJudge);
 
-  const judgeScoreMutation = useMutation({
-    mutationFn: ScoringApi.saveJudgeScores,
-    onSuccess: () => {
+    const filled: Record<string, number> = {};
+    const fillSubs = (cat: Criteria, total: number) => {
+      let remaining = total;
+      for (let i = 0; i < cat.subs.length; i++) {
+        const val = Math.min(remaining, cat.subs[i].maxScore);
+        filled[getSubKey(cat.id, i)] = Math.round(val * 100) / 100;
+        remaining = Math.round((remaining - val) * 100) / 100;
+      }
+    };
+
+    for (let i = 0; i < 5; i++) {
+      const cat = criteriaData[i];
+      const val = judgeRow ? Number((judgeRow as Record<string, unknown>)[cat.apiKey] ?? 0) : 0;
+      fillSubs(cat, val);
+    }
+    const disciplineVal = btcScore ? Number(btcScore.discipline) : 0;
+    fillSubs(criteriaData[5], disciplineVal);
+
+    setSubScores(filled);
+  }, [teamScoresRes, selectedJudge]);
+
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveAllScores = async () => {
+    if (!selectedTeamId) return toast.error('Chọn đội trước!');
+    setIsSaving(true);
+    try {
+      await Promise.all([
+        ScoringApi.saveJudgeScores({
+          teamId: selectedTeamId,
+          data: {
+            judgeNumber: selectedJudge,
+            ideaConcept: getCategoryTotal(criteriaData[0]),
+            choreography: getCategoryTotal(criteriaData[1]),
+            synchronization: getCategoryTotal(criteriaData[2]),
+            performance: getCategoryTotal(criteriaData[3]),
+            costume: getCategoryTotal(criteriaData[4]),
+          },
+        }),
+        ScoringApi.saveBtcScore({ teamId: selectedTeamId, data: { discipline: getCategoryTotal(criteriaData[5]) } }),
+      ]);
       queryClient.invalidateQueries({ queryKey: ['scoring-teams'] });
       queryClient.invalidateQueries({ queryKey: ['scoring-team-scores', selectedTeamId] });
-      toast.success('Lưu điểm BGK thành công!');
-    },
-    onError: (err: unknown) => {
+      toast.success('Lưu điểm thành công!');
+    } catch (err: unknown) {
       toast.error(
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Có lỗi xảy ra!',
       );
-    },
-  });
-
-  const btcScoreMutation = useMutation({
-    mutationFn: ScoringApi.saveBtcScore,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['scoring-teams'] });
-      queryClient.invalidateQueries({ queryKey: ['scoring-team-scores', selectedTeamId] });
-      toast.success('Lưu điểm BTC thành công!');
-    },
-    onError: (err: unknown) => {
-      toast.error(
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Có lỗi xảy ra!',
-      );
-    },
-  });
-
-  const handleSaveJudgeScores = () => {
-    if (!selectedTeamId) return toast.error('Chọn đội trước!');
-    judgeScoreMutation.mutate({
-      teamId: selectedTeamId,
-      data: {
-        judgeNumber: selectedJudge,
-        ideaConcept: getCategoryTotal(criteriaData[0]),
-        choreography: getCategoryTotal(criteriaData[1]),
-        synchronization: getCategoryTotal(criteriaData[2]),
-        performance: getCategoryTotal(criteriaData[3]),
-        costume: getCategoryTotal(criteriaData[4]),
-      },
-    });
-  };
-
-  const handleSaveBtcScore = () => {
-    if (!selectedTeamId) return toast.error('Chọn đội trước!');
-    btcScoreMutation.mutate({ teamId: selectedTeamId, data: { discipline: getCategoryTotal(criteriaData[5]) } });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const grandTotal = criteriaData.reduce((sum, cat) => sum + getCategoryTotal(cat), 0);
@@ -391,7 +405,7 @@ const Scoring = () => {
               {teams.map((team) => (
                 <button
                   key={team.id}
-                  onClick={() => setSelectedTeamId(team.id)}
+                  onClick={() => handleSelectTeam(team.id)}
                   style={{
                     padding: '8px 16px',
                     borderRadius: 8,
@@ -513,7 +527,7 @@ const Scoring = () => {
                                     textShadow: getCategoryTotal(cat) > 0 ? `0 0 10px ${cat.accent}44` : 'none',
                                   }}
                                 >
-                                  {getCategoryTotal(cat)}
+                                  {getCategoryTotal(cat).toFixed(2)}
                                 </span>
                                 <span style={{ fontSize: 11, color: 'var(--dim)' }}> / {cat.maxScore}</span>
                               </div>
@@ -703,7 +717,7 @@ const Scoring = () => {
                               textShadow: `0 0 10px ${cat.accent}44`,
                             }}
                           >
-                            {getCategoryTotal(cat)}
+                            {getCategoryTotal(cat).toFixed(2)}
                           </span>
                           <span style={{ fontSize: 11, color: 'var(--dim)' }}>/ {cat.maxScore}</span>
                         </div>
@@ -752,7 +766,7 @@ const Scoring = () => {
                       textShadow: grandTotal > 0 ? '0 0 24px rgba(254,230,34,.6)' : 'none',
                     }}
                   >
-                    {grandTotal}
+                    {grandTotal.toFixed(2)}
                   </td>
                   <td style={{ ...tdBase, borderBottom: 'none' }} />
                 </tr>
@@ -760,30 +774,11 @@ const Scoring = () => {
             </table>
           </div>
 
-          {/* Save buttons */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 20 }}>
+          {/* Save button */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
             <button
-              onClick={handleSaveBtcScore}
-              disabled={!selectedTeamId || btcScoreMutation.isPending}
-              style={{
-                padding: '12px 32px',
-                borderRadius: 10,
-                border: '1px solid rgba(251,140,5,.4)',
-                background: selectedTeamId ? 'rgba(251,140,5,.12)' : 'rgba(255,255,255,.04)',
-                color: selectedTeamId ? 'var(--orange)' : 'var(--dim)',
-                fontFamily: "'Anton', sans-serif",
-                fontSize: 15,
-                letterSpacing: '.1em',
-                cursor: selectedTeamId ? 'pointer' : 'not-allowed',
-                opacity: selectedTeamId ? 1 : 0.6,
-                transition: 'all .2s',
-              }}
-            >
-              {btcScoreMutation.isPending ? 'Đang lưu...' : 'LƯU ĐIỂM BTC'}
-            </button>
-            <button
-              onClick={handleSaveJudgeScores}
-              disabled={!selectedTeamId || judgeScoreMutation.isPending}
+              onClick={handleSaveAllScores}
+              disabled={!selectedTeamId || isSaving}
               style={{
                 padding: '12px 32px',
                 borderRadius: 10,
@@ -798,7 +793,7 @@ const Scoring = () => {
                 transition: 'all .2s',
               }}
             >
-              {judgeScoreMutation.isPending ? 'Đang lưu...' : 'LƯU ĐIỂM BGK'}
+              {isSaving ? 'Đang lưu...' : 'LƯU ĐIỂM'}
             </button>
           </div>
         </div>

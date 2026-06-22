@@ -112,8 +112,6 @@ const Leaderboard = () => {
                     <tr style={{ background: 'rgba(251,140,5,.06)' }}>
                       <th style={{ ...thStyle, width: '8%' }}>Rank</th>
                       <th style={thStyle}>Đội</th>
-                      <th style={{ ...thStyle, textAlign: 'right' }}>Judge Avg</th>
-                      <th style={{ ...thStyle, textAlign: 'right' }}>BTC</th>
                       <th style={{ ...thStyle, textAlign: 'right' }}>Tổng</th>
                     </tr>
                   </thead>
@@ -139,8 +137,6 @@ const Leaderboard = () => {
                             </div>
                             <div style={{ fontSize: 12, color: 'var(--dim)', marginTop: 2 }}>{row.team.concept}</div>
                           </td>
-                          <td style={{ ...tdStyle, textAlign: 'right' }}>{row.judgeAvg}</td>
-                          <td style={{ ...tdStyle, textAlign: 'right' }}>{row.btcScore}</td>
                           <td
                             style={{
                               ...tdStyle,
@@ -149,7 +145,7 @@ const Leaderboard = () => {
                               color: isFirst ? 'var(--orange)' : undefined,
                             }}
                           >
-                            {row.totalScore}
+                            {row.totalScore.toFixed(2)}
                           </td>
                         </tr>
                       );
