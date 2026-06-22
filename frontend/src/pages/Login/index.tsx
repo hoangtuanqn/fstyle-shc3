@@ -5,9 +5,17 @@ import axios from "axios";
 
 import AuthApi from "~/api-requests/auth.requests";
 import ParticleCanvas from "~/components/ParticleCanvas";
+import { RoleType } from "~/constants/enums";
 import { setUser } from "~/features/userSlice";
 import { useAppDispatch } from "~/hooks/useRedux";
 import LocalStorage from "~/utils/localStorage";
+
+const redirectByRole: Record<string, string> = {
+  [RoleType.ADMIN]: "/scoring",
+  [RoleType.MC]: "/leaderboard",
+  [RoleType.BTC_FSTYLE]: "/dashboard",
+  [RoleType.MEMBER]: "/dashboard",
+};
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -31,7 +39,8 @@ const Login = () => {
       LocalStorage.setItem("logged_in", "true");
       dispatch(setUser(data.result));
       toast.success(data.message);
-      navigate("/dashboard", { replace: true });
+      const role = data.result.role;
+      navigate(redirectByRole[role] ?? "/dashboard", { replace: true });
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.data?.message) {
         toast.error(err.response.data.message);
