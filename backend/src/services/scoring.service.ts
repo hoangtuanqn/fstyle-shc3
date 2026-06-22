@@ -29,7 +29,7 @@ class ScoringService {
       const btcScore = allBtcScores.find((s) => s.teamId === team.id);
       const judgeAvg = this.calculateJudgeAverage(teamJudgeScores);
       const btcTotal = btcScore ? Number(btcScore.discipline) : 0;
-      return { ...team, judgeAvg, btcScore: btcTotal, totalScore: judgeAvg + btcTotal };
+      return { ...team, judgeAvg, btcScore: btcTotal, totalScore: Math.round((judgeAvg + btcTotal) * 100) / 100 };
     });
   };
 
@@ -84,7 +84,7 @@ class ScoringService {
         judgeDetails,
         judgeAvg,
         btcScore: btcTotal,
-        totalScore: judgeAvg + btcTotal,
+        totalScore: Math.round((judgeAvg + btcTotal) * 100) / 100,
       };
     });
   };
@@ -99,7 +99,7 @@ class ScoringService {
         Number(r.performance) +
         Number(r.costume),
     );
-    return Math.round((totals.reduce((s, t) => s + t, 0) / judgeRows.length) * 10) / 10;
+    return Math.round((totals.reduce((s, t) => s + t, 0) / judgeRows.length) * 100) / 100;
   };
 }
 
