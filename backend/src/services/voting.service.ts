@@ -78,6 +78,10 @@ class VotingService {
     await votingRepository.deleteVote(userId, candidateId);
   };
 
+  getVoteLeaderboard = async () => {
+    return await votingRepository.findVoteLeaderboard();
+  };
+
   private checkVotingPeriod = () => {
     const now = new Date();
     if (now < VOTE_START || now > VOTE_END) {

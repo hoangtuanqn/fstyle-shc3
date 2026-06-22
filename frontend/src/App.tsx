@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Scoring from './pages/Scoring';
 import Leaderboard from './pages/Leaderboard';
+import VotingLeaderboard from './pages/VotingLeaderboard';
 import Awards from './pages/Awards';
 
 export default function App() {
@@ -55,6 +56,22 @@ export default function App() {
                 <Nav />
                 <main>
                   <Leaderboard />
+                </main>
+                <Footer />
+              </>
+            }
+          />
+        </Route>
+
+        {/* Voting Leaderboard — Admin + BTC FStyle + MC */}
+        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE, RoleType.MC]} />}>
+          <Route
+            path="/voting-leaderboard"
+            element={
+              <>
+                <Nav />
+                <main>
+                  <VotingLeaderboard />
                 </main>
                 <Footer />
               </>

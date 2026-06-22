@@ -8,6 +8,7 @@ import { validate } from '~/utils/validation';
 
 const votingRouter = Router();
 
+votingRouter.get('/leaderboard', middlewareAuth.auth, isRole([RoleType.ADMIN, RoleType.BTC_FSTYLE, RoleType.MC]), votingController.getVoteLeaderboard);
 votingRouter.get('/candidates', middlewareAuth.auth, isRole([RoleType.MEMBER, RoleType.BTC_FSTYLE]), votingController.getCandidates);
 votingRouter.get('/my-votes', middlewareAuth.auth, isRole([RoleType.MEMBER, RoleType.BTC_FSTYLE]), votingController.getMyVotes);
 votingRouter.post('/vote', middlewareAuth.auth, isRole([RoleType.MEMBER, RoleType.BTC_FSTYLE]), validate(voteBodySchema), votingController.vote);
