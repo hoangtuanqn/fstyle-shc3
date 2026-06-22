@@ -46,8 +46,8 @@ export default function App() {
           />
         </Route>
 
-        {/* Leaderboard — all authenticated roles */}
-        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE, RoleType.MC, RoleType.MEMBER]} />}>
+        {/* Leaderboard — Admin + MC only */}
+        <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.MC]} />}>
           <Route
             path="/leaderboard"
             element={
