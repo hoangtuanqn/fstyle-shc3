@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
-import type { CSSProperties } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMemo } from "react";
+import type { CSSProperties } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import VotingApi from '~/api-requests/voting.requests';
-import useSocket from '~/hooks/useSocket';
-import type { VoteLeaderboardCandidate } from '~/types/voting';
+import VotingApi from "~/api-requests/voting.requests";
+import useSocket from "~/hooks/useSocket";
+import type { VoteLeaderboardCandidate } from "~/types/voting";
 
 type TeamGroup = {
   teamId: string;
@@ -15,26 +15,26 @@ type TeamGroup = {
 };
 
 const thStyle: CSSProperties = {
-  padding: '12px 16px',
-  textAlign: 'left',
+  padding: "12px 16px",
+  textAlign: "left",
   fontWeight: 800,
   fontSize: 10,
-  letterSpacing: '.14em',
-  textTransform: 'uppercase',
-  whiteSpace: 'nowrap',
+  letterSpacing: ".14em",
+  textTransform: "uppercase",
+  whiteSpace: "nowrap",
 };
 
 const tdStyle: CSSProperties = {
-  padding: '12px 16px',
+  padding: "12px 16px",
   fontSize: 14,
-  verticalAlign: 'middle',
+  verticalAlign: "middle",
 };
 
 const VotingLeaderboard = () => {
   useSocket();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['voting-leaderboard'],
+    queryKey: ["voting-leaderboard"],
     queryFn: VotingApi.getVoteLeaderboard,
   });
 
@@ -43,7 +43,10 @@ const VotingLeaderboard = () => {
 
   const teamGroups = useMemo((): TeamGroup[] => {
     const grouped = new Map<string, VoteLeaderboardCandidate[]>();
-    const teamMeta = new Map<string, { name: string; color: string; order: number }>();
+    const teamMeta = new Map<
+      string,
+      { name: string; color: string; order: number }
+    >();
 
     for (const c of candidates) {
       if (!c.teamId) continue;
@@ -59,7 +62,7 @@ const VotingLeaderboard = () => {
     }
 
     return Array.from(grouped.entries())
-      .sort((a, b) => (teamMeta.get(a[0])!.order - teamMeta.get(b[0])!.order))
+      .sort((a, b) => teamMeta.get(a[0])!.order - teamMeta.get(b[0])!.order)
       .map(([teamId, members]) => {
         const meta = teamMeta.get(teamId)!;
         const sorted = members.sort((a, b) => b.voteCount - a.voteCount);
@@ -80,46 +83,83 @@ const VotingLeaderboard = () => {
 
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', paddingTop: 108, textAlign: 'center', color: 'var(--dim)' }}>Đang tải...</div>
+      <div
+        style={{
+          minHeight: "100vh",
+          paddingTop: 108,
+          textAlign: "center",
+          color: "var(--dim)",
+        }}
+      >
+        Đang tải...
+      </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', paddingTop: 108 }}>
+    <div style={{ minHeight: "100vh", paddingTop: 108 }}>
       {/* Header */}
       <section style={{ paddingBottom: 40 }}>
-        <div className="con" style={{ textAlign: 'center' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-            <span style={{ width: 40, height: 1, background: 'linear-gradient(90deg, transparent, var(--orange))' }} />
+        <div className="con" style={{ textAlign: "center" }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+              marginBottom: 18,
+            }}
+          >
+            <span
+              style={{
+                width: 40,
+                height: 1,
+                background:
+                  "linear-gradient(90deg, transparent, var(--orange))",
+              }}
+            />
             <span
               style={{
                 fontSize: 10,
                 fontWeight: 800,
-                letterSpacing: '.4em',
-                textTransform: 'uppercase',
-                color: 'var(--orange)',
+                letterSpacing: ".4em",
+                textTransform: "uppercase",
+                color: "var(--orange)",
               }}
             >
               GIẢI NỖ LỰC
             </span>
-            <span style={{ width: 40, height: 1, background: 'linear-gradient(90deg, var(--orange), transparent)' }} />
+            <span
+              style={{
+                width: 40,
+                height: 1,
+                background:
+                  "linear-gradient(90deg, var(--orange), transparent)",
+              }}
+            />
           </div>
           <h1 className="st" style={{ marginBottom: 12 }}>
             BẢNG XẾP HẠNG <em>VOTE</em>
           </h1>
-          <p style={{ fontSize: 14, color: 'var(--dim)', maxWidth: 500, margin: '0 auto 24px' }}>
-            Bình chọn thành viên nỗ lực nhất — kết quả realtime theo từng đội
+          <p
+            style={{
+              fontSize: 14,
+              color: "var(--dim)",
+              maxWidth: 500,
+              margin: "0 auto 24px",
+            }}
+          >
+            Bình chọn thành viên nỗ lực nhất - kết quả realtime theo từng đội
           </p>
 
           {/* Total votes badge */}
           <div
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
+              display: "inline-flex",
+              alignItems: "center",
               gap: 10,
-              padding: '12px 28px',
-              background: 'rgba(254,230,34,.06)',
-              border: '1px solid rgba(254,230,34,.2)',
+              padding: "12px 28px",
+              background: "rgba(254,230,34,.06)",
+              border: "1px solid rgba(254,230,34,.2)",
               borderRadius: 14,
             }}
           >
@@ -128,8 +168,8 @@ const VotingLeaderboard = () => {
               style={{
                 fontFamily: "'Anton', sans-serif",
                 fontSize: 28,
-                color: 'var(--gold)',
-                textShadow: '0 0 12px rgba(254,230,34,.5)',
+                color: "var(--gold)",
+                textShadow: "0 0 12px rgba(254,230,34,.5)",
                 lineHeight: 1,
               }}
             >
@@ -139,9 +179,9 @@ const VotingLeaderboard = () => {
               style={{
                 fontSize: 10,
                 fontWeight: 800,
-                letterSpacing: '.18em',
-                textTransform: 'uppercase',
-                color: 'var(--dim)',
+                letterSpacing: ".18em",
+                textTransform: "uppercase",
+                color: "var(--dim)",
               }}
             >
               TỔNG LƯỢT VOTE
@@ -155,7 +195,11 @@ const VotingLeaderboard = () => {
         <div className="con">
           <div
             className="vote-lb-grid"
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              gap: 24,
+            }}
           >
             {teamGroups.map((team) => {
               const hexToRgba = (hex: string, a: number) => {
@@ -174,23 +218,25 @@ const VotingLeaderboard = () => {
                   style={{
                     borderRadius: 14,
                     border: `1px solid ${borderColor}`,
-                    background: 'var(--bg2)',
+                    background: "var(--bg2)",
                     boxShadow: `0 0 30px ${glowColor}`,
-                    overflow: 'hidden',
+                    overflow: "hidden",
                   }}
                 >
                   {/* Team header */}
                   <div
                     style={{
-                      padding: '18px 20px',
+                      padding: "18px 20px",
                       background: headerBg,
                       borderBottom: `1px solid ${borderColor}`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 12 }}
+                    >
                       <div
                         style={{
                           width: 4,
@@ -204,7 +250,7 @@ const VotingLeaderboard = () => {
                         style={{
                           fontFamily: "'Anton', sans-serif",
                           fontSize: 22,
-                          letterSpacing: '.04em',
+                          letterSpacing: ".04em",
                           color: team.teamColor,
                           textShadow: `0 0 16px ${hexToRgba(team.teamColor, 0.4)}`,
                         }}
@@ -214,11 +260,11 @@ const VotingLeaderboard = () => {
                     </div>
                     <div
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
+                        display: "flex",
+                        alignItems: "center",
                         gap: 8,
-                        padding: '6px 14px',
-                        background: 'rgba(0,0,0,.4)',
+                        padding: "6px 14px",
+                        background: "rgba(0,0,0,.4)",
                         border: `1px solid ${borderColor}`,
                         borderRadius: 8,
                       }}
@@ -237,9 +283,9 @@ const VotingLeaderboard = () => {
                         style={{
                           fontSize: 9,
                           fontWeight: 800,
-                          letterSpacing: '.14em',
-                          textTransform: 'uppercase',
-                          color: 'var(--dim)',
+                          letterSpacing: ".14em",
+                          textTransform: "uppercase",
+                          color: "var(--dim)",
                         }}
                       >
                         votes
@@ -248,20 +294,35 @@ const VotingLeaderboard = () => {
                   </div>
 
                   {/* Ranking table */}
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <div style={{ overflowX: "auto" }}>
+                    <table
+                      style={{ width: "100%", borderCollapse: "collapse" }}
+                    >
                       <thead>
                         <tr>
-                          <th style={{ ...thStyle, width: 50, color: team.teamColor, borderBottom: `1px solid ${borderColor}` }}>
+                          <th
+                            style={{
+                              ...thStyle,
+                              width: 50,
+                              color: team.teamColor,
+                              borderBottom: `1px solid ${borderColor}`,
+                            }}
+                          >
                             #
                           </th>
-                          <th style={{ ...thStyle, color: team.teamColor, borderBottom: `1px solid ${borderColor}` }}>
+                          <th
+                            style={{
+                              ...thStyle,
+                              color: team.teamColor,
+                              borderBottom: `1px solid ${borderColor}`,
+                            }}
+                          >
                             Thành viên
                           </th>
                           <th
                             style={{
                               ...thStyle,
-                              textAlign: 'center',
+                              textAlign: "center",
                               width: 80,
                               color: team.teamColor,
                               borderBottom: `1px solid ${borderColor}`,
@@ -272,7 +333,7 @@ const VotingLeaderboard = () => {
                           <th
                             style={{
                               ...thStyle,
-                              textAlign: 'right',
+                              textAlign: "right",
                               width: 100,
                               color: team.teamColor,
                               borderBottom: `1px solid ${borderColor}`,
@@ -292,8 +353,9 @@ const VotingLeaderboard = () => {
                                   ...tdStyle,
                                   fontWeight: 800,
                                   fontSize: 16,
-                                  color: isTop ? team.teamColor : 'var(--dim)',
-                                  borderBottom: '1px solid rgba(255,255,255,.04)',
+                                  color: isTop ? team.teamColor : "var(--dim)",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,.04)",
                                 }}
                               >
                                 {m.rank}
@@ -301,13 +363,14 @@ const VotingLeaderboard = () => {
                               <td
                                 style={{
                                   ...tdStyle,
-                                  borderBottom: '1px solid rgba(255,255,255,.04)',
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,.04)",
                                 }}
                               >
                                 <span
                                   style={{
                                     fontWeight: isTop ? 700 : 500,
-                                    color: isTop ? 'var(--text)' : 'var(--dim)',
+                                    color: isTop ? "var(--text)" : "var(--dim)",
                                   }}
                                 >
                                   {m.name}
@@ -316,16 +379,21 @@ const VotingLeaderboard = () => {
                               <td
                                 style={{
                                   ...tdStyle,
-                                  textAlign: 'center',
-                                  borderBottom: '1px solid rgba(255,255,255,.04)',
+                                  textAlign: "center",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,.04)",
                                 }}
                               >
                                 <span
                                   style={{
                                     fontFamily: "'Anton', sans-serif",
                                     fontSize: 18,
-                                    color: isTop ? team.teamColor : 'var(--dim)',
-                                    textShadow: isTop ? `0 0 10px ${hexToRgba(team.teamColor, 0.4)}` : 'none',
+                                    color: isTop
+                                      ? team.teamColor
+                                      : "var(--dim)",
+                                    textShadow: isTop
+                                      ? `0 0 10px ${hexToRgba(team.teamColor, 0.4)}`
+                                      : "none",
                                   }}
                                 >
                                   {m.voteCount}
@@ -334,29 +402,37 @@ const VotingLeaderboard = () => {
                               <td
                                 style={{
                                   ...tdStyle,
-                                  textAlign: 'right',
-                                  borderBottom: '1px solid rgba(255,255,255,.04)',
+                                  textAlign: "right",
+                                  borderBottom:
+                                    "1px solid rgba(255,255,255,.04)",
                                 }}
                               >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 8,
+                                    justifyContent: "flex-end",
+                                  }}
+                                >
                                   <div
                                     style={{
                                       flex: 1,
                                       maxWidth: 60,
                                       height: 4,
                                       borderRadius: 2,
-                                      background: 'rgba(255,255,255,.06)',
-                                      overflow: 'hidden',
+                                      background: "rgba(255,255,255,.06)",
+                                      overflow: "hidden",
                                     }}
                                   >
                                     <div
                                       style={{
                                         width: `${m.percentage}%`,
-                                        height: '100%',
+                                        height: "100%",
                                         borderRadius: 2,
                                         background: team.teamColor,
                                         boxShadow: `0 0 6px ${hexToRgba(team.teamColor, 0.5)}`,
-                                        transition: 'width .6s ease',
+                                        transition: "width .6s ease",
                                       }}
                                     />
                                   </div>
@@ -364,9 +440,11 @@ const VotingLeaderboard = () => {
                                     style={{
                                       fontSize: 12,
                                       fontWeight: 700,
-                                      color: isTop ? team.teamColor : 'var(--dim)',
+                                      color: isTop
+                                        ? team.teamColor
+                                        : "var(--dim)",
                                       minWidth: 42,
-                                      textAlign: 'right',
+                                      textAlign: "right",
                                     }}
                                   >
                                     {m.percentage.toFixed(1)}%
@@ -378,7 +456,14 @@ const VotingLeaderboard = () => {
                         })}
                         {team.members.length === 0 && (
                           <tr>
-                            <td colSpan={4} style={{ ...tdStyle, textAlign: 'center', color: 'var(--dim)' }}>
+                            <td
+                              colSpan={4}
+                              style={{
+                                ...tdStyle,
+                                textAlign: "center",
+                                color: "var(--dim)",
+                              }}
+                            >
                               Chưa có dữ liệu
                             </td>
                           </tr>
@@ -392,7 +477,14 @@ const VotingLeaderboard = () => {
           </div>
 
           {teamGroups.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--dim)', fontSize: 15 }}>
+            <div
+              style={{
+                textAlign: "center",
+                padding: "60px 0",
+                color: "var(--dim)",
+                fontSize: 15,
+              }}
+            >
               Chưa có dữ liệu bình chọn.
             </div>
           )}
