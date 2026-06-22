@@ -241,27 +241,22 @@ const tdBase: CSSProperties = {
   lineHeight: 1.5,
 };
 
-type JudgeScoresState = {
-  ideaConcept: number;
-  choreography: number;
-  synchronization: number;
-  performance: number;
-  costume: number;
-};
-
 const Scoring = () => {
   const queryClient = useQueryClient();
 
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [selectedJudge, setSelectedJudge] = useState<1 | 2 | 3>(1);
-  const [judgeScores, setJudgeScores] = useState<JudgeScoresState>({
-    ideaConcept: 0,
-    choreography: 0,
-    synchronization: 0,
-    performance: 0,
-    costume: 0,
-  });
-  const [disciplineScore, setDisciplineScore] = useState(0);
+  const [subScores, setSubScores] = useState<Record<string, number>>({});
+
+  const getSubKey = (catId: number, subIdx: number) => `${catId}-${subIdx}`;
+  const getSubScore = (catId: number, subIdx: number) => subScores[getSubKey(catId, subIdx)] ?? 0;
+  const setSubScore = (catId: number, subIdx: number, val: number, maxScore: number) => {
+    setSubScores((prev) => ({
+      ...prev,
+      [getSubKey(catId, subIdx)]: Math.min(Math.max(0, val), maxScore),
+    }));
+  };
+  const getCategoryTotal = (cat: Criteria) => cat.subs.reduce((sum, _, i) => sum + getSubScore(cat.id, i), 0);
 
   const { data: teamsRes } = useQuery({
     queryKey: ['scoring-teams'],
@@ -281,22 +276,8 @@ const Scoring = () => {
   }, [teamsRes, selectedTeamId]);
 
   useEffect(() => {
-    if (!teamScoresRes?.result) return;
-    const judgeRow = teamScoresRes.result.judgeScores.find((s) => s.judgeNumber === selectedJudge);
-    if (judgeRow) {
-      setJudgeScores({
-        ideaConcept: Number(judgeRow.ideaConcept),
-        choreography: Number(judgeRow.choreography),
-        synchronization: Number(judgeRow.synchronization),
-        performance: Number(judgeRow.performance),
-        costume: Number(judgeRow.costume),
-      });
-    } else {
-      setJudgeScores({ ideaConcept: 0, choreography: 0, synchronization: 0, performance: 0, costume: 0 });
-    }
-    const btcRow = teamScoresRes.result.btcScore;
-    setDisciplineScore(btcRow ? Number(btcRow.discipline) : 0);
-  }, [teamScoresRes, selectedJudge]);
+    setSubScores({});
+  }, [selectedTeamId, selectedJudge]);
 
   const judgeScoreMutation = useMutation({
     mutationFn: ScoringApi.saveJudgeScores,
@@ -328,37 +309,25 @@ const Scoring = () => {
 
   const handleSaveJudgeScores = () => {
     if (!selectedTeamId) return toast.error('Chọn đội trước!');
-    judgeScoreMutation.mutate({ teamId: selectedTeamId, data: { judgeNumber: selectedJudge, ...judgeScores } });
+    judgeScoreMutation.mutate({
+      teamId: selectedTeamId,
+      data: {
+        judgeNumber: selectedJudge,
+        ideaConcept: getCategoryTotal(criteriaData[0]),
+        choreography: getCategoryTotal(criteriaData[1]),
+        synchronization: getCategoryTotal(criteriaData[2]),
+        performance: getCategoryTotal(criteriaData[3]),
+        costume: getCategoryTotal(criteriaData[4]),
+      },
+    });
   };
 
   const handleSaveBtcScore = () => {
     if (!selectedTeamId) return toast.error('Chọn đội trước!');
-    btcScoreMutation.mutate({ teamId: selectedTeamId, data: { discipline: disciplineScore } });
+    btcScoreMutation.mutate({ teamId: selectedTeamId, data: { discipline: getCategoryTotal(criteriaData[5]) } });
   };
 
-  const getCategoryScore = (cat: Criteria): number => {
-    if (cat.apiKey === 'discipline') return disciplineScore;
-    return judgeScores[cat.apiKey as keyof JudgeScoresState];
-  };
-
-  const setCategoryScore = (cat: Criteria, val: number) => {
-    if (cat.apiKey === 'discipline') {
-      setDisciplineScore(Math.min(Math.max(0, val), cat.maxScore));
-    } else {
-      setJudgeScores((prev) => ({
-        ...prev,
-        [cat.apiKey]: Math.min(Math.max(0, val), cat.maxScore),
-      }));
-    }
-  };
-
-  const grandTotal =
-    judgeScores.ideaConcept +
-    judgeScores.choreography +
-    judgeScores.synchronization +
-    judgeScores.performance +
-    judgeScores.costume +
-    disciplineScore;
+  const grandTotal = criteriaData.reduce((sum, cat) => sum + getCategoryTotal(cat), 0);
 
   const teams = teamsRes?.result ?? [];
 
@@ -506,8 +475,6 @@ const Scoring = () => {
                     const key = `${cat.id}-${subIdx}`;
                     const isFirstRow = subIdx === 0;
                     const catBorderColor = `${cat.accent}26`;
-                    const catScore = getCategoryScore(cat);
-                    const hasScore = catScore > 0;
 
                     return (
                       <tr
@@ -537,6 +504,19 @@ const Scoring = () => {
                               }}
                             >
                               {cat.id}. {cat.name}
+                              <div style={{ marginTop: 8 }}>
+                                <span
+                                  style={{
+                                    fontFamily: "'Anton', sans-serif",
+                                    fontSize: 20,
+                                    color: getCategoryTotal(cat) > 0 ? cat.accent : 'var(--dim)',
+                                    textShadow: getCategoryTotal(cat) > 0 ? `0 0 10px ${cat.accent}44` : 'none',
+                                  }}
+                                >
+                                  {getCategoryTotal(cat)}
+                                </span>
+                                <span style={{ fontSize: 11, color: 'var(--dim)' }}> / {cat.maxScore}</span>
+                              </div>
                             </td>
                             <td
                               rowSpan={cat.subs.length}
@@ -581,108 +561,49 @@ const Scoring = () => {
                         <td style={{ ...tdBase, fontSize: 12, color: '#D04047' }}>
                           <span style={{ opacity: 0.85 }}>−</span> {sub.minus}
                         </td>
-                        {/* Category-level score input — spans all sub-rows */}
-                        {isFirstRow && (
-                          <td
-                            rowSpan={cat.subs.length}
-                            style={{ ...tdBase, textAlign: 'center', verticalAlign: 'middle', background: cat.accentGlow, borderBottom: `1px solid ${catBorderColor}` }}
-                          >
-                            {cat.evaluator === 'BTC' ? (
-                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                                <input
-                                  type="number"
-                                  min={0}
-                                  max={cat.maxScore}
-                                  step={0.5}
-                                  value={disciplineScore}
-                                  onChange={(e) => {
-                                    const val = parseFloat(e.target.value);
-                                    if (!isNaN(val)) setCategoryScore(cat, val);
-                                    else if (e.target.value === '') setDisciplineScore(0);
-                                  }}
-                                  placeholder={`/${cat.maxScore}`}
-                                  style={{
-                                    width: 64,
-                                    padding: '8px 6px',
-                                    borderRadius: 8,
-                                    border: `1px solid ${hasScore ? `${cat.accent}66` : 'rgba(255,255,255,.12)'}`,
-                                    background: hasScore ? `${cat.accent}0D` : 'rgba(255,255,255,.04)',
-                                    color: hasScore ? cat.accent : 'var(--dim)',
-                                    fontFamily: "'Anton', sans-serif",
-                                    fontSize: 18,
-                                    textAlign: 'center',
-                                    outline: 'none',
-                                    transition: 'border-color .2s, background .2s, box-shadow .2s',
-                                    boxShadow: hasScore ? `0 0 12px ${cat.accent}1A` : 'none',
-                                  }}
-                                  onFocus={(e) => {
-                                    e.target.style.borderColor = cat.accent;
-                                    e.target.style.boxShadow = `0 0 16px ${cat.accent}33`;
-                                  }}
-                                  onBlur={(e) => {
-                                    e.target.style.borderColor = hasScore ? `${cat.accent}66` : 'rgba(255,255,255,.12)';
-                                    e.target.style.boxShadow = hasScore ? `0 0 12px ${cat.accent}1A` : 'none';
-                                  }}
-                                />
-                                <button
-                                  onClick={handleSaveBtcScore}
-                                  disabled={!selectedTeamId || btcScoreMutation.isPending}
-                                  style={{
-                                    padding: '4px 10px',
-                                    borderRadius: 6,
-                                    border: '1px solid rgba(251,140,5,.4)',
-                                    background: 'rgba(251,140,5,.12)',
-                                    color: 'var(--orange)',
-                                    fontSize: 10,
-                                    fontWeight: 700,
-                                    letterSpacing: '.08em',
-                                    cursor: selectedTeamId ? 'pointer' : 'not-allowed',
-                                    opacity: selectedTeamId ? 1 : 0.5,
-                                    whiteSpace: 'nowrap',
-                                  }}
-                                >
-                                  {btcScoreMutation.isPending ? 'Đang lưu...' : 'Lưu BTC'}
-                                </button>
-                              </div>
-                            ) : (
+                        <td style={{ ...tdBase, textAlign: 'center', verticalAlign: 'middle' }}>
+                          {(() => {
+                            const subVal = getSubScore(cat.id, subIdx);
+                            const hasSub = subVal > 0;
+                            return (
                               <input
                                 type="number"
                                 min={0}
-                                max={cat.maxScore}
+                                max={sub.maxScore}
                                 step={0.5}
-                                value={catScore}
+                                value={subVal || ''}
                                 onChange={(e) => {
                                   const val = parseFloat(e.target.value);
-                                  if (!isNaN(val)) setCategoryScore(cat, val);
-                                  else if (e.target.value === '') setCategoryScore(cat, 0);
+                                  if (!isNaN(val)) setSubScore(cat.id, subIdx, val, sub.maxScore);
+                                  else if (e.target.value === '') setSubScore(cat.id, subIdx, 0, sub.maxScore);
                                 }}
-                                placeholder={`/${cat.maxScore}`}
+                                placeholder={`/${sub.maxScore}`}
                                 style={{
                                   width: 64,
                                   padding: '8px 6px',
                                   borderRadius: 8,
-                                  border: `1px solid ${hasScore ? `${cat.accent}66` : 'rgba(255,255,255,.12)'}`,
-                                  background: hasScore ? `${cat.accent}0D` : 'rgba(255,255,255,.04)',
-                                  color: hasScore ? cat.accent : 'var(--dim)',
+                                  border: `1px solid ${hasSub ? `${cat.accent}66` : 'rgba(255,255,255,.12)'}`,
+                                  background: hasSub ? `${cat.accent}0D` : 'rgba(255,255,255,.04)',
+                                  color: hasSub ? cat.accent : 'var(--dim)',
                                   fontFamily: "'Anton', sans-serif",
                                   fontSize: 18,
                                   textAlign: 'center',
                                   outline: 'none',
                                   transition: 'border-color .2s, background .2s, box-shadow .2s',
-                                  boxShadow: hasScore ? `0 0 12px ${cat.accent}1A` : 'none',
+                                  boxShadow: hasSub ? `0 0 12px ${cat.accent}1A` : 'none',
                                 }}
                                 onFocus={(e) => {
                                   e.target.style.borderColor = cat.accent;
                                   e.target.style.boxShadow = `0 0 16px ${cat.accent}33`;
                                 }}
                                 onBlur={(e) => {
-                                  e.target.style.borderColor = hasScore ? `${cat.accent}66` : 'rgba(255,255,255,.12)';
-                                  e.target.style.boxShadow = hasScore ? `0 0 12px ${cat.accent}1A` : 'none';
+                                  e.target.style.borderColor = hasSub ? `${cat.accent}66` : 'rgba(255,255,255,.12)';
+                                  e.target.style.boxShadow = hasSub ? `0 0 12px ${cat.accent}1A` : 'none';
                                 }}
                               />
-                            )}
-                          </td>
-                        )}
+                            );
+                          })()}
+                        </td>
                         {isFirstRow && (
                           <td
                             rowSpan={cat.subs.length}
@@ -782,7 +703,7 @@ const Scoring = () => {
                               textShadow: `0 0 10px ${cat.accent}44`,
                             }}
                           >
-                            {getCategoryScore(cat)}
+                            {getCategoryTotal(cat)}
                           </span>
                           <span style={{ fontSize: 11, color: 'var(--dim)' }}>/ {cat.maxScore}</span>
                         </div>
@@ -839,8 +760,27 @@ const Scoring = () => {
             </table>
           </div>
 
-          {/* Save BGK scores button */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
+          {/* Save buttons */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 20 }}>
+            <button
+              onClick={handleSaveBtcScore}
+              disabled={!selectedTeamId || btcScoreMutation.isPending}
+              style={{
+                padding: '12px 32px',
+                borderRadius: 10,
+                border: '1px solid rgba(251,140,5,.4)',
+                background: selectedTeamId ? 'rgba(251,140,5,.12)' : 'rgba(255,255,255,.04)',
+                color: selectedTeamId ? 'var(--orange)' : 'var(--dim)',
+                fontFamily: "'Anton', sans-serif",
+                fontSize: 15,
+                letterSpacing: '.1em',
+                cursor: selectedTeamId ? 'pointer' : 'not-allowed',
+                opacity: selectedTeamId ? 1 : 0.6,
+                transition: 'all .2s',
+              }}
+            >
+              {btcScoreMutation.isPending ? 'Đang lưu...' : 'LƯU ĐIỂM BTC'}
+            </button>
             <button
               onClick={handleSaveJudgeScores}
               disabled={!selectedTeamId || judgeScoreMutation.isPending}
