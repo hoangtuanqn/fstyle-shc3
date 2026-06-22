@@ -366,79 +366,6 @@ const ShowcaseNight = () => {
               )}
             </div>
 
-            {/* Judges section */}
-            <div
-              style={{
-                fontSize: 12,
-                fontWeight: 800,
-                letterSpacing: '.2em',
-                color: 'var(--orange)',
-                textTransform: 'uppercase',
-                marginBottom: 18,
-              }}
-            >
-              Ban Giám Khảo
-            </div>
-
-            <div
-              className="judges-grid"
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}
-            >
-              {judges.map((j, i) => (
-                <div
-                  key={j.name}
-                  className="rv"
-                  onMouseEnter={() => setHoveredJudge(i)}
-                  onMouseLeave={() => setHoveredJudge(null)}
-                  style={{
-                    borderRadius: 14,
-                    overflow: 'hidden',
-                    background: 'rgba(255,255,255,.03)',
-                    border: '1px solid rgba(255,255,255,.07)',
-                    transform: hoveredJudge === i ? 'translateY(-6px)' : 'translateY(0)',
-                    transition: 'transform .4s cubic-bezier(.22,.8,.42,1), box-shadow .4s',
-                    transitionDelay: `${i * 0.1}s`,
-                    boxShadow: hoveredJudge === i ? '0 12px 32px rgba(254,230,34,.08)' : 'none',
-                  }}
-                >
-                  <div style={{ aspectRatio: '1 / 1', overflow: 'hidden', background: 'rgba(255,255,255,.03)' }}>
-                    <img
-                      src={j.img}
-                      alt={j.name}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        objectPosition: 'center top',
-                        filter: hoveredJudge === i ? 'grayscale(0%)' : 'grayscale(30%)',
-                        transition: 'filter .4s, transform .4s',
-                        transform: hoveredJudge === i ? 'scale(1.05)' : 'scale(1)',
-                        display: 'block',
-                      }}
-                    />
-                  </div>
-                  <div style={{ padding: '14px 12px 16px', textAlign: 'center' }}>
-                    <div style={{ fontFamily: 'Anton, sans-serif', fontSize: 18, color: 'var(--text)' }}>
-                      {j.name}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 9,
-                        fontWeight: 800,
-                        letterSpacing: '.16em',
-                        textTransform: 'uppercase',
-                        color: 'var(--orange)',
-                        margin: '6px 0 3px',
-                      }}
-                    >
-                      {j.role}
-                    </div>
-                    <div style={{ fontSize: 11.5, color: 'var(--dim)' }}>{j.crew}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
             {/* Vote box */}
             <div
               style={{
@@ -465,6 +392,87 @@ const ShowcaseNight = () => {
                 Hãy cùng cổ vũ cho team bạn yêu thích nhất!
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* ── JUDGES — full-width centered ── */}
+        <div style={{ marginTop: 64, textAlign: 'center' }} className="rv">
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 800,
+              letterSpacing: '.2em',
+              color: 'var(--orange)',
+              textTransform: 'uppercase',
+              marginBottom: 18,
+            }}
+          >
+            Ban Giám Khảo
+          </div>
+
+          <div
+            className="judges-grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: 16,
+              maxWidth: 720,
+              margin: '0 auto',
+            }}
+          >
+            {judges.map((j, i) => (
+              <div
+                key={j.name}
+                className="rv"
+                onMouseEnter={() => setHoveredJudge(i)}
+                onMouseLeave={() => setHoveredJudge(null)}
+                style={{
+                  borderRadius: 14,
+                  overflow: 'hidden',
+                  background: 'rgba(255,255,255,.03)',
+                  border: '1px solid rgba(255,255,255,.07)',
+                  transform: hoveredJudge === i ? 'translateY(-6px)' : 'translateY(0)',
+                  transition: 'transform .4s cubic-bezier(.22,.8,.42,1), box-shadow .4s',
+                  transitionDelay: `${i * 0.1}s`,
+                  boxShadow: hoveredJudge === i ? '0 12px 32px rgba(254,230,34,.08)' : 'none',
+                }}
+              >
+                <div style={{ aspectRatio: '1 / 1', overflow: 'hidden', background: 'rgba(255,255,255,.03)' }}>
+                  <img
+                    src={j.img}
+                    alt={j.name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center top',
+                      filter: hoveredJudge === i ? 'grayscale(0%)' : 'grayscale(30%)',
+                      transition: 'filter .4s, transform .4s',
+                      transform: hoveredJudge === i ? 'scale(1.05)' : 'scale(1)',
+                      display: 'block',
+                    }}
+                  />
+                </div>
+                <div style={{ padding: '14px 12px 16px', textAlign: 'center' }}>
+                  <div style={{ fontFamily: 'Anton, sans-serif', fontSize: 18, color: 'var(--text)' }}>
+                    {j.name}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 9,
+                      fontWeight: 800,
+                      letterSpacing: '.16em',
+                      textTransform: 'uppercase',
+                      color: 'var(--orange)',
+                      margin: '6px 0 3px',
+                    }}
+                  >
+                    {j.role}
+                  </div>
+                  <div style={{ fontSize: 11.5, color: 'var(--dim)' }}>{j.crew}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
