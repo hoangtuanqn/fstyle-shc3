@@ -24,7 +24,7 @@ const mainAwards: MainAward[] = [
     prize: '1.500.000 VND',
     color: '#FEE622',
     borderColor: 'rgba(254,230,34,.3)',
-    condition: 'Điểm TB cao nhất — 03 BGK',
+    condition: 'Điểm TB cao nhất từ 03 BGK',
   },
   {
     medal: '/assets/images/silver-medal.png',
@@ -60,7 +60,7 @@ const subAwards: SubAward[] = [
   {
     icon: '🔥',
     name: 'Nỗ Lực',
-    qty: '04 giải — Never Stop Trying!',
+    qty: '04 giải · Never Stop Trying!',
     desc: 'Chuyên cần 30% + BTC 30% + thành viên vote 40%. Mỗi team 1 người.',
     highlight: true,
   },

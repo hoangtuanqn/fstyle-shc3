@@ -99,8 +99,8 @@ const Concept = () => {
             margin: '0 auto',
           }}
         >
-          Bốn đội thi hiện thân bốn Kỵ Sĩ Khải Huyền — mỗi đội mang một trạng thái cảm xúc tận cùng, kể câu chuyện về sự
-          sụp đổ và tái sinh của con người qua ngôn ngữ vũ đạo.
+          Bốn đội thi hiện thân bốn Kỵ Sĩ Khải Huyền, mỗi đội mang một trạng thái cảm xúc tận cùng, kể câu chuyện về
+          sự sụp đổ và tái sinh qua ngôn ngữ vũ đạo.
         </p>
 
         <img
@@ -157,10 +157,10 @@ const Concept = () => {
             ✦ NGUỒN CẢM HỨNG: BOOK OF REVELATION
           </h3>
           <p style={{ fontSize: '14.5px', lineHeight: 1.85, color: 'var(--dim)' }}>
-            Book of Revelation (Sách Khải Huyền) là chương cuối của Kinh Thánh Tân Ước, kể về ngày tận thế qua những hình
-            ảnh biểu tượng đầy sức mạnh. Bảy Ấn (Seven Seals) lần lượt được mở ra, báo hiệu sự phán xét cuối cùng. Khi
-            bốn Ấn đầu tiên được mở, Tứ Kỵ Sĩ Khải Huyền (Four Horsemen of the Apocalypse) xuất hiện — hiện thân cho
-            những thử thách tận cùng mà nhân loại phải đối mặt trước khi bước vào sự tái sinh.
+            Concept lấy cảm hứng từ Book of Revelation, xoay quanh Seven Seals, bảy ấn phong giữ cân bằng thế giới,
+            dần bị con người phá vỡ bởi tham lam và xung đột, kéo theo các kiếp nạn phản ánh sự sụp đổ nội tại. Khi bốn
+            ấn đầu mở ra, Four Horsemen of the Apocalypse xuất hiện như những thực thể thanh lọc, đẩy thế giới đến giới
+            hạn cuối cùng. Sụp đổ không phải là kết thúc, mà là khởi đầu cho tái sinh và một vòng cân bằng mới.
           </p>
         </div>
       </div>

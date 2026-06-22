@@ -133,8 +133,8 @@ const FCode = () => {
                 maxWidth: 620,
               }}
             >
-              CLB F-Code đóng vai trò đơn vị kiểm toán độc lập và cung cấp nền tảng công nghệ chấm điểm
-              cho Heatwave Showcase #3, đảm bảo kết quả minh bạch và công bằng tuyệt đối.
+              Đơn vị Kiểm toán độc lập, cung cấp nền tảng chấm điểm trực tuyến cho BGK nhập điểm trực tiếp.
+              Toàn bộ nhận xét và dữ liệu đánh giá được lưu trữ, đảm bảo minh bạch và công bằng tuyệt đối.
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
