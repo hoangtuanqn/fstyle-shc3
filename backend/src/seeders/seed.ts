@@ -85,6 +85,9 @@ async function seed() {
       role: "BTC_FSTYLE" as const,
     },
   ];
+  const mcUsers = [
+    { name: "Trấn Thành", email: "mc@gmail.com", role: "MC" as const },
+  ];
 
   const shiroMembers = [
     { name: "Huỳnh Minh Quân", email: "huynhminhquan9630@gmail.com" },
@@ -147,6 +150,11 @@ async function seed() {
       password: hashedPassword,
     })),
     ...btcFstyleUsers.map((u) => ({
+      ...u,
+      teamId: null,
+      password: hashedPassword,
+    })),
+    ...mcUsers.map((u) => ({
       ...u,
       teamId: null,
       password: hashedPassword,
