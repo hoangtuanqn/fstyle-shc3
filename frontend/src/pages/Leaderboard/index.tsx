@@ -34,7 +34,7 @@ const Leaderboard = () => {
 
   const rankings = data?.result?.rankings ?? [];
   const awards = data?.result?.awards ?? [];
-  const hasAny = rankings.length > 0 || awards.some((a) => a.winnerName);
+  const hasAny = rankings.length > 0 || awards.some((a) => a.winners.length > 0);
 
   if (isLoading)
     return (
@@ -144,22 +144,29 @@ const Leaderboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {awards.map((award) => (
-                      <tr key={award.id}>
-                        <td style={{ ...tdStyle, fontWeight: 700 }}>{award.name}</td>
-                        <td
-                          style={{
-                            ...tdStyle,
-                            fontFamily: award.winnerName ? "'Anton', sans-serif" : undefined,
-                            fontSize: award.winnerName ? 20 : undefined,
-                            letterSpacing: award.winnerName ? '.03em' : undefined,
-                            color: award.winnerName ? 'var(--text)' : 'var(--dim)',
-                          }}
-                        >
-                          {award.winnerName ?? 'Chưa công bố'}
-                        </td>
-                      </tr>
-                    ))}
+                    {awards.map((award) => {
+                      const hasWinners = award.winners.length > 0;
+                      const winnerNames = award.winners
+                        .map((w) => w.winnerName)
+                        .filter(Boolean)
+                        .join(', ');
+                      return (
+                        <tr key={award.id}>
+                          <td style={{ ...tdStyle, fontWeight: 700 }}>{award.name}</td>
+                          <td
+                            style={{
+                              ...tdStyle,
+                              fontFamily: hasWinners ? "'Anton', sans-serif" : undefined,
+                              fontSize: hasWinners ? 20 : undefined,
+                              letterSpacing: hasWinners ? '.03em' : undefined,
+                              color: hasWinners ? 'var(--text)' : 'var(--dim)',
+                            }}
+                          >
+                            {hasWinners ? winnerNames : 'Chưa công bố'}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
