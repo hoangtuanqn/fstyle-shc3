@@ -1,7 +1,7 @@
 import { privateApi } from '~/utils/axiosInstance';
 
 import type { ApiResponse } from '~/types/auth';
-import type { CandidateType, VoteType } from '~/types/voting';
+import type { CandidateType, VoteLeaderboardData, VoteType } from '~/types/voting';
 
 class VotingApi {
   static getCandidates = async () => {
@@ -21,6 +21,11 @@ class VotingApi {
 
   static removeVote = async (candidateId: string) => {
     const response = await privateApi.delete<ApiResponse<null>>(`/voting/vote/${candidateId}`);
+    return response.data;
+  };
+
+  static getVoteLeaderboard = async () => {
+    const response = await privateApi.get<ApiResponse<VoteLeaderboardData>>('/voting/leaderboard');
     return response.data;
   };
 }

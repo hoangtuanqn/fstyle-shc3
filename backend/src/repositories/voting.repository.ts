@@ -72,6 +72,26 @@ class VotingRepository {
       .delete(effortVotes)
       .where(and(eq(effortVotes.voterId, voterId), eq(effortVotes.candidateId, candidateId)));
   };
+
+  findVoteLeaderboard = async () => {
+    const candidates = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        teamId: users.teamId,
+        teamName: teams.name,
+        teamColor: teams.color,
+        teamDisplayOrder: teams.displayOrder,
+        voteCount: sql<number>`(SELECT COUNT(*) FROM effort_votes WHERE candidate_id = ${users.id})`,
+      })
+      .from(users)
+      .innerJoin(teams, eq(users.teamId, teams.id))
+      .where(eq(users.role, RoleType.MEMBER))
+      .orderBy(teams.displayOrder);
+
+    const totalVotes = candidates.reduce((sum, c) => sum + Number(c.voteCount), 0);
+    return { candidates, totalVotes };
+  };
 }
 
 export default new VotingRepository();

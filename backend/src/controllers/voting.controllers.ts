@@ -34,6 +34,15 @@ class VotingController {
     }
   };
 
+  getVoteLeaderboard = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await votingService.getVoteLeaderboard();
+      res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Thành công!', result }));
+    } catch (err) {
+      next(err);
+    }
+  };
+
   removeVote = async (req: Request, res: Response, next: NextFunction) => {
     try {
       await votingService.removeVote(req.userId!, req.params.candidateId as string);

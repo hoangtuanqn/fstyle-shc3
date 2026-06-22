@@ -12,3 +12,18 @@ export type VoteType = {
   candidateId: string;
   createdAt: string;
 };
+
+export type VoteLeaderboardCandidate = {
+  id: string;
+  name: string;
+  teamId: string;
+  teamName: string;
+  teamColor: string;
+  teamDisplayOrder: number;
+  voteCount: number;
+};
+
+export type VoteLeaderboardData = {
+  candidates: VoteLeaderboardCandidate[];
+  totalVotes: number;
+};
