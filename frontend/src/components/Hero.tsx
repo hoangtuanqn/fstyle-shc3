@@ -127,8 +127,62 @@ const Hero = () => {
             animation: 'fu .9s .5s both',
           }}
         >
-          The category is DANCE or APOCALYPSE
+          Heatwave Showcase mùa 3: Apocalypse - Nơi sinh viên kể chuyện bằng ngôn ngữ vũ đạo.
         </p>
+
+        {/* 3b. Featured on HTV badge */}
+        <a
+          href="https://htv.vn/heatwave-showcase-mua-3-apocalypse-noi-sinh-vien-ke-chuyen-bang-ngon-ngu-vu-dao-222260611214349823.htm"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="htv-badge"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 10,
+            marginTop: 16,
+            padding: '8px 20px 8px 12px',
+            background: 'rgba(0,0,0,.5)',
+            border: '1px solid rgba(254,230,34,.2)',
+            borderRadius: 100,
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            textDecoration: 'none',
+            animation: 'fu .9s .6s both',
+            transition: 'border-color .3s, box-shadow .3s',
+          }}
+        >
+          <img
+            src="/assets/images/htv.png"
+            alt="HTV"
+            style={{
+              height: 22,
+              width: 'auto',
+              objectFit: 'contain',
+              flexShrink: 0,
+            }}
+          />
+          <span
+            style={{
+              width: 1,
+              height: 16,
+              background: 'rgba(254,230,34,.25)',
+              flexShrink: 0,
+            }}
+          />
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: '.12em',
+              textTransform: 'uppercase',
+              color: 'var(--dim)',
+            }}
+          >
+            Được đưa tin trên{' '}
+            <span style={{ color: 'var(--gold)' }}>HTV</span>
+          </span>
+        </a>
 
         {/* 4. Meta bar */}
         <div
@@ -273,6 +327,10 @@ const Hero = () => {
       </div>
 
       <style>{`
+        .htv-badge:hover {
+          border-color: rgba(254,230,34,.45) !important;
+          box-shadow: 0 0 20px rgba(254,230,34,.12), 0 0 40px rgba(254,230,34,.06);
+        }
         @media (max-width: 600px) {
           .hero-meta {
             flex-direction: column;
