@@ -16,6 +16,7 @@ const links = [
 const allPageLinks = [
   { to: '/leaderboard', label: 'Leaderboard', roles: [RoleType.ADMIN, RoleType.MC] },
   { to: '/awards', label: 'BTC', roles: [RoleType.ADMIN, RoleType.BTC_FSTYLE] },
+  { to: '/scoring', label: 'Scoring', roles: [RoleType.ADMIN] },
 ];
 
 const Nav = () => {
