@@ -1,9 +1,8 @@
-import type { NextFunction, Request, Response } from 'express';
-
 import { HTTP_STATUS } from '~/constants/httpStatus';
 import { ResponseClient } from '~/rules/response';
 import awardService from '~/services/award.service';
 
+import type { NextFunction, Request, Response } from 'express';
 import type { RoleType } from '~/constants/enums';
 
 class AwardController {

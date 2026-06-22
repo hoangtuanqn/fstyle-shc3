@@ -29,6 +29,7 @@ const disabledInputStyle: CSSProperties = {
   cursor: 'not-allowed',
 };
 
+// Must match BTC_FSTYLE_EDITABLE_RANGE in backend/src/services/award.service.ts
 const canEdit = (role: string, displayOrder: number): boolean => {
   if (role === RoleType.ADMIN) return true;
   if (role === RoleType.BTC_FSTYLE) return displayOrder >= 4 && displayOrder <= 8;

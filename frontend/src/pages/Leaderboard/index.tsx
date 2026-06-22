@@ -145,24 +145,24 @@ const Leaderboard = () => {
                   </thead>
                   <tbody>
                     {awards.map((award) => {
-                      const hasWinners = award.winners.length > 0;
                       const winnerNames = award.winners
                         .map((w) => w.winnerName)
                         .filter(Boolean)
                         .join(', ');
+                      const hasDisplay = winnerNames.length > 0;
                       return (
                         <tr key={award.id}>
                           <td style={{ ...tdStyle, fontWeight: 700 }}>{award.name}</td>
                           <td
                             style={{
                               ...tdStyle,
-                              fontFamily: hasWinners ? "'Anton', sans-serif" : undefined,
-                              fontSize: hasWinners ? 20 : undefined,
-                              letterSpacing: hasWinners ? '.03em' : undefined,
-                              color: hasWinners ? 'var(--text)' : 'var(--dim)',
+                              fontFamily: hasDisplay ? "'Anton', sans-serif" : undefined,
+                              fontSize: hasDisplay ? 20 : undefined,
+                              letterSpacing: hasDisplay ? '.03em' : undefined,
+                              color: hasDisplay ? 'var(--text)' : 'var(--dim)',
                             }}
                           >
-                            {hasWinners ? winnerNames : 'Chưa công bố'}
+                            {hasDisplay ? winnerNames : 'Chưa công bố'}
                           </td>
                         </tr>
                       );
