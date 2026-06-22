@@ -56,15 +56,28 @@ export const awards = mysqlTable('awards', {
   name: varchar('name', { length: 255 }).notNull(),
   type: mysqlEnum('type', ['AUTO', 'MANUAL']).notNull(),
   winnerType: mysqlEnum('winner_type', ['TEAM', 'INDIVIDUAL']).notNull(),
-  winnerTeamId: varchar('winner_team_id', { length: 36 }).references(() => teams.id),
-  winnerUserId: varchar('winner_user_id', { length: 36 }).references(() => users.id),
-  winnerName: varchar('winner_name', { length: 255 }),
   quantity: tinyint('quantity').notNull().default(1),
   prize: varchar('prize', { length: 500 }),
   displayOrder: tinyint('display_order').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
+
+// ── Award Winners ─────────────────────────────────────
+export const awardWinners = mysqlTable(
+  'award_winners',
+  {
+    id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => crypto.randomUUID()),
+    awardId: varchar('award_id', { length: 36 }).notNull().references(() => awards.id),
+    slot: tinyint('slot').notNull(),
+    winnerTeamId: varchar('winner_team_id', { length: 36 }).references(() => teams.id),
+    winnerUserId: varchar('winner_user_id', { length: 36 }).references(() => users.id),
+    winnerName: varchar('winner_name', { length: 255 }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+  },
+  (table) => [uniqueIndex('award_slot_idx').on(table.awardId, table.slot)],
+);
 
 // ── Effort Votes (Giải Nỗ lực) ────────────────────────
 // Rules: MEMBER → max 2 votes in own team, no self-vote
