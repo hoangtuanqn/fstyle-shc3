@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import type { CSSProperties } from 'react';
 
 import AwardApi from '~/api-requests/award.requests';
 import { RoleType } from '~/constants/enums';
 import useAuth from '~/hooks/useAuth';
 import useSocket from '~/hooks/useSocket';
 
-import type { UpdateAwardInput } from '~/types/award';
+import type { CSSProperties } from 'react';
+import type { AwardType, AwardWinner } from '~/types/award';
 
 const inputStyle: CSSProperties = {
   width: '100%',
@@ -23,12 +23,24 @@ const inputStyle: CSSProperties = {
   transition: 'border-color .2s, box-shadow .2s',
 };
 
+const disabledInputStyle: CSSProperties = {
+  ...inputStyle,
+  opacity: 0.4,
+  cursor: 'not-allowed',
+};
+
+const canEdit = (role: string, displayOrder: number): boolean => {
+  if (role === RoleType.ADMIN) return true;
+  if (role === RoleType.BTC_FSTYLE) return displayOrder >= 4 && displayOrder <= 8;
+  return false;
+};
 
 const Awards = () => {
   useSocket();
 
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const userRole = user?.role ?? '';
 
   const { data: awardsRes, isLoading } = useQuery({
     queryKey: ['awards'],
@@ -38,11 +50,16 @@ const Awards = () => {
 
   const [drafts, setDrafts] = useState<Record<string, string>>({});
 
-  const getDraft = (awardId: string, fallback: string | null) =>
-    drafts[awardId] !== undefined ? drafts[awardId] : (fallback ?? '');
+  const getDraft = (awardId: string, slot: number, winners: AwardWinner[]) => {
+    const key = `${awardId}-${slot}`;
+    if (drafts[key] !== undefined) return drafts[key];
+    const existing = winners.find((w) => w.slot === slot);
+    return existing?.winnerName ?? '';
+  };
 
-  const setDraft = (awardId: string, value: string) =>
-    setDrafts((prev) => ({ ...prev, [awardId]: value }));
+  const setDraft = (awardId: string, slot: number, value: string) => {
+    setDrafts((prev) => ({ ...prev, [`${awardId}-${slot}`]: value }));
+  };
 
   const updateMutation = useMutation({
     mutationFn: AwardApi.updateAward,
@@ -52,8 +69,7 @@ const Awards = () => {
     },
     onError: (err: unknown) => {
       toast.error(
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-          'Có lỗi xảy ra!',
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Có lỗi xảy ra!',
       );
     },
   });
@@ -66,18 +82,53 @@ const Awards = () => {
     },
     onError: (err: unknown) => {
       toast.error(
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-          'Có lỗi xảy ra!',
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Có lỗi xảy ra!',
       );
     },
   });
 
-  const handleSaveAward = (awardId: string, data: UpdateAwardInput) => {
-    updateMutation.mutate({ awardId, data });
+  const handleSaveAward = (award: AwardType) => {
+    const winners: AwardWinner[] = [];
+    for (let slot = 1; slot <= award.quantity; slot++) {
+      const name = getDraft(award.id, slot, award.winners).trim();
+      if (name) {
+        winners.push({ slot, winnerTeamId: null, winnerUserId: null, winnerName: name });
+      }
+    }
+    if (winners.length === 0) {
+      toast.error('Cần nhập ít nhất 1 người/đội nhận giải!');
+      return;
+    }
+    updateMutation.mutate({ awardId: award.id, data: { winners } });
   };
 
   const autoAwards = awards.filter((a) => a.type === 'AUTO');
   const manualAwards = awards.filter((a) => a.type === 'MANUAL');
+
+  const renderWinnerInputs = (award: AwardType) => {
+    const editable = canEdit(userRole, award.displayOrder);
+    const slots = Array.from({ length: award.quantity }, (_, i) => i + 1);
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
+        {slots.map((slot) => (
+          <input
+            key={slot}
+            type="text"
+            placeholder={
+              award.winnerType === 'TEAM'
+                ? `Nhập tên đội${award.quantity > 1 ? ` (${slot}/${award.quantity})` : ''}...`
+                : `Nhập tên${award.quantity > 1 ? ` (${slot}/${award.quantity})` : ''}...`
+            }
+            value={getDraft(award.id, slot, award.winners)}
+            onChange={(e) => setDraft(award.id, slot, e.target.value)}
+            disabled={!editable}
+            style={editable ? inputStyle : disabledInputStyle}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div style={{ minHeight: '100vh', paddingTop: 108 }}>
@@ -130,40 +181,49 @@ const Awards = () => {
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                     {manualAwards.map((award) => (
-                      <div key={award.id} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                        <div style={{ minWidth: 160, fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>
+                      <div key={award.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                        <div
+                          style={{
+                            minWidth: 160,
+                            fontSize: 13,
+                            fontWeight: 700,
+                            color: 'var(--text)',
+                            paddingTop: 10,
+                          }}
+                        >
                           {award.name}
+                          {award.quantity > 1 && (
+                            <span style={{ fontSize: 11, color: 'var(--dim)', fontWeight: 400 }}>
+                              {' '}
+                              ×{award.quantity}
+                            </span>
+                          )}
                           {award.prize && (
                             <div style={{ fontSize: 11, color: 'var(--dim)', fontWeight: 400 }}>{award.prize}</div>
                           )}
                         </div>
-                        <input
-                          type="text"
-                          placeholder={award.winnerType === 'TEAM' ? 'Nhập tên đội...' : 'Nhập tên...'}
-                          value={getDraft(award.id, award.winnerName)}
-                          onChange={(e) => setDraft(award.id, e.target.value)}
-                          style={inputStyle}
-                        />
-                        <button
-                          onClick={() =>
-                            handleSaveAward(award.id, { winnerName: getDraft(award.id, award.winnerName) })
-                          }
-                          disabled={updateMutation.isPending}
-                          style={{
-                            padding: '10px 18px',
-                            borderRadius: 8,
-                            border: 'none',
-                            background: 'var(--gold)',
-                            color: '#050301',
-                            fontFamily: "'Montserrat', sans-serif",
-                            fontSize: 11,
-                            fontWeight: 800,
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          Lưu
-                        </button>
+                        {renderWinnerInputs(award)}
+                        {canEdit(userRole, award.displayOrder) && (
+                          <button
+                            onClick={() => handleSaveAward(award)}
+                            disabled={updateMutation.isPending}
+                            style={{
+                              padding: '10px 18px',
+                              borderRadius: 8,
+                              border: 'none',
+                              background: 'var(--gold)',
+                              color: '#050301',
+                              fontFamily: "'Montserrat', sans-serif",
+                              fontSize: 11,
+                              fontWeight: 800,
+                              cursor: 'pointer',
+                              whiteSpace: 'nowrap',
+                              marginTop: 0,
+                            }}
+                          >
+                            Lưu
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -199,22 +259,40 @@ const Awards = () => {
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                     {autoAwards.map((award) => (
-                      <div key={award.id} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                        <div style={{ minWidth: 160, fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>
+                      <div key={award.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                        <div
+                          style={{
+                            minWidth: 160,
+                            fontSize: 13,
+                            fontWeight: 700,
+                            color: 'var(--text)',
+                            paddingTop: 4,
+                          }}
+                        >
                           {award.name}
+                          {award.quantity > 1 && (
+                            <span style={{ fontSize: 11, color: 'var(--dim)', fontWeight: 400 }}>
+                              {' '}
+                              ×{award.quantity}
+                            </span>
+                          )}
                           {award.prize && (
                             <div style={{ fontSize: 11, color: 'var(--dim)', fontWeight: 400 }}>{award.prize}</div>
                           )}
                         </div>
-                        <div
-                          style={{
-                            flex: 1,
-                            fontSize: 14,
-                            color: award.winnerName ? 'var(--gold)' : 'var(--dim)',
-                            fontStyle: award.winnerName ? 'normal' : 'italic',
-                          }}
-                        >
-                          {award.winnerName ?? 'Chưa tính'}
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                          {award.winners.length > 0 ? (
+                            award.winners.map((w) => (
+                              <div key={w.slot} style={{ fontSize: 14, color: 'var(--gold)' }}>
+                                {award.quantity > 1 && (
+                                  <span style={{ color: 'var(--dim)', fontSize: 11 }}>{w.slot}. </span>
+                                )}
+                                {w.winnerName}
+                              </div>
+                            ))
+                          ) : (
+                            <div style={{ fontSize: 14, color: 'var(--dim)', fontStyle: 'italic' }}>Chưa tính</div>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -224,7 +302,7 @@ const Awards = () => {
 
               {/* Actions */}
               <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-                {user?.role === RoleType.ADMIN && (
+                {userRole === RoleType.ADMIN && (
                   <button
                     type="button"
                     onClick={() => autoCalcMutation.mutate()}
@@ -258,7 +336,6 @@ const Awards = () => {
         @media (max-width: 600px) {
           .con { padding: 0 16px !important; }
         }
-        select option:disabled { opacity: 0.5; }
       `}</style>
     </div>
   );
