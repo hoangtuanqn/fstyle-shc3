@@ -18,7 +18,7 @@ const partners: Partner[] = [
     logoBg: 'white',
     role: 'Đối tác Công nghệ',
     roleColor: 'var(--fcode)',
-    desc: 'Cung cấp nền tảng chấm điểm & Kiểm toán độc lập kết quả.',
+    desc: 'Cung cấp nền tảng chấm điểm trực tiếp & Đơn vị Kiểm toán độc lập, đảm bảo tính minh bạch và công bằng.',
     highlight: true,
     hoverGlow: 'rgba(46,204,113,.2)',
   },
@@ -28,7 +28,7 @@ const partners: Partner[] = [
     logoBg: '#FEE622',
     role: 'Truyền Thông & Hình Ảnh',
     roleColor: '#FEE622',
-    desc: 'Phụ trách sản xuất hình ảnh, nhân sự & thiết bị quay/chụp.',
+    desc: 'Phụ trách sản xuất hình ảnh, cung cấp nhân sự và thiết bị quay/chụp trong suốt chương trình.',
     hoverGlow: 'rgba(254,230,34,.15)',
   },
   {
@@ -37,7 +37,7 @@ const partners: Partner[] = [
     logoBg: '#5b2d8a',
     role: 'Vận Hành Onsite',
     roleColor: '#b87de8',
-    desc: 'Cung cấp nhân sự PG, hậu cần & điều phối toàn bộ sự kiện.',
+    desc: 'Cung cấp nhân sự vận hành onsite, bao gồm PG, hậu cần và điều phối sự kiện.',
     hoverGlow: 'rgba(120,60,180,.15)',
   },
   {
@@ -46,7 +46,7 @@ const partners: Partner[] = [
     logoBg: 'white',
     role: 'Cộng Đồng Tình Nguyện',
     roleColor: '#ff6090',
-    desc: 'Cộng đồng Sinh viên Tình nguyện hỗ trợ vận hành sự kiện.',
+    desc: 'Cộng đồng Sinh viên Tình nguyện hỗ trợ vận hành, xử lý tình huống phát sinh trong ngày tổ chức.',
     hoverGlow: 'rgba(255,80,120,.1)',
   },
 ];

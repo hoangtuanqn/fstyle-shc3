@@ -21,7 +21,7 @@ const teams: Team[] = [
     name: 'SHIRO KURO',
     concept: 'EMPTINESS',
     color: 'var(--shiro)',
-    desc: 'Trống rỗng — khi mọi sắc màu tan biến, chỉ còn lại đen và trắng. Sự hư vô thuần khiết nhất.',
+    desc: 'Trống rỗng. Khi mọi sắc màu tan biến, chỉ còn lại đen và trắng. Sự hư vô thuần khiết nhất.',
     image: '/assets/pptx-images/image10.png',
     avatar: '/assets/images/avatar-emptiness.png',
     weapon: { img: '/assets/images/vuokhi-can.png', name: 'Cân Công Lý' },
@@ -34,7 +34,7 @@ const teams: Team[] = [
     name: 'APEX AURA',
     concept: 'INNER CONFLICT',
     color: 'var(--apex)',
-    desc: 'Mâu thuẫn nội tâm — ngọn lửa đỏ thiêu đốt từ bên trong. Cuộc chiến không hồi kết với chính mình.',
+    desc: 'Mâu thuẫn nội tâm. Ngọn lửa đỏ thiêu đốt từ bên trong, cuộc chiến không hồi kết với chính mình.',
     image: '/assets/pptx-images/image11.png',
     avatar: '/assets/images/avatar-inner-conflict.png',
     weapon: { img: '/assets/images/vuokhi-kiem.png', name: 'Huyết Kiếm' },
@@ -47,7 +47,7 @@ const teams: Team[] = [
     name: 'SLATT',
     concept: 'AWAKENING',
     color: 'var(--slatt)',
-    desc: 'Thức tỉnh — ánh sáng xanh lam xuyên qua màn đêm hỗn loạn. Khoảnh khắc bừng sáng sau cơn mê.',
+    desc: 'Thức tỉnh. Ánh sáng xanh lam xuyên qua màn đêm hỗn loạn, khoảnh khắc bừng sáng sau cơn mê.',
     image: '/assets/pptx-images/image9.png',
     avatar: '/assets/images/avatar-awakening.png',
     weapon: { img: '/assets/images/vuokhi-cung.png', name: 'Thần Cung' },
@@ -60,7 +60,7 @@ const teams: Team[] = [
     name: 'ANTI',
     concept: 'LETTING GO',
     color: 'var(--anti)',
-    desc: 'Buông bỏ — sự giải phóng thanh thản nhất. Khi bạn chấp nhận và để mọi thứ trôi đi.',
+    desc: 'Buông bỏ. Sự giải phóng thanh thản nhất, khi bạn chấp nhận và để mọi thứ trôi đi.',
     image: '/assets/pptx-images/image12.png',
     avatar: '/assets/images/avatar-letting-go.png',
     weapon: { img: '/assets/images/vuokhi-liem.png', name: 'Linh Liềm' },
@@ -194,8 +194,10 @@ const Teams = () => {
             gap: '20px',
           }}
         >
-          {teams.map((team) => (
-            <TeamCard key={team.id} team={team} />
+          {teams.map((team, i) => (
+            <div key={team.id} className="rv" style={{ transitionDelay: `${i * 0.1}s` }}>
+              <TeamCard team={team} />
+            </div>
           ))}
         </div>
       </div>

@@ -155,7 +155,7 @@ const Footer = () => {
                 fontWeight: 700,
               }}
             >
-              MST Software - Giải pháp Công nghệ MMO
+              MST Software Co., Ltd
             </a>
           </div>
         </div>

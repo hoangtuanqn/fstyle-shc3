@@ -695,7 +695,7 @@ const Nav = () => {
             textAlign: 'center',
           }}
         >
-          SHOWCASE NIGHT — 05.07.2026
+          SHOWCASE NIGHT · 05.07.2026
         </div>
       </div>
 

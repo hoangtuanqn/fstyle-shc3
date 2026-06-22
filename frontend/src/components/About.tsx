@@ -82,15 +82,12 @@ const About = () => {
           </h2>
 
           <p style={paragraphStyle}>
-            Heatwave Showcase là sự kiện thường niên quy mô lớn nhất của FStyle Crew — nơi các vũ công thể hiện đam mê,
-            bản lĩnh và tinh thần không ngừng cố gắng trên sân khấu lớn.
+            Dự án thường niên của FStyle Crew, tổ chức mỗi mùa hè. Không chỉ là sân khấu trình diễn, mà còn là hành trình
+            rèn luyện tư duy sáng tạo, kỹ năng biên đạo và bản lĩnh sân khấu.
           </p>
           <p style={paragraphStyle}>
-            Mùa 3 mang chủ đề APOCALYPSE — lấy cảm hứng từ Sách Khải Huyền, nơi bốn đội thi hiện thân cho bốn Kỵ Sĩ
-            mang theo những trạng thái cảm xúc tận cùng của con người.
-          </p>
-          <p style={{ ...paragraphStyle, marginBottom: '34px' }}>
-            Sụp đổ không phải là kết thúc — mà là khởi đầu cho sự tái sinh.
+            Mùa 3 mang chủ đề APOCALYPSE, lấy cảm hứng từ Book of Revelation. Bốn đội thi hiện thân bốn Kỵ Sĩ Khải Huyền,
+            kể câu chuyện về sự sụp đổ và tái sinh qua ngôn ngữ vũ đạo.
           </p>
 
           <InfoRow
@@ -100,7 +97,7 @@ const About = () => {
           />
           <InfoRow
             icon={<LocationIcon />}
-            title="Hall A – FPT University HCM Campus"
+            title="Hall A, FPT University HCM Campus"
             sub="Lô E2a-7, Đường D1, TP. Thủ Đức"
           />
           <InfoRow

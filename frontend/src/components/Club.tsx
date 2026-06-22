@@ -24,15 +24,11 @@ const Club = () => {
             </h2>
 
             <p style={{ fontSize: 16, lineHeight: 1.85, color: 'var(--dim)', marginBottom: 18 }}>
-              FStyle Crew là câu lạc bộ vũ đạo trực thuộc FPT University HCM — nơi quy tụ những người trẻ đam mê
-              chuyển động, sáng tạo và bứt phá giới hạn của bản thân.
-            </p>
-            <p style={{ fontSize: 16, lineHeight: 1.85, color: 'var(--dim)', marginBottom: 18 }}>
-              Từ những bước nhảy đầu tiên đến những sân khấu lớn, FStyle luôn theo đuổi tinh thần học hỏi không
-              ngừng, biến mỗi buổi tập thành một hành trình trưởng thành.
+              CLB Văn hoá Nghệ thuật của Trường Đại học FPT TP. HCM, Đơn vị Tổ chức chính của Heatwave Showcase.
             </p>
             <p style={{ fontSize: 16, lineHeight: 1.85, color: 'var(--dim)' }}>
-              Heatwave Showcase là minh chứng cho ngọn lửa ấy — nơi đam mê được thắp sáng và chia sẻ với cộng đồng.
+              Với kinh nghiệm triển khai biểu diễn, thi đấu và tổ chức sự kiện, CLB đảm nhận từ nội dung, nhân sự
+              đến điều phối sân khấu, góp phần lan tỏa văn hóa nghệ thuật đường phố trong cộng đồng sinh viên.
             </p>
 
             <span
