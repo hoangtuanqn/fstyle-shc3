@@ -1,6 +1,6 @@
+import { getIO } from '~/configs/socket';
 import { RoleType } from '~/constants/enums';
 import { HTTP_STATUS } from '~/constants/httpStatus';
-import { getIO } from '~/configs/socket';
 import { ErrorWithStatus } from '~/rules/error';
 import awardRepository from '~/repositories/award.repository';
 import scoringService from '~/services/scoring.service';
@@ -12,9 +12,14 @@ type WinnerInput = {
   winnerName?: string | null;
 };
 
+// Awards 4-8: Yêu Thích, Kỹ Thuật, Biên Đạo, Trưởng Nhóm, Phong Cách — editable by BTC FStyle
+const BTC_FSTYLE_EDITABLE_RANGE = [4, 8] as const;
+
 const canEditAward = (role: RoleType, displayOrder: number): boolean => {
   if (role === RoleType.ADMIN) return true;
-  if (role === RoleType.BTC_FSTYLE) return displayOrder >= 4 && displayOrder <= 8;
+  if (role === RoleType.BTC_FSTYLE) {
+    return displayOrder >= BTC_FSTYLE_EDITABLE_RANGE[0] && displayOrder <= BTC_FSTYLE_EDITABLE_RANGE[1];
+  }
   return false;
 };
 
@@ -32,7 +37,10 @@ class AwardService {
       throw new ErrorWithStatus({ message: 'Không thể chỉnh sửa giải tự động!', status: HTTP_STATUS.BAD_REQUEST });
     }
     if (!canEditAward(role, award.displayOrder)) {
-      throw new ErrorWithStatus({ message: 'Bạn không có quyền chỉnh sửa giải thưởng này!', status: HTTP_STATUS.FORBIDDEN });
+      throw new ErrorWithStatus({
+        message: 'Bạn không có quyền chỉnh sửa giải thưởng này!',
+        status: HTTP_STATUS.FORBIDDEN,
+      });
     }
 
     const invalidSlots = winners.filter((w) => w.slot < 1 || w.slot > award.quantity);
@@ -48,14 +56,14 @@ class AwardService {
       throw new ErrorWithStatus({ message: 'Không được trùng slot!', status: HTTP_STATUS.BAD_REQUEST });
     }
 
-    await awardRepository.deleteWinnersByAwardId(awardId);
-    await awardRepository.insertWinners(
+    await awardRepository.replaceWinners(
+      awardId,
       winners.map((w) => ({
         awardId,
         slot: w.slot,
-        winnerTeamId: w.winnerTeamId ?? null,
-        winnerUserId: w.winnerUserId ?? null,
-        winnerName: w.winnerName ?? null,
+        winnerTeamId: w.winnerTeamId || null,
+        winnerUserId: w.winnerUserId || null,
+        winnerName: w.winnerName || null,
       })),
     );
 
@@ -71,14 +79,13 @@ class AwardService {
     const allAwards = await awardRepository.findAll();
     const autoAwards = allAwards.filter((a) => a.type === 'AUTO').sort((a, b) => a.displayOrder - b.displayOrder);
 
+    const batches: { awardId: string; rows: { awardId: string; slot: number; winnerTeamId: string; winnerName: string }[] }[] = [];
     let teamCursor = 0;
+
     for (const award of autoAwards) {
-      await awardRepository.deleteWinnersByAwardId(award.id);
-
-      const winnersToInsert: { awardId: string; slot: number; winnerTeamId: string; winnerName: string }[] = [];
-
+      const rows: { awardId: string; slot: number; winnerTeamId: string; winnerName: string }[] = [];
       for (let slot = 1; slot <= award.quantity && teamCursor < sorted.length; slot++) {
-        winnersToInsert.push({
+        rows.push({
           awardId: award.id,
           slot,
           winnerTeamId: sorted[teamCursor].id,
@@ -86,9 +93,10 @@ class AwardService {
         });
         teamCursor++;
       }
-
-      await awardRepository.insertWinners(winnersToInsert);
+      batches.push({ awardId: award.id, rows });
     }
+
+    await awardRepository.replaceWinnersBatch(batches);
 
     getIO().emit('awards:updated', { type: 'auto-calculate' });
     return await awardRepository.findAll();

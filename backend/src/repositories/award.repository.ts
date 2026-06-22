@@ -35,13 +35,24 @@ class AwardRepository {
     return { ...award, winners };
   };
 
-  deleteWinnersByAwardId = async (awardId: string) => {
-    await db.delete(awardWinners).where(eq(awardWinners.awardId, awardId));
+  replaceWinners = async (awardId: string, rows: AwardWinnerInput[]) => {
+    await db.transaction(async (tx) => {
+      await tx.delete(awardWinners).where(eq(awardWinners.awardId, awardId));
+      if (rows.length > 0) {
+        await tx.insert(awardWinners).values(rows);
+      }
+    });
   };
 
-  insertWinners = async (rows: AwardWinnerInput[]) => {
-    if (rows.length === 0) return;
-    await db.insert(awardWinners).values(rows);
+  replaceWinnersBatch = async (batches: { awardId: string; rows: AwardWinnerInput[] }[]) => {
+    await db.transaction(async (tx) => {
+      for (const batch of batches) {
+        await tx.delete(awardWinners).where(eq(awardWinners.awardId, batch.awardId));
+        if (batch.rows.length > 0) {
+          await tx.insert(awardWinners).values(batch.rows);
+        }
+      }
+    });
   };
 
   findTeamById = async (teamId: string) => {
