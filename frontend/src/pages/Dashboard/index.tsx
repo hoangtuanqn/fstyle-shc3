@@ -47,26 +47,37 @@ const buildTeamInfo = (teamId: string, teamName: string, teamColor: string): Tea
 const VoteCard = ({
   candidate,
   isVoted,
+  canVote,
+  isPending,
   onToggleVote,
 }: {
   candidate: CandidateType;
   isVoted: boolean;
+  canVote: boolean;
+  isPending: boolean;
   onToggleVote: (id: string) => void;
 }) => {
   const [hover, setHover] = useState(false);
-  const [voting, setVoting] = useState(false);
+  const [justVoted, setJustVoted] = useState(false);
+  const [justUnvoted, setJustUnvoted] = useState(false);
 
   const teamId = candidate.teamId ?? '';
   const teamColor = candidate.teamColor ?? '#888888';
   const team: TeamInfo = buildTeamInfo(teamId, candidate.teamName ?? 'Unknown', teamColor);
 
-  const handleVote = () => {
-    setVoting(true);
-    onToggleVote(candidate.id);
-    setTimeout(() => setVoting(false), 600);
-  };
+  const disabled = !isVoted && !canVote;
 
-  const voted = isVoted;
+  const handleVote = () => {
+    if (disabled || isPending) return;
+    if (isVoted) {
+      setJustUnvoted(true);
+      setTimeout(() => setJustUnvoted(false), 600);
+    } else {
+      setJustVoted(true);
+      setTimeout(() => setJustVoted(false), 800);
+    }
+    onToggleVote(candidate.id);
+  };
 
   const cardStyle: CSSProperties = {
     position: 'relative',
@@ -74,15 +85,14 @@ const VoteCard = ({
     overflow: 'hidden',
     border: '1px solid rgba(255,255,255,.08)',
     background: 'var(--bg2)',
-    boxShadow: hover
-      ? `0 18px 50px ${team.glowHover}, 0 0 0 1px ${team.glowHover} inset`
-      : `0 0 30px ${team.glowColor}, 0 0 0 1px ${team.glowColor} inset`,
-    transform: hover ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
-    transition: 'transform .4s cubic-bezier(.22,.8,.42,1), box-shadow .4s',
+    boxShadow: `0 0 30px ${team.glowColor}, 0 0 0 1px ${team.glowColor} inset`,
+    transform: hover ? 'translateY(-4px)' : 'translateY(0)',
+    transition: 'transform .35s ease, box-shadow .35s ease',
   };
 
   return (
     <div
+      className={justVoted ? 'vote-pulse' : ''}
       style={cardStyle}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -109,8 +119,8 @@ const VoteCard = ({
             objectFit: 'cover',
             objectPosition: 'center top',
             display: 'block',
-            transform: hover ? 'scale(1.06)' : 'scale(1)',
-            transition: 'transform .5s ease',
+            transform: hover ? 'scale(1.03)' : 'scale(1)',
+            transition: 'transform .4s ease',
           }}
         />
 
@@ -129,8 +139,8 @@ const VoteCard = ({
             gap: 6,
             backdropFilter: 'blur(8px)',
             WebkitBackdropFilter: 'blur(8px)',
-            transform: voting ? 'scale(1.2)' : 'scale(1)',
-            transition: 'transform .3s cubic-bezier(.22,.8,.42,1)',
+            transform: justVoted ? 'scale(1.3)' : justUnvoted ? 'scale(0.85)' : 'scale(1)',
+            transition: 'transform .4s cubic-bezier(.22,.8,.42,1)',
           }}
         >
           <span style={{ fontSize: 14 }}>🔥</span>
@@ -146,6 +156,19 @@ const VoteCard = ({
             {candidate.voteCount}
           </span>
         </div>
+
+        {/* Vote burst effect */}
+        {justVoted && (
+          <div
+            className="vote-burst"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              pointerEvents: 'none',
+              background: 'radial-gradient(circle at 50% 80%, rgba(254,230,34,.35), transparent 65%)',
+            }}
+          />
+        )}
 
         {/* Team badge */}
         <div
@@ -199,38 +222,39 @@ const VoteCard = ({
         <button
           type="button"
           onClick={handleVote}
+          disabled={disabled || isPending}
           style={{
             width: '100%',
             padding: '12px 0',
             borderRadius: 10,
-            cursor: 'pointer',
+            cursor: disabled || isPending ? 'not-allowed' : 'pointer',
             fontFamily: "'Montserrat', sans-serif",
             fontSize: 11,
             fontWeight: 800,
             letterSpacing: '.18em',
             textTransform: 'uppercase',
-            color: voted ? '#050301' : voting ? '#050301' : 'var(--gold)',
-            background: voted ? 'var(--gold)' : voting ? 'var(--gold)' : 'rgba(254,230,34,.08)',
-            border: voted || voting ? '1px solid var(--gold)' : '1px solid rgba(254,230,34,.25)',
-            boxShadow:
-              voted || voting ? '0 0 30px rgba(254,230,34,.5)' : '0 0 10px rgba(254,230,34,.1)',
-            transform: voting ? 'scale(0.96)' : 'scale(1)',
+            opacity: disabled ? 0.35 : 1,
+            color: isVoted ? '#050301' : 'var(--gold)',
+            background: isVoted ? 'var(--gold)' : 'rgba(254,230,34,.08)',
+            border: isVoted ? '1px solid var(--gold)' : '1px solid rgba(254,230,34,.25)',
+            boxShadow: isVoted ? '0 0 30px rgba(254,230,34,.5)' : '0 0 10px rgba(254,230,34,.1)',
+            transform: justVoted ? 'scale(0.93)' : justUnvoted ? 'scale(0.97)' : 'scale(1)',
             transition: 'all .3s cubic-bezier(.22,.8,.42,1)',
           }}
           onMouseEnter={(e) => {
-            if (!voting && !voted) {
+            if (!disabled && !isPending && !isVoted) {
               e.currentTarget.style.background = 'rgba(254,230,34,.15)';
               e.currentTarget.style.boxShadow = '0 0 20px rgba(254,230,34,.3)';
             }
           }}
           onMouseLeave={(e) => {
-            if (!voting && !voted) {
+            if (!disabled && !isPending && !isVoted) {
               e.currentTarget.style.background = 'rgba(254,230,34,.08)';
               e.currentTarget.style.boxShadow = '0 0 10px rgba(254,230,34,.1)';
             }
           }}
         >
-          {voted ? '✦ ĐÃ VOTE ✦' : '★ VOTE'}
+          {isPending ? '...' : disabled ? 'HẾT LƯỢT' : isVoted ? '✦ ĐÃ VOTE ✦' : '★ VOTE'}
         </button>
       </div>
     </div>
@@ -507,6 +531,8 @@ const Dashboard = () => {
                     key={candidate.id}
                     candidate={candidate}
                     isVoted={myVotedIds.has(candidate.id)}
+                    canVote={remainingVotes > 0}
+                    isPending={voteMutation.isPending || unvoteMutation.isPending}
                     onToggleVote={handleToggleVote}
                   />
                 ))}
@@ -530,6 +556,18 @@ const Dashboard = () => {
       </section>
 
       <style>{`
+        @keyframes votePulse {
+          0% { box-shadow: 0 0 0 0 rgba(254,230,34,.5); }
+          50% { box-shadow: 0 0 0 14px rgba(254,230,34,0); }
+          100% { box-shadow: 0 0 0 0 rgba(254,230,34,0); }
+        }
+        @keyframes voteBurst {
+          0% { opacity: 0; }
+          30% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+        .vote-pulse { animation: votePulse .7s ease-out; }
+        .vote-burst { animation: voteBurst .8s ease-out forwards; }
         @media (max-width: 1024px) {
           .vote-grid { grid-template-columns: repeat(3, 1fr) !important; }
         }
