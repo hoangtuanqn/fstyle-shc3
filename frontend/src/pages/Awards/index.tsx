@@ -135,7 +135,40 @@ const Awards = () => {
     <div style={{ minHeight: '100vh', paddingTop: 108 }}>
       <section style={{ paddingBottom: 48 }}>
         <div className="con" style={{ textAlign: 'center' }}>
-          <span className="ey">🔧 BTC Panel</span>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 10,
+              marginBottom: 18,
+            }}
+          >
+            <span
+              style={{
+                width: 40,
+                height: 1,
+                background: 'linear-gradient(90deg, transparent, var(--gold))',
+              }}
+            />
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 800,
+                letterSpacing: '.4em',
+                textTransform: 'uppercase',
+                color: 'var(--gold)',
+              }}
+            >
+              BTC PANEL
+            </span>
+            <span
+              style={{
+                width: 40,
+                height: 1,
+                background: 'linear-gradient(90deg, var(--gold), transparent)',
+              }}
+            />
+          </div>
           <h1 className="st" style={{ marginBottom: 12 }}>
             NHẬP <em>GIẢI THƯỞNG</em>
           </h1>
@@ -174,7 +207,7 @@ const Awards = () => {
                       marginBottom: 6,
                     }}
                   >
-                    🏆 GIẢI THƯỞNG
+                    GIẢI THƯỞNG
                   </h2>
                   <p style={{ fontSize: 12, color: 'var(--dim)', marginBottom: 28 }}>
                     Nhập tên đội / cá nhân nhận giải
@@ -252,7 +285,7 @@ const Awards = () => {
                       marginBottom: 6,
                     }}
                   >
-                    ⚡ GIẢI TỰ ĐỘNG
+                    GIẢI TỰ ĐỘNG
                   </h2>
                   <p style={{ fontSize: 12, color: 'var(--dim)', marginBottom: 28 }}>
                     Tính toán tự động từ điểm số BGK — chỉ Admin mới có thể kích hoạt
@@ -324,7 +357,7 @@ const Awards = () => {
                       boxShadow: '0 0 20px rgba(89,115,179,.3)',
                     }}
                   >
-                    {autoCalcMutation.isPending ? 'Đang tính...' : '⚡ TÍNH GIẢI TỰ ĐỘNG'}
+                    {autoCalcMutation.isPending ? 'Đang tính...' : 'TÍNH GIẢI TỰ ĐỘNG'}
                   </button>
                 )}
               </div>

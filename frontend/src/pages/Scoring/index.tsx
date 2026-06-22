@@ -367,7 +367,40 @@ const Scoring = () => {
       {/* Header */}
       <section style={{ paddingBottom: 48 }}>
         <div className="con" style={{ textAlign: 'center' }}>
-          <span className="ey">🔥 Heatwave SHC3 Apocalypse</span>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 10,
+              marginBottom: 18,
+            }}
+          >
+            <span
+              style={{
+                width: 40,
+                height: 1,
+                background: 'linear-gradient(90deg, transparent, var(--orange))',
+              }}
+            />
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 800,
+                letterSpacing: '.4em',
+                textTransform: 'uppercase',
+                color: 'var(--orange)',
+              }}
+            >
+              SCORING PANEL
+            </span>
+            <span
+              style={{
+                width: 40,
+                height: 1,
+                background: 'linear-gradient(90deg, var(--orange), transparent)',
+              }}
+            />
+          </div>
           <h1 className="st" style={{ marginBottom: 12 }}>
             TIÊU CHÍ <em>ĐÁNH GIÁ</em>
           </h1>
