@@ -73,8 +73,6 @@ const Nav = () => {
           zIndex: 1000,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 56px',
           height: 68,
           transition: 'background .35s, backdrop-filter .35s, border-color .35s',
           background: scrolled || menuOpen ? 'rgba(5,3,1,0.95)' : 'transparent',
@@ -83,162 +81,202 @@ const Nav = () => {
           borderBottom: scrolled || menuOpen ? '1px solid rgba(254,230,34,.1)' : '1px solid transparent',
         }}
       >
-        {/* Logo */}
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            setMenuOpen(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        {/* Logo zone — fixed-width left panel */}
+        <div
+          className="nav-logo-zone"
+          style={{
+            width: 220,
+            minWidth: 220,
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            paddingLeft: 48,
+            borderRight: '1px solid rgba(254,230,34,.08)',
           }}
-          style={{ display: 'flex', alignItems: 'center' }}
         >
-          <img src="/assets/images/logo-ngang.png" alt="FStyle Crew" className="nav-logo" style={{ display: 'block', height: 40 }} />
-        </a>
-
-        {/* Desktop nav links */}
-        <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
-          {links.map((link) => (
-            <button
-              key={link.id}
-              type="button"
-              onClick={() => handleSectionClick(link.id)}
-              onMouseEnter={() => setHovered(link.id)}
-              onMouseLeave={() => setHovered(null)}
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setMenuOpen(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            style={{ display: 'flex', alignItems: 'center' }}
+          >
+            <img
+              src="/assets/images/FStyle.jpg"
+              alt="FStyle Crew"
+              className="nav-logo"
               style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 11,
-                fontWeight: 800,
-                letterSpacing: '.18em',
-                textTransform: 'uppercase',
-                color: hovered === link.id ? 'var(--gold)' : 'var(--dim)',
-                transition: 'color .25s',
-                fontFamily: 'Montserrat, sans-serif',
+                display: 'block',
+                width: 42,
+                height: 42,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: '2px solid rgba(254,230,34,.35)',
+                boxShadow: '0 0 12px rgba(254,230,34,.25)',
+              }}
+            />
+          </a>
+        </div>
+
+        {/* Menu zone — fills remaining space */}
+        <div
+          className="nav-menu-zone"
+          style={{
+            flex: 1,
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingLeft: 40,
+            paddingRight: 48,
+          }}
+        >
+          {/* Nav links */}
+          <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
+            {links.map((link) => (
+              <button
+                key={link.id}
+                type="button"
+                onClick={() => handleSectionClick(link.id)}
+                onMouseEnter={() => setHovered(link.id)}
+                onMouseLeave={() => setHovered(null)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 11,
+                  fontWeight: 800,
+                  letterSpacing: '.18em',
+                  textTransform: 'uppercase',
+                  color: hovered === link.id ? 'var(--gold)' : 'var(--dim)',
+                  transition: 'color .25s',
+                  fontFamily: 'Montserrat, sans-serif',
+                }}
+              >
+                {link.label}
+              </button>
+            ))}
+            {pageLinks.length > 0 && (
+              <>
+                <span style={{ width: 1, height: 18, background: 'rgba(255,255,255,.12)' }} />
+                {pageLinks.map((pl) => (
+                  <Link
+                    key={pl.to}
+                    to={pl.to}
+                    onMouseEnter={() => setHovered(pl.to)}
+                    onMouseLeave={() => setHovered(null)}
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 800,
+                      letterSpacing: '.18em',
+                      textTransform: 'uppercase',
+                      color: hovered === pl.to ? 'var(--gold)' : 'var(--dim)',
+                      transition: 'color .25s',
+                      fontFamily: 'Montserrat, sans-serif',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    {pl.label}
+                  </Link>
+                ))}
+              </>
+            )}
+          </div>
+
+          {/* Right section */}
+          <div className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+            <div
+              className="nav-date"
+              style={{
+                fontFamily: 'Anton, sans-serif',
+                color: 'var(--gold)',
+                fontSize: 18,
+                letterSpacing: '.04em',
+                textShadow: '0 0 18px rgba(254,230,34,.6)',
               }}
             >
-              {link.label}
-            </button>
-          ))}
-          {pageLinks.length > 0 && (
-            <>
-              <span style={{ width: 1, height: 18, background: 'rgba(255,255,255,.12)' }} />
-              {pageLinks.map((pl) => (
-                <Link
-                  key={pl.to}
-                  to={pl.to}
-                  onMouseEnter={() => setHovered(pl.to)}
-                  onMouseLeave={() => setHovered(null)}
+              05.07.2026
+            </div>
+
+            {isAuthenticated && user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span
                   style={{
                     fontSize: 11,
                     fontWeight: 800,
-                    letterSpacing: '.18em',
-                    textTransform: 'uppercase',
-                    color: hovered === pl.to ? 'var(--gold)' : 'var(--dim)',
-                    transition: 'color .25s',
                     fontFamily: 'Montserrat, sans-serif',
-                    textDecoration: 'none',
+                    letterSpacing: '.1em',
+                    textTransform: 'uppercase',
+                    color: 'var(--gold)',
                   }}
                 >
-                  {pl.label}
-                </Link>
-              ))}
-            </>
-          )}
-        </div>
-
-        {/* Desktop right section */}
-        <div className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          <div
-            className="nav-date"
-            style={{
-              fontFamily: 'Anton, sans-serif',
-              color: 'var(--gold)',
-              fontSize: 18,
-              letterSpacing: '.04em',
-              textShadow: '0 0 18px rgba(254,230,34,.6)',
-            }}
-          >
-            05.07.2026
-          </div>
-
-          {isAuthenticated && user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span
+                  {user.name}
+                </span>
+                <button
+                  onClick={logout}
+                  style={{
+                    padding: '8px 18px',
+                    background: 'transparent',
+                    border: '1px solid rgba(254,230,34,.4)',
+                    borderRadius: 6,
+                    color: 'var(--gold)',
+                    fontSize: 11,
+                    fontWeight: 800,
+                    fontFamily: 'Montserrat, sans-serif',
+                    letterSpacing: '.14em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    transition: 'background .25s, border-color .25s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(254,230,34,.1)';
+                    e.currentTarget.style.borderColor = 'rgba(254,230,34,.7)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.borderColor = 'rgba(254,230,34,.4)';
+                  }}
+                >
+                  Đăng xuất
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
                 style={{
-                  fontSize: 11,
-                  fontWeight: 800,
-                  fontFamily: 'Montserrat, sans-serif',
-                  letterSpacing: '.1em',
-                  textTransform: 'uppercase',
-                  color: 'var(--gold)',
-                }}
-              >
-                {user.name}
-              </span>
-              <button
-                onClick={logout}
-                style={{
-                  padding: '8px 18px',
-                  background: 'transparent',
-                  border: '1px solid rgba(254,230,34,.4)',
+                  padding: '8px 22px',
+                  background: 'var(--gold)',
+                  border: 'none',
                   borderRadius: 6,
-                  color: 'var(--gold)',
+                  color: '#050301',
                   fontSize: 11,
                   fontWeight: 800,
                   fontFamily: 'Montserrat, sans-serif',
                   letterSpacing: '.14em',
                   textTransform: 'uppercase',
+                  textDecoration: 'none',
                   cursor: 'pointer',
-                  transition: 'background .25s, border-color .25s',
+                  transition: 'background .25s, box-shadow .25s, transform .15s',
+                  boxShadow: '0 0 20px rgba(254,230,34,.25)',
+                  display: 'inline-block',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(254,230,34,.1)';
-                  e.currentTarget.style.borderColor = 'rgba(254,230,34,.7)';
+                  e.currentTarget.style.background = '#ffe94a';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(254,230,34,.45)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.borderColor = 'rgba(254,230,34,.4)';
+                  e.currentTarget.style.background = 'var(--gold)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 0 20px rgba(254,230,34,.25)';
                 }}
               >
-                Đăng xuất
-              </button>
-            </div>
-          ) : (
-            <Link
-              to="/login"
-              style={{
-                padding: '8px 22px',
-                background: 'var(--gold)',
-                border: 'none',
-                borderRadius: 6,
-                color: '#050301',
-                fontSize: 11,
-                fontWeight: 800,
-                fontFamily: 'Montserrat, sans-serif',
-                letterSpacing: '.14em',
-                textTransform: 'uppercase',
-                textDecoration: 'none',
-                cursor: 'pointer',
-                transition: 'background .25s, box-shadow .25s, transform .15s',
-                boxShadow: '0 0 20px rgba(254,230,34,.25)',
-                display: 'inline-block',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#ffe94a';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow = '0 0 30px rgba(254,230,34,.45)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'var(--gold)';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 0 20px rgba(254,230,34,.25)';
-              }}
-            >
-              Đăng nhập
-            </Link>
-          )}
+                Đăng nhập
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Hamburger button — mobile only (hidden via CSS on desktop) */}
@@ -481,12 +519,16 @@ const Nav = () => {
       <style>{`
         .nav-hamburger { display: none; }
         @media (max-width: 1024px) {
-          nav { padding: 0 20px !important; }
-          .nav-links,
-          .nav-date,
-          .nav-right { display: none !important; }
-          .nav-hamburger { display: flex; }
-          .nav-logo { max-width: 140px; height: auto !important; object-fit: contain; }
+          .nav-logo-zone {
+            width: auto !important;
+            min-width: 0 !important;
+            padding-left: 20px !important;
+            border-right: none !important;
+            flex: 1;
+          }
+          .nav-menu-zone { display: none !important; }
+          .nav-hamburger { display: flex; padding-right: 20px; }
+          .nav-logo { width: 36px !important; height: 36px !important; }
         }
         @media (min-width: 1025px) {
           .nav-mobile-menu { display: none !important; }

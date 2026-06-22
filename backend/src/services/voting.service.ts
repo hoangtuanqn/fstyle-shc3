@@ -4,7 +4,7 @@ import userRepository from '~/repositories/user.repository';
 import votingRepository from '~/repositories/voting.repository';
 import { ErrorWithStatus } from '~/rules/error';
 
-const VOTE_START = new Date('2026-06-29T00:00:00+07:00');
+const VOTE_START = new Date('2025-06-29T00:00:00+07:00');
 const VOTE_END = new Date('2026-07-03T23:59:59+07:00');
 const MAX_VOTES_PER_SCOPE = 2;
 
