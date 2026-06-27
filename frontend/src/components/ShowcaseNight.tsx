@@ -82,22 +82,25 @@ const performances: Performance[] = [
 
 const judges = [
   {
-    name: "BIGG",
-    role: "Judge",
-    crew: "Choreographer",
-    img: "/assets/pptx-extracted/judge-bigg.png",
+    name: "Đinh Võ Hoàng",
+    role: "Ban Giám Khảo",
+    crew: "",
+    img: "/assets/images/members/bgk-dinh-vo-hoang-1.webp",
+    img2: "/assets/images/members/bgk-dinh-vo-hoang-2.webp",
   },
   {
-    name: "BON",
-    role: "Judge",
-    crew: "JustMove Crew · BClass Dance",
-    img: "/assets/pptx-extracted/judge-bon.png",
+    name: "Trịnh Mai Phương",
+    role: "Ban Giám Khảo",
+    crew: "",
+    img: "/assets/images/members/bgk-trinh-mai-phuong-1.webp",
+    img2: null,
   },
   {
-    name: "CHẤY",
-    role: "Judge",
-    crew: "C.O Crew",
-    img: "/assets/pptx-extracted/judge-chay.png",
+    name: "Võ Ngọc Toàn",
+    role: "Ban Giám Khảo",
+    crew: "",
+    img: "/assets/images/members/bgk-vo-ngoc-toan-1.webp",
+    img2: "/assets/images/members/bgk-vo-ngoc-toan-2.webp",
   },
 ];
 
@@ -515,6 +518,7 @@ const ShowcaseNight = () => {
               >
                 <div
                   style={{
+                    position: "relative",
                     aspectRatio: "1 / 1",
                     overflow: "hidden",
                     background: "rgba(255,255,255,.03)",
@@ -524,18 +528,40 @@ const ShowcaseNight = () => {
                     src={j.img}
                     alt={j.name}
                     style={{
+                      position: "absolute",
+                      inset: 0,
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
                       objectPosition: "center top",
                       filter:
                         hoveredJudge === i ? "grayscale(0%)" : "grayscale(30%)",
-                      transition: "filter .4s, transform .4s",
+                      transition: "filter .4s, transform .4s, opacity .45s ease",
                       transform:
                         hoveredJudge === i ? "scale(1.05)" : "scale(1)",
                       display: "block",
+                      opacity: j.img2 && hoveredJudge === i ? 0 : 1,
                     }}
                   />
+                  {j.img2 && (
+                    <img
+                      src={j.img2}
+                      alt={j.name}
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        objectPosition: "center top",
+                        transition: "transform .4s, opacity .45s ease",
+                        transform:
+                          hoveredJudge === i ? "scale(1.05)" : "scale(1.08)",
+                        display: "block",
+                        opacity: hoveredJudge === i ? 1 : 0,
+                      }}
+                    />
+                  )}
                 </div>
                 <div style={{ padding: "14px 12px 16px", textAlign: "center" }}>
                   <div

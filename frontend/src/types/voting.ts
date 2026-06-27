@@ -4,6 +4,7 @@ export type CandidateType = {
   teamId: string | null;
   teamName?: string;
   teamColor?: string;
+  avatarUrls?: string[] | null;
   voteCount: number;
 };
 
