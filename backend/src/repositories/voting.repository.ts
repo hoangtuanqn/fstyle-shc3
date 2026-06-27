@@ -32,6 +32,7 @@ class VotingRepository {
         teamId: users.teamId,
         teamName: teams.name,
         teamColor: teams.color,
+        avatarUrls: users.avatarUrls,
         voteCount: sql<number>`(SELECT COUNT(*) FROM effort_votes WHERE candidate_id = ${users.id})`,
       })
       .from(users)
@@ -47,6 +48,7 @@ class VotingRepository {
         teamId: users.teamId,
         teamName: teams.name,
         teamColor: teams.color,
+        avatarUrls: users.avatarUrls,
         voteCount: sql<number>`(SELECT COUNT(*) FROM effort_votes WHERE candidate_id = ${users.id})`,
       })
       .from(users)
