@@ -1,6 +1,7 @@
 import {
   decimal,
   index,
+  json,
   mysqlEnum,
   mysqlTable,
   tinyint,
@@ -34,6 +35,7 @@ export const users = mysqlTable("users", {
     .notNull()
     .default("MEMBER"),
   teamId: varchar("team_id", { length: 36 }).references(() => teams.id),
+  avatarUrls: json("avatar_urls").$type<string[]>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
