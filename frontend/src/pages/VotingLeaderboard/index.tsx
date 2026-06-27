@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import VotingApi from "~/api-requests/voting.requests";
 import useSocket from "~/hooks/useSocket";
+import usePageTitle from "~/hooks/usePageTitle";
 import type { VoteLeaderboardCandidate } from "~/types/voting";
 
 type TeamGroup = {
@@ -31,6 +32,7 @@ const tdStyle: CSSProperties = {
 };
 
 const VotingLeaderboard = () => {
+  usePageTitle("Xếp Hạng Vote");
   useSocket();
 
   const { data, isLoading } = useQuery({

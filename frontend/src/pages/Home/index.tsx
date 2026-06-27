@@ -1,4 +1,5 @@
 import { useScrollReveal } from '../../hooks/useScrollReveal';
+import usePageTitle from '~/hooks/usePageTitle';
 import Hero from '../../components/Hero';
 import MarqueeBand from '../../components/MarqueeBand';
 import About from '../../components/About';
@@ -13,6 +14,7 @@ import Awards from '../../components/Awards';
 import Club from '../../components/Club';
 
 const Home = () => {
+  usePageTitle();
   useScrollReveal();
 
   return (

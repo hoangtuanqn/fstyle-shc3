@@ -8,6 +8,7 @@ import ParticleCanvas from "~/components/ParticleCanvas";
 import { RoleType } from "~/constants/enums";
 import { setUser } from "~/features/userSlice";
 import { useAppDispatch } from "~/hooks/useRedux";
+import usePageTitle from "~/hooks/usePageTitle";
 import LocalStorage from "~/utils/localStorage";
 
 const redirectByRole: Record<string, string> = {
@@ -18,6 +19,7 @@ const redirectByRole: Record<string, string> = {
 };
 
 const Login = () => {
+  usePageTitle("Đăng Nhập");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
