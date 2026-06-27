@@ -7,6 +7,7 @@ import VotingApi from "~/api-requests/voting.requests";
 import { RoleType } from "~/constants/enums";
 import useAuth from "~/hooks/useAuth";
 import useSocket from "~/hooks/useSocket";
+import usePageTitle from "~/hooks/usePageTitle";
 import type { CandidateType } from "~/types/voting";
 
 type TeamInfo = {
@@ -312,6 +313,7 @@ const VoteCard = ({
 };
 
 const Dashboard = () => {
+  usePageTitle("Bình Chọn");
   useSocket();
 
   const { user } = useAuth();

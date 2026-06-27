@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 
 import LeaderboardApi from "~/api-requests/leaderboard.requests";
 import useSocket from "~/hooks/useSocket";
+import usePageTitle from "~/hooks/usePageTitle";
 
 const thStyle: CSSProperties = {
   padding: "14px 18px",
@@ -25,6 +26,7 @@ const tdStyle: CSSProperties = {
 };
 
 const Leaderboard = () => {
+  usePageTitle("Xếp Hạng Giải Thưởng");
   useSocket();
 
   const { data, isLoading } = useQuery({

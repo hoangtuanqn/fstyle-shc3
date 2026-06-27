@@ -147,13 +147,18 @@ const Nav = () => {
           }}
         >
           <a
-            href="#"
+            href="/"
+            title="Về trang chủ"
             onClick={(e) => {
               e.preventDefault();
               setMenuOpen(false);
-              window.scrollTo({ top: 0, behavior: "smooth" });
+              if (window.location.pathname !== "/") {
+                navigate("/");
+              } else {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
             }}
-            style={{ display: "flex", alignItems: "center" }}
+            style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
           >
             <img
               src="/assets/images/FStyle.jpg"
@@ -167,6 +172,15 @@ const Nav = () => {
                 objectFit: "cover",
                 border: "2px solid rgba(254,230,34,.35)",
                 boxShadow: "0 0 12px rgba(254,230,34,.25)",
+                transition: "transform .3s ease, box-shadow .3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.08)";
+                e.currentTarget.style.boxShadow = "0 0 22px rgba(254,230,34,.55)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow = "0 0 12px rgba(254,230,34,.25)";
               }}
             />
           </a>

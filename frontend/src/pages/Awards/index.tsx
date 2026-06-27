@@ -6,6 +6,7 @@ import AwardApi from "~/api-requests/award.requests";
 import { RoleType } from "~/constants/enums";
 import useAuth from "~/hooks/useAuth";
 import useSocket from "~/hooks/useSocket";
+import usePageTitle from "~/hooks/usePageTitle";
 
 import type { CSSProperties } from "react";
 import type { AwardType, AwardWinner } from "~/types/award";
@@ -32,6 +33,7 @@ const canEdit = (role: string, displayOrder: number): boolean => {
 };
 
 const Awards = () => {
+  usePageTitle("Nhập Giải Thưởng");
   useSocket();
 
   const { user } = useAuth();

@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import ScoringApi from "~/api-requests/scoring.requests";
+import usePageTitle from "~/hooks/usePageTitle";
 
 type SubCriteria = {
   name: string;
@@ -248,6 +249,7 @@ const tdBase: CSSProperties = {
 };
 
 const Scoring = () => {
+  usePageTitle("Chấm Điểm");
   const queryClient = useQueryClient();
 
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
