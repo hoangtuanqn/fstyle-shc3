@@ -5,6 +5,7 @@ import About from '../../components/About';
 import Concept from '../../components/Concept';
 import Teams from '../../components/Teams';
 import FCode from '../../components/FCode';
+import Btc from '../../components/Btc';
 import ShowcaseNight from '../../components/ShowcaseNight';
 import Timeline from '../../components/Timeline';
 import Partners from '../../components/Partners';
@@ -22,6 +23,7 @@ const Home = () => {
       <Concept />
       <Teams />
       <FCode />
+      <Btc />
       <ShowcaseNight />
       <Timeline />
       <Partners />
