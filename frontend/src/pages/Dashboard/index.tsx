@@ -118,19 +118,42 @@ const VoteCard = ({
           background: `radial-gradient(circle at 50% 60%, ${team.glowHover}, transparent 70%)`,
         }}
       >
+        {/* Primary image */}
         <img
-          src="/assets/images/avatar-emptiness.png"
+          src={candidate.avatarUrls?.[0] ?? "/assets/images/avatar-emptiness.png"}
           alt={candidate.name}
           style={{
+            position: "absolute",
+            inset: 0,
             width: "100%",
             height: "100%",
             objectFit: "cover",
             objectPosition: "center top",
             display: "block",
             transform: hover ? "scale(1.03)" : "scale(1)",
-            transition: "transform .4s ease",
+            transition: "transform .4s ease, opacity .45s ease",
+            opacity: candidate.avatarUrls?.[1] && hover ? 0 : 1,
           }}
         />
+        {/* Secondary image (hover) */}
+        {candidate.avatarUrls?.[1] && (
+          <img
+            src={candidate.avatarUrls[1]}
+            alt={candidate.name}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center top",
+              display: "block",
+              transform: hover ? "scale(1.03)" : "scale(1.06)",
+              transition: "transform .4s ease, opacity .45s ease",
+              opacity: hover ? 1 : 0,
+            }}
+          />
+        )}
 
         {/* Vote count badge */}
         <div
