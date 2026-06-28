@@ -29,7 +29,7 @@ const allPageLinks = [
   {
     to: "/voting-leaderboard",
     label: "Xếp hạng vote",
-    roles: [RoleType.ADMIN, RoleType.BTC_FSTYLE, RoleType.MC],
+    roles: [RoleType.ADMIN, RoleType.BTC_FSTYLE],
   },
   {
     to: "/awards",
@@ -176,11 +176,13 @@ const Nav = () => {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "scale(1.08)";
-                e.currentTarget.style.boxShadow = "0 0 22px rgba(254,230,34,.55)";
+                e.currentTarget.style.boxShadow =
+                  "0 0 22px rgba(254,230,34,.55)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow = "0 0 12px rgba(254,230,34,.25)";
+                e.currentTarget.style.boxShadow =
+                  "0 0 12px rgba(254,230,34,.25)";
               }}
             />
           </a>

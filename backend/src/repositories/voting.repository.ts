@@ -33,7 +33,7 @@ class VotingRepository {
         teamName: teams.name,
         teamColor: teams.color,
         avatarUrls: users.avatarUrls,
-        voteCount: sql<number>`(SELECT COUNT(*) FROM effort_votes WHERE candidate_id = ${users.id})`,
+        voteCount: sql<number>`COALESCE((SELECT SUM(CASE WHEN u2.role = 'BTC_FSTYLE' THEN 3 ELSE 1 END) FROM effort_votes ev INNER JOIN users u2 ON u2.id = ev.voter_id WHERE ev.candidate_id = ${users.id}), 0)`,
       })
       .from(users)
       .innerJoin(teams, eq(users.teamId, teams.id))
@@ -49,7 +49,7 @@ class VotingRepository {
         teamName: teams.name,
         teamColor: teams.color,
         avatarUrls: users.avatarUrls,
-        voteCount: sql<number>`(SELECT COUNT(*) FROM effort_votes WHERE candidate_id = ${users.id})`,
+        voteCount: sql<number>`COALESCE((SELECT SUM(CASE WHEN u2.role = 'BTC_FSTYLE' THEN 3 ELSE 1 END) FROM effort_votes ev INNER JOIN users u2 ON u2.id = ev.voter_id WHERE ev.candidate_id = ${users.id}), 0)`,
       })
       .from(users)
       .innerJoin(teams, eq(users.teamId, teams.id))
@@ -84,7 +84,7 @@ class VotingRepository {
         teamName: teams.name,
         teamColor: teams.color,
         teamDisplayOrder: teams.displayOrder,
-        voteCount: sql<number>`(SELECT COUNT(*) FROM effort_votes WHERE candidate_id = ${users.id})`,
+        voteCount: sql<number>`COALESCE((SELECT SUM(CASE WHEN u2.role = 'BTC_FSTYLE' THEN 3 ELSE 1 END) FROM effort_votes ev INNER JOIN users u2 ON u2.id = ev.voter_id WHERE ev.candidate_id = ${users.id}), 0)`,
       })
       .from(users)
       .innerJoin(teams, eq(users.teamId, teams.id))
