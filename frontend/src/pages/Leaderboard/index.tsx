@@ -36,8 +36,6 @@ const Leaderboard = () => {
 
   const rankings = data?.result?.rankings ?? [];
   const awards = data?.result?.awards ?? [];
-  const hasAny =
-    rankings.length > 0 || awards.some((a) => a.winners.length > 0);
 
   if (isLoading)
     return (
@@ -69,8 +67,7 @@ const Leaderboard = () => {
               style={{
                 width: 40,
                 height: 1,
-                background:
-                  "linear-gradient(90deg, transparent, var(--orange))",
+                background: "linear-gradient(90deg, transparent, var(--orange))",
               }}
             />
             <span
@@ -88,8 +85,7 @@ const Leaderboard = () => {
               style={{
                 width: 40,
                 height: 1,
-                background:
-                  "linear-gradient(90deg, var(--orange), transparent)",
+                background: "linear-gradient(90deg, var(--orange), transparent)",
               }}
             />
           </div>
@@ -99,115 +95,117 @@ const Leaderboard = () => {
         </div>
       </section>
 
-      {!hasAny && (
-        <section style={{ paddingBottom: 80 }}>
-          <div className="con" style={{ textAlign: "center" }}>
-            <p style={{ color: "var(--dim)", fontSize: 15 }}>
-              Chưa có kết quả - BTC chưa công bố giải thưởng.
-            </p>
-          </div>
-        </section>
-      )}
-
-      {hasAny && (
-        <section style={{ paddingBottom: 80 }}>
-          <div className="con" style={{ maxWidth: 700, margin: "0 auto" }}>
-            {/* Rankings Table */}
-            {rankings.length > 0 && (
-              <div
-                style={{
-                  overflowX: "auto",
-                  borderRadius: 12,
-                  border: "1px solid rgba(255,255,255,.08)",
-                  background: "var(--bg2)",
-                  marginBottom: 36,
-                }}
-              >
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ background: "rgba(251,140,5,.06)" }}>
-                      <th style={{ ...thStyle, width: "8%" }}>Rank</th>
-                      <th style={thStyle}>Đội</th>
-                      <th style={{ ...thStyle, textAlign: "right" }}>Tổng</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rankings.map((row) => {
-                      const isTop3 = row.rank <= 3;
-                      const isFirst = row.rank === 1;
-                      return (
-                        <tr key={row.team.id}>
-                          <td
+      <section style={{ paddingBottom: 80 }}>
+        <div className="con" style={{ maxWidth: 700, margin: "0 auto" }}>
+          {/* Rankings Table */}
+          <div
+            style={{
+              overflowX: "auto",
+              borderRadius: 12,
+              border: "1px solid rgba(255,255,255,.08)",
+              background: "var(--bg2)",
+              marginBottom: 36,
+            }}
+          >
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ background: "rgba(251,140,5,.06)" }}>
+                  <th style={{ ...thStyle, width: "8%" }}>Rank</th>
+                  <th style={thStyle}>Đội</th>
+                  <th style={{ ...thStyle, textAlign: "right" }}>Tổng</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rankings.filter((r) => r.totalScore > 0).length === 0 && (
+                  <tr>
+                    <td colSpan={3} style={{ ...tdStyle, textAlign: "center", color: "var(--dim)" }}>
+                      Chưa có thông tin kết quả
+                    </td>
+                  </tr>
+                )}
+                {rankings
+                  .filter((r) => r.totalScore > 0)
+                  .map((row) => {
+                    const isTop3 = row.rank <= 3;
+                    const isFirst = row.rank === 1;
+                    return (
+                      <tr key={row.team.id}>
+                        <td
+                          style={{
+                            ...tdStyle,
+                            fontWeight: 800,
+                            fontSize: 18,
+                            color: isTop3 ? "var(--orange)" : "var(--dim)",
+                          }}
+                        >
+                          #{row.rank}
+                        </td>
+                        <td style={tdStyle}>
+                          <div
                             style={{
-                              ...tdStyle,
-                              fontWeight: 800,
+                              fontFamily: "'Anton', sans-serif",
                               fontSize: 18,
-                              color: isTop3 ? "var(--orange)" : "var(--dim)",
+                              letterSpacing: ".03em",
                             }}
                           >
-                            #{row.rank}
-                          </td>
-                          <td style={tdStyle}>
-                            <div
-                              style={{
-                                fontFamily: "'Anton', sans-serif",
-                                fontSize: 18,
-                                letterSpacing: ".03em",
-                              }}
-                            >
-                              {row.team.name}
-                            </div>
-                            <div
-                              style={{
-                                fontSize: 12,
-                                color: "var(--dim)",
-                                marginTop: 2,
-                              }}
-                            >
-                              {row.team.concept}
-                            </div>
-                          </td>
-                          <td
+                            {row.team.name}
+                          </div>
+                          <div
                             style={{
-                              ...tdStyle,
-                              textAlign: "right",
-                              fontWeight: isFirst ? 800 : undefined,
-                              color: isFirst ? "var(--orange)" : undefined,
+                              fontSize: 12,
+                              color: "var(--dim)",
+                              marginTop: 2,
                             }}
                           >
-                            {row.totalScore.toFixed(2)}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                            {row.team.concept}
+                          </div>
+                        </td>
+                        <td
+                          style={{
+                            ...tdStyle,
+                            textAlign: "right",
+                            fontWeight: isFirst ? 800 : undefined,
+                            color: isFirst ? "var(--orange)" : undefined,
+                          }}
+                        >
+                          {row.totalScore.toFixed(2)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
 
-            {/* Awards Table */}
-            {awards.length > 0 && (
-              <div
-                style={{
-                  overflowX: "auto",
-                  borderRadius: 12,
-                  border: "1px solid rgba(255,255,255,.08)",
-                  background: "var(--bg2)",
-                }}
-              >
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ background: "rgba(251,140,5,.06)" }}>
-                      <th style={{ ...thStyle, width: "40%" }}>Giải</th>
-                      <th style={thStyle}>Tên đội/người nhận</th>
+          {/* Awards Table — luôn hiện tên giải, chưa công bố thì hiện "Chưa có thông tin kết quả" */}
+          {awards.length > 0 && (
+            <div
+              style={{
+                overflowX: "auto",
+                borderRadius: 12,
+                border: "1px solid rgba(255,255,255,.08)",
+                background: "var(--bg2)",
+              }}
+            >
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ background: "rgba(251,140,5,.06)" }}>
+                    <th style={{ ...thStyle, width: "40%" }}>Giải</th>
+                    <th style={thStyle}>Tên đội/người nhận</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {awards.filter((a) => a.winners.length > 0).length === 0 && (
+                    <tr>
+                      <td colSpan={2} style={{ ...tdStyle, textAlign: "center", color: "var(--dim)" }}>
+                        Chưa có thông tin kết quả
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {awards.map((award) => {
-                      const winnerNames = award.winners
-                        .map((w) => w.winnerName)
-                        .filter(Boolean);
-                      const hasDisplay = winnerNames.length > 0;
+                  )}
+                  {awards
+                    .filter((a) => a.winners.length > 0)
+                    .map((award) => {
+                      const winnerNames = award.winners.map((w) => w.winnerName).filter(Boolean);
                       const winnerStyle: CSSProperties = {
                         fontFamily: "'Anton', sans-serif",
                         fontSize: 20,
@@ -216,35 +214,20 @@ const Leaderboard = () => {
                       };
                       return (
                         <tr key={award.id}>
-                          <td style={{ ...tdStyle, fontWeight: 700 }}>
-                            {award.name}
-                          </td>
-                          <td
-                            style={{
-                              ...tdStyle,
-                              ...(hasDisplay ? {} : { color: "var(--dim)" }),
-                            }}
-                          >
-                            {!hasDisplay && "Chưa công bố"}
-                            {hasDisplay && winnerNames.length === 1 && (
+                          <td style={{ ...tdStyle, fontWeight: 700 }}>{award.name}</td>
+                          <td style={tdStyle}>
+                            {winnerNames.length === 1 && (
                               <span style={winnerStyle}>{winnerNames[0]}</span>
                             )}
-                            {hasDisplay && winnerNames.length >= 2 && (
-                              <ol
-                                style={{
-                                  margin: 0,
-                                  paddingLeft: 20,
-                                  listStyleType: "decimal",
-                                }}
-                              >
+                            {winnerNames.length >= 2 && (
+                              <ol style={{ margin: 0, paddingLeft: 20, listStyleType: "decimal" }}>
                                 {winnerNames.map((name, i) => (
                                   <li
                                     key={i}
                                     style={{
                                       ...winnerStyle,
                                       fontSize: 17,
-                                      marginBottom:
-                                        i < winnerNames.length - 1 ? 4 : 0,
+                                      marginBottom: i < winnerNames.length - 1 ? 4 : 0,
                                     }}
                                   >
                                     {name}
@@ -256,13 +239,12 @@ const Leaderboard = () => {
                         </tr>
                       );
                     })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </section>
 
       <style>{`
         @media (max-width: 600px) {
