@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { Clapperboard, Crown, Flame, GraduationCap, Sparkles } from 'lucide-react';
+import { type ReactNode, useState } from 'react';
 
 type MainAward = {
   medal: string;
@@ -10,7 +11,7 @@ type MainAward = {
 };
 
 type SubAward = {
-  icon: string;
+  icon: ReactNode;
   name: string;
   qty: string;
   desc: string;
@@ -53,18 +54,18 @@ const mainAwards: MainAward[] = [
 ];
 
 const subAwards: SubAward[] = [
-  { icon: '⚙️', name: 'Kỹ Thuật', qty: '01 giải', desc: 'TB điểm Kỹ thuật cao nhất từ 03 BGK.' },
-  { icon: '🎭', name: 'Biên Đạo', qty: '01 giải', desc: 'TB điểm Biên dựng cao nhất từ 03 BGK.' },
-  { icon: '👑', name: 'Trưởng Nhóm', qty: '01 giải', desc: 'Điểm quá trình cao nhất + BTC đánh giá.' },
-  { icon: '✨', name: 'Phong Cách', qty: '01 giải', desc: 'TB điểm Phục trang cao nhất từ 03 BGK.' },
+  { icon: <span style={{ fontSize: 20 }}>💃</span>, name: 'Kỹ Thuật', qty: '01 giải', desc: 'TB điểm Kỹ thuật cao nhất từ 03 BGK.' },
+  { icon: <Clapperboard size={20} strokeWidth={1.75} style={{ color: '#c084fc' }} />, name: 'Biên Đạo', qty: '01 giải', desc: 'TB điểm Biên dựng cao nhất từ 03 BGK.' },
+  { icon: <Crown size={20} strokeWidth={1.75} style={{ color: '#fbbf24' }} />, name: 'Trưởng Nhóm', qty: '01 giải', desc: 'Điểm quá trình cao nhất + BTC đánh giá.' },
+  { icon: <Sparkles size={20} strokeWidth={1.75} style={{ color: '#f472b6' }} />, name: 'Phong Cách', qty: '01 giải', desc: 'TB điểm Phục trang cao nhất từ 03 BGK.' },
   {
-    icon: '🔥',
+    icon: <Flame size={20} strokeWidth={1.75} style={{ color: '#fb923c' }} />,
     name: 'Nỗ Lực',
     qty: '04 giải · Never Stop Trying!',
     desc: 'Chuyên cần 30% + BTC 30% + thành viên vote 40%. Mỗi team 1 người.',
     highlight: true,
   },
-  { icon: '🙏', name: 'Tri Ân Mentor', qty: '13 giải', desc: 'Team Mentor tự động nhận quà từ Ban Tổ Chức.' },
+  { icon: <GraduationCap size={20} strokeWidth={1.75} style={{ color: '#34d399' }} />, name: 'Tri Ân Mentor', qty: '13 giải', desc: 'Team Mentor tự động nhận quà từ Ban Tổ Chức.' },
 ];
 
 const Awards = () => {
@@ -181,7 +182,6 @@ const Awards = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: 20,
                     background: s.highlight ? 'rgba(254,230,34,.1)' : 'rgba(255,255,255,.04)',
                     border: s.highlight ? '1px solid rgba(254,230,34,.25)' : '1px solid rgba(255,255,255,.08)',
                   }}
