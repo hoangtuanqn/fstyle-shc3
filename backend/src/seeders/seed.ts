@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import "dotenv/config";
+import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { awards, btcScores, judgeScores, teams, users } from "~/db/schema";
+import { awardWinners, awards, btcScores, judgeScores, teams, users } from "~/db/schema";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
@@ -252,7 +253,7 @@ async function seed() {
       name: "Tri Ân Mentor",
       type: "MANUAL" as const,
       winnerType: "INDIVIDUAL" as const,
-      quantity: 13,
+      quantity: 14,
       prize: "Chứng nhận + Quà",
       displayOrder: 10,
     },
@@ -260,6 +261,35 @@ async function seed() {
 
   await db.insert(awards).values(awardData);
   console.log(`  ✓ ${awardData.length} awards`);
+
+  // ── 6. Tri Ân Mentor winners (fixed list) ──────────
+  const mentorNames = [
+    "Lê Hiền Diệu",
+    "Trần Nguyễn Tường Vy",
+    "Nguyễn Trần Duy Thịnh",
+    "Bùi Minh Châu",
+    "Lê Tấn Cường (Tacu)",
+    "Trần Quốc Huy",
+    "Nguyễn Hoàng Việt",
+    "Nguyễn Đình Thắng",
+    "Huỳnh Ngọc Minh Thư",
+    "Trần Phương Thuỷ (Cipi)",
+    "Phạm Lê Hải Ngọc",
+    "Võ Phương Nga",
+    "Phạm Lê Thắng Hùng",
+    "Thái Hoàng Kim",
+  ];
+  const [mentorAward] = await db.select({ id: awards.id }).from(awards).where(eq(awards.name, "Tri Ân Mentor"));
+  if (mentorAward) {
+    await db.insert(awardWinners).values(
+      mentorNames.map((name, i) => ({
+        awardId: mentorAward.id,
+        slot: i + 1,
+        winnerName: name,
+      })),
+    );
+    console.log(`  ✓ ${mentorNames.length} mentor winners`);
+  }
 
   console.log("\n✅ Seed complete!");
   process.exit(0);
