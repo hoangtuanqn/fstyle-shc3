@@ -89,14 +89,8 @@ const Leaderboard = () => {
 
       {/* ── Two-column grid: Rankings | Awards ── */}
       <div
-        className="con"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 24,
-          marginBottom: isMC ? 40 : 0,
-          alignItems: "start",
-        }}
+        className={`con grid grid-cols-1 gap-6 md:grid-cols-2 ${isMC ? "mb-10" : ""}`}
+        style={{ alignItems: "start" }}
       >
         {/* Rankings */}
         <div>
@@ -104,7 +98,8 @@ const Leaderboard = () => {
             Bảng xếp hạng
           </p>
           <div style={{ borderRadius: 12, border: "1px solid rgba(255,255,255,.08)", background: "var(--bg2)", overflow: "hidden" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 220 }}>
               <thead>
                 <tr style={{ background: "rgba(251,140,5,.05)" }}>
                   {["#", "Đội", "Điểm"].map((h, i) => (
@@ -158,6 +153,7 @@ const Leaderboard = () => {
                 )}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
 
@@ -167,7 +163,8 @@ const Leaderboard = () => {
             Giải thưởng đã công bố
           </p>
           <div style={{ borderRadius: 12, border: "1px solid rgba(255,255,255,.08)", background: "var(--bg2)", overflow: "hidden" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 240 }}>
               <thead>
                 <tr style={{ background: "rgba(251,140,5,.05)" }}>
                   {["Giải", "Người/Đội nhận"].map((h) => (
@@ -202,7 +199,7 @@ const Leaderboard = () => {
                     const names = award.winners.map((w) => w.winnerName).filter(Boolean);
                     return (
                       <tr key={award.id}>
-                        <td style={{ padding: "11px 14px", fontWeight: 700, fontSize: 13, borderBottom: "1px solid rgba(255,255,255,.05)", color: "var(--text)", whiteSpace: "nowrap" }}>
+                        <td style={{ padding: "11px 14px", fontWeight: 700, fontSize: 13, borderBottom: "1px solid rgba(255,255,255,.05)", color: "var(--text)" }}>
                           {award.name}
                         </td>
                         <td style={{ padding: "11px 14px", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
@@ -223,6 +220,7 @@ const Leaderboard = () => {
                 )}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       </div>
@@ -232,13 +230,9 @@ const Leaderboard = () => {
         <div className="con">
           <div style={{ borderRadius: 14, border: "1px solid rgba(251,140,5,.3)", background: "var(--bg2)", overflow: "hidden" }}>
             {/* Panel header */}
-            <div style={{
+            <div className="flex flex-wrap items-center justify-between gap-3" style={{
               padding: "14px 20px",
               borderBottom: "1px solid rgba(255,255,255,.06)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 12,
               background: "rgba(251,140,5,.04)",
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -377,13 +371,6 @@ const Leaderboard = () => {
         </div>
       )}
 
-      <style>{`
-        @media (max-width: 720px) {
-          .con > div[style*="grid-template-columns"] {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };
