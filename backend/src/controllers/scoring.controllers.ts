@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 
 import { HTTP_STATUS } from '~/constants/httpStatus';
 import { ResponseClient } from '~/rules/response';
+import awardService from '~/services/award.service';
 import scoringService from '~/services/scoring.service';
 
 class ScoringController {
@@ -27,6 +28,7 @@ class ScoringController {
     try {
       await scoringService.saveJudgeScores(req.params.teamId as string, req.body);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Lưu điểm BGK thành công!' }));
+      awardService.autoCalculate().catch(console.error);
     } catch (err) {
       next(err);
     }
@@ -36,6 +38,7 @@ class ScoringController {
     try {
       await scoringService.saveBtcScore(req.params.teamId as string, req.body.discipline);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Lưu điểm BTC thành công!' }));
+      awardService.autoCalculate().catch(console.error);
     } catch (err) {
       next(err);
     }
