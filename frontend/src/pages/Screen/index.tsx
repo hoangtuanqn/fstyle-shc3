@@ -37,7 +37,6 @@ const fetchPublicLeaderboard = async () => {
   return res.data;
 };
 
-const medals: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
 
 const Screen = () => {
   const queryClient = useQueryClient();
@@ -52,10 +51,26 @@ const Screen = () => {
 
   const rankings = data?.result?.rankings ?? [];
   const awards = data?.result?.awards ?? [];
-  const visibleRankings = rankings.filter((r) => r.totalScore > 0);
+
+  // Map AUTO awards → team names from live rankings (rank 1→Quán Quân, rank 2→Á Quân, rank 3/4→Khuyến Khích)
+  const rankedTeams = [...rankings]
+    .filter((r) => r.totalScore > 0)
+    .sort((a, b) => b.totalScore - a.totalScore);
+
+  const autoNamesMap = new Map<string, string[]>();
+  let teamCursor = 0;
+  for (const award of [...awards].filter((a) => a.type === 'AUTO').sort((a, b) => a.displayOrder - b.displayOrder)) {
+    const names: string[] = [];
+    for (let i = 0; i < award.quantity && teamCursor < rankedTeams.length; i++) {
+      names.push(rankedTeams[teamCursor].team.name);
+      teamCursor++;
+    }
+    autoNamesMap.set(award.id, names);
+  }
+
   const revealedAwards = awards
     .filter((a) => revealedIds.includes(a.id))
-    .sort((a, b) => revealedIds.indexOf(a.id) - revealedIds.indexOf(b.id));
+    .sort((a, b) => revealedIds.indexOf(b.id) - revealedIds.indexOf(a.id));
 
   useEffect(() => {
     const socket = io(SOCKET_URL, { withCredentials: true });
@@ -71,7 +86,25 @@ const Screen = () => {
         setTimeout(() => {
           const cached = queryClient.getQueryData<ApiResponse<LeaderboardData>>(['leaderboard-public']);
           const found = cached?.result?.awards.find((a) => a.id === awardId) ?? null;
-          if (found) setOverlayAward(found);
+          if (!found) return;
+          if (found.type === 'AUTO') {
+            const ranked = [...(cached?.result?.rankings ?? [])]
+              .filter((r) => r.totalScore > 0)
+              .sort((a, b) => b.totalScore - a.totalScore);
+            const autoSorted = [...(cached?.result?.awards ?? [])]
+              .filter((a) => a.type === 'AUTO')
+              .sort((a, b) => a.displayOrder - b.displayOrder);
+            let cur = 0;
+            for (const a of autoSorted) {
+              const computed = ranked.slice(cur, cur + a.quantity).map((r) => r.team.name);
+              cur += a.quantity;
+              if (a.id === awardId) {
+                setOverlayAward({ ...found, winners: computed.map((name, i) => ({ slot: i + 1, winnerTeamId: null, winnerUserId: null, winnerName: name })) });
+                return;
+              }
+            }
+          }
+          setOverlayAward(found);
         }, 500);
       }
     });
@@ -109,94 +142,59 @@ const Screen = () => {
       <div style={{ position: 'relative', zIndex: 10 }}>
 
         {/* Header */}
-        <section style={{ padding: '64px 24px 48px', textAlign: 'center' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
-            <span style={{ width: 56, height: 1, background: 'linear-gradient(90deg,transparent,var(--orange))' }} />
+        <section style={{ padding: '64px 24px 48px', textAlign: 'center', position: 'relative' }}>
+          {/* Radial glow burst behind title */}
+          <div style={{
+            position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            width: 700, height: 340, borderRadius: '50%',
+            background: 'radial-gradient(ellipse, rgba(251,140,5,.13) 0%, transparent 70%)',
+            pointerEvents: 'none',
+            animation: 'hdr-burst 1s .1s both',
+          }} />
+
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, marginBottom: 20, animation: 'hdr-badge .5s .05s both' }}>
+            <span style={{ height: 1, background: 'linear-gradient(90deg,transparent,var(--orange))', animation: 'hdr-line-l .5s .3s both' }} />
             <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.46em', textTransform: 'uppercase', color: 'var(--orange)', textShadow: '0 0 20px rgba(251,140,5,.7)' }}>
               LIVE RESULTS
             </span>
-            <span style={{ width: 56, height: 1, background: 'linear-gradient(90deg,var(--orange),transparent)' }} />
+            <span style={{ height: 1, background: 'linear-gradient(90deg,var(--orange),transparent)', animation: 'hdr-line-r .5s .3s both' }} />
           </div>
 
           <h1 style={{
             fontFamily: "'Anton', sans-serif",
-            fontSize: 'clamp(52px, 9vw, 110px)',
+            fontSize: 'clamp(48px, 8.5vw, 104px)',
             letterSpacing: '.05em',
             margin: 0,
             lineHeight: 1,
             textShadow: '0 4px 40px rgba(0,0,0,.6)',
+            animation: 'hdr-bang .75s .15s both',
           }}>
-            BẢNG XẾP <em style={{ color: 'var(--orange)', fontStyle: 'italic', textShadow: '0 0 40px rgba(251,140,5,.5)' }}>HẠNG</em>
+            CÔNG BỐ <em style={{
+              color: 'var(--orange)',
+              fontStyle: 'italic',
+              textShadow: '0 0 40px rgba(251,140,5,.5)',
+              animation: 'hdr-glow 3s 1.2s ease-in-out infinite',
+            }}>GIẢI THƯỞNG</em>
           </h1>
 
-          <p style={{ marginTop: 12, marginBottom: 0, fontSize: 13, color: 'rgba(255,255,255,.4)', letterSpacing: '.18em', textTransform: 'uppercase' }}>
+          <p style={{ marginTop: 14, marginBottom: 0, fontSize: 13, color: 'rgba(255,255,255,.4)', letterSpacing: '.18em', textTransform: 'uppercase', animation: 'hdr-sub .6s .6s both' }}>
             Heatwave Showcase #3 · Apocalypse
           </p>
         </section>
 
         <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 28px 100px' }}>
 
-          {/* Rankings */}
-          <div style={{
-            borderRadius: 16,
-            border: '1px solid rgba(255,255,255,.09)',
-            background: 'rgba(10,7,3,.65)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            marginBottom: 44,
-            overflow: 'hidden',
-          }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr>
-                  <th style={{ ...thS, width: '7%' }}>Rank</th>
-                  <th style={thS}>Đội thi</th>
-                  <th style={{ ...thS, textAlign: 'right' }}>Điểm TB</th>
-                </tr>
-              </thead>
-              <tbody>
-                {visibleRankings.length === 0 && (
-                  <tr>
-                    <td colSpan={3} style={{ ...tdS, textAlign: 'center', color: 'var(--dim)', padding: '36px 24px', fontSize: 14 }}>
-                      Chưa có thông tin kết quả
-                    </td>
-                  </tr>
-                )}
-                {visibleRankings.map((row) => {
-                  const isFirst = row.rank === 1;
-                  const isTop3 = row.rank <= 3;
-                  return (
-                    <tr key={row.team.id} style={{ background: isFirst ? 'rgba(251,140,5,.04)' : undefined }}>
-                      <td style={{ ...tdS, fontWeight: 900, fontSize: 26, color: isTop3 ? 'var(--orange)' : 'rgba(255,255,255,.3)' }}>
-                        {medals[row.rank] ?? `#${row.rank}`}
-                      </td>
-                      <td style={tdS}>
-                        <div style={{ fontFamily: "'Anton', sans-serif", fontSize: 26, letterSpacing: '.03em', color: isFirst ? 'var(--orange)' : 'var(--text)', textShadow: isFirst ? '0 0 20px rgba(251,140,5,.4)' : 'none' }}>
-                          {row.team.name}
-                        </div>
-                        <div style={{ fontSize: 12, color: 'rgba(255,255,255,.35)', marginTop: 3, letterSpacing: '.04em' }}>
-                          {row.team.concept}
-                        </div>
-                      </td>
-                      <td style={{ ...tdS, textAlign: 'right', fontFamily: "'Anton', sans-serif", fontSize: isFirst ? 34 : 26, color: isFirst ? 'var(--orange)' : 'var(--text)', textShadow: isFirst ? '0 0 20px rgba(251,140,5,.4)' : 'none' }}>
-                        {row.totalScore.toFixed(2)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
           {/* Revealed awards */}
           {revealedAwards.length > 0 && (
             <div style={{
               borderRadius: 16,
-              border: '1px solid rgba(255,255,255,.09)',
-              background: 'rgba(10,7,3,.65)',
+              border: '1px solid rgba(251,140,5,.22)',
+              background: 'rgba(10,7,3,.68)',
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
               overflow: 'hidden',
+              boxShadow: '0 0 48px rgba(251,140,5,.08)',
+              animation: 'awards-enter .6s both',
             }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
@@ -207,21 +205,16 @@ const Screen = () => {
                 </thead>
                 <tbody>
                   {revealedAwards.map((award, idx) => {
-                    const names = award.winners.map((w) => w.winnerName).filter(Boolean) as string[];
+                    const names = award.type === 'AUTO'
+                      ? (autoNamesMap.get(award.id) ?? [])
+                      : award.winners.map((w) => w.winnerName).filter(Boolean) as string[];
                     return (
                       <tr key={award.id} style={{ animation: `screen-up .45s ${idx * 0.06}s both` }}>
                         <td style={{ ...tdS, fontWeight: 700, fontSize: 15 }}>{award.name}</td>
                         <td style={tdS}>
-                          {names.length === 1 && (
-                            <span style={{ fontFamily: "'Anton', sans-serif", fontSize: 22, letterSpacing: '.03em' }}>{names[0]}</span>
-                          )}
-                          {names.length >= 2 && (
-                            <ol style={{ margin: 0, paddingLeft: 20 }}>
-                              {names.map((n, i) => (
-                                <li key={i} style={{ fontFamily: "'Anton', sans-serif", fontSize: 19, marginBottom: i < names.length - 1 ? 4 : 0 }}>{n}</li>
-                              ))}
-                            </ol>
-                          )}
+                          {names.map((n, i) => (
+                            <div key={i} style={{ fontFamily: "'Anton', sans-serif", fontSize: 22, letterSpacing: '.03em', marginBottom: i < names.length - 1 ? 6 : 0 }}>{n}</div>
+                          ))}
                         </td>
                       </tr>
                     );
@@ -238,6 +231,23 @@ const Screen = () => {
       <style>{`
         @keyframes hzoom { from { transform: scale(1) } to { transform: scale(1.06) } }
         @keyframes screen-up { from { opacity: 0; transform: translateY(18px) } to { opacity: 1; transform: none } }
+        @keyframes hdr-bang {
+          0%   { opacity: 0; transform: scale(2.4) rotate(-1.5deg); filter: blur(10px); }
+          35%  { opacity: 1; transform: scale(.94) rotate(0deg); filter: blur(0); }
+          55%  { transform: scale(1.05); }
+          75%  { transform: scale(.98); }
+          100% { transform: scale(1); }
+        }
+        @keyframes hdr-badge { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
+        @keyframes hdr-line-l { from { width: 0; opacity: 0; } to { width: 56px; opacity: 1; } }
+        @keyframes hdr-line-r { from { width: 0; opacity: 0; } to { width: 56px; opacity: 1; } }
+        @keyframes hdr-sub { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+        @keyframes hdr-burst { from { opacity: 0; transform: translate(-50%,-50%) scale(.4); } to { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
+        @keyframes hdr-glow {
+          0%, 100% { text-shadow: 0 0 40px rgba(251,140,5,.5); }
+          50%       { text-shadow: 0 0 80px rgba(251,140,5,1), 0 0 140px rgba(251,140,5,.4), 0 2px 0 rgba(251,140,5,.3); }
+        }
+        @keyframes awards-enter { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
       `}</style>
     </div>
   );
