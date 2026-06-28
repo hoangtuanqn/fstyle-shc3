@@ -33,8 +33,8 @@ export const AppRoutes = () => (
       </Route>
     </Route>
 
-    {/* Admin + BTC FStyle + MC */}
-    <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE, RoleType.MC]} />}>
+    {/* Admin + BTC FStyle */}
+    <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN, RoleType.BTC_FSTYLE]} />}>
       <Route element={<MainLayout />}>
         <Route path="/voting-leaderboard" element={<VotingLeaderboard />} />
       </Route>

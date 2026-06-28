@@ -21,13 +21,11 @@ const Hero = () => {
 
   const colon = (
     <span
+      className="text-[26px] sm:text-[40px] leading-none mx-0.5 sm:mx-[2px]"
       style={{
         fontFamily: "Anton, sans-serif",
-        fontSize: 40,
         color: "var(--gold)",
         animation: "cb 1s step-end infinite",
-        lineHeight: 1,
-        margin: "0 2px",
       }}
     >
       :
@@ -108,17 +106,42 @@ const Hero = () => {
         </span>
 
         {/* 2. Logo */}
-        <img
-          src="/assets/images/typography-apocalypse-gold.png"
-          alt="APOCALYPSE"
-          style={{
-            width: "min(580px, 84vw)",
-            marginTop: 22,
-            filter:
-              "drop-shadow(0 0 60px rgba(254,230,34,.7)) drop-shadow(0 0 20px rgba(251,140,5,.5))",
-            animation: "fu 1s .3s both",
-          }}
-        />
+        <div
+          className="relative"
+          style={{ width: "min(580px, 84vw)", marginTop: 22, animation: "fu 1s .3s both" }}
+        >
+          {/* Stage light bloom */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              inset: "-90px -50px",
+              background:
+                "radial-gradient(ellipse 75% 55% at 50% 50%, rgba(254,230,34,.55) 0%, rgba(251,140,5,.28) 45%, transparent 70%)",
+              filter: "blur(32px)",
+            }}
+          />
+          {/* Light shafts */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              inset: "-20px -60px",
+              background:
+                "conic-gradient(from 260deg at 50% 50%, transparent 0deg, rgba(254,220,20,.12) 10deg, transparent 20deg, transparent 50deg, rgba(254,220,20,.1) 60deg, transparent 70deg, transparent 360deg)",
+              filter: "blur(18px)",
+            }}
+          />
+          {/* Orbit ring */}
+          <div className="logo-orbit-ring pointer-events-none absolute" style={{ inset: "-18px -10px" }} />
+          <img
+            src="/assets/images/typography-apocalypse-gold.png"
+            alt="APOCALYPSE"
+            className="relative w-full"
+            style={{
+              filter:
+                "drop-shadow(0 0 2px rgba(255,255,255,1)) drop-shadow(0 0 10px rgba(255,255,210,1)) drop-shadow(0 0 30px rgba(254,230,34,1)) drop-shadow(0 0 70px rgba(254,200,10,.9)) drop-shadow(0 0 140px rgba(251,140,5,.7))",
+            }}
+          />
+        </div>
 
         {/* 3. Tagline */}
         <p
@@ -126,8 +149,9 @@ const Hero = () => {
           style={{
             fontSize: 14,
             fontStyle: "italic",
-            color: "rgba(242,237,224,.7)",
+            color: "rgba(242,237,224,.92)",
             marginTop: 18,
+            textShadow: "0 0 20px rgba(255,255,255,.35), 0 1px 8px rgba(0,0,0,.8)",
             animation: "fu .9s .5s both",
           }}
         >
@@ -243,38 +267,24 @@ const Hero = () => {
 
         {/* 5. Countdown */}
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginTop: 36,
-            flexWrap: "wrap",
-            justifyContent: "center",
-            animation: "fu .9s .9s both",
-          }}
+          className="flex items-center flex-wrap justify-center gap-1 sm:gap-1.5"
+          style={{ marginTop: 36, animation: "fu .9s .9s both" }}
         >
           {countItems.map((item, i) => (
-            <div
-              key={item.label}
-              style={{ display: "flex", alignItems: "center", gap: 6 }}
-            >
+            <div key={item.label} className="flex items-center gap-1 sm:gap-1.5">
               <div
+                className="flex flex-col items-center rounded-[10px]"
                 style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  minWidth: 72,
-                  padding: "14px 10px",
                   background: "rgba(0,0,0,.4)",
                   border: "1px solid rgba(254,230,34,.22)",
-                  borderRadius: 10,
+                  minWidth: "clamp(52px, 13vw, 72px)",
+                  padding: "clamp(10px, 2vw, 14px) clamp(7px, 1.5vw, 10px)",
                 }}
               >
                 <span
+                  className="text-[30px] sm:text-[40px] leading-none"
                   style={{
                     fontFamily: "Anton, sans-serif",
-                    fontSize: 40,
-                    lineHeight: 1,
                     color: "var(--gold)",
                     textShadow: "0 0 20px rgba(254,230,34,.6)",
                   }}
@@ -282,14 +292,8 @@ const Hero = () => {
                   {item.value}
                 </span>
                 <span
-                  style={{
-                    fontSize: 9,
-                    fontWeight: 800,
-                    letterSpacing: ".24em",
-                    color: "var(--dim)",
-                    textTransform: "uppercase",
-                    marginTop: 8,
-                  }}
+                  className="text-[8px] sm:text-[9px] font-extrabold tracking-[.24em] uppercase mt-1.5 sm:mt-2"
+                  style={{ color: "var(--dim)" }}
                 >
                   {item.label}
                 </span>
@@ -337,6 +341,27 @@ const Hero = () => {
       </div>
 
       <style>{`
+        .logo-orbit-ring {
+          border-radius: 50% / 28%;
+          background: conic-gradient(
+            from 0deg,
+            transparent 0deg,
+            transparent 295deg,
+            rgba(255,230,80,.5) 315deg,
+            rgba(255,255,210,1) 336deg,
+            rgba(255,255,255,1) 342deg,
+            rgba(254,230,34,.8) 352deg,
+            transparent 360deg
+          );
+          -webkit-mask: radial-gradient(ellipse calc(100% - 10px) calc(100% - 10px) at 50% 50%, transparent 95%, black 100%);
+          mask: radial-gradient(ellipse calc(100% - 10px) calc(100% - 10px) at 50% 50%, transparent 95%, black 100%);
+          animation: logo-orbit 7s linear infinite;
+          filter: blur(1px) brightness(1.4);
+        }
+        @keyframes logo-orbit {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
         .htv-badge:hover {
           border-color: rgba(254,230,34,.45) !important;
           box-shadow: 0 0 20px rgba(254,230,34,.12), 0 0 40px rgba(254,230,34,.06);

@@ -186,7 +186,7 @@ const VotingLeaderboard = () => {
                 color: "var(--dim)",
               }}
             >
-              TỔNG LƯỢT VOTE
+              TỔNG ĐIỂM
             </span>
           </div>
         </div>
@@ -290,7 +290,7 @@ const VotingLeaderboard = () => {
                           color: "var(--dim)",
                         }}
                       >
-                        votes
+                        điểm
                       </span>
                     </div>
                   </div>
@@ -330,7 +330,7 @@ const VotingLeaderboard = () => {
                               borderBottom: `1px solid ${borderColor}`,
                             }}
                           >
-                            Votes
+                            Điểm
                           </th>
                           <th
                             style={{
