@@ -27,10 +27,11 @@ const useSocket = () => {
 
     return () => {
       socket.disconnect();
+      socketRef.current = null;
     };
   }, [queryClient]);
 
-  return socketRef.current;
+  return socketRef;
 };
 
 export default useSocket;

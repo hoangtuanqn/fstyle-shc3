@@ -1,9 +1,12 @@
+import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { CSSProperties } from "react";
 
 import LeaderboardApi from "~/api-requests/leaderboard.requests";
 import useSocket from "~/hooks/useSocket";
 import usePageTitle from "~/hooks/usePageTitle";
+import useAuth from "~/hooks/useAuth";
+import { RoleType } from "~/constants/enums";
 
 const thStyle: CSSProperties = {
   padding: "14px 18px",
@@ -27,7 +30,9 @@ const tdStyle: CSSProperties = {
 
 const Leaderboard = () => {
   usePageTitle("Xếp Hạng Giải Thưởng");
-  useSocket();
+  const socketRef = useSocket();
+  const { user } = useAuth();
+  const isMC = user?.role === RoleType.ADMIN || user?.role === RoleType.MC;
 
   const { data, isLoading } = useQuery({
     queryKey: ["leaderboard"],
@@ -36,6 +41,36 @@ const Leaderboard = () => {
 
   const rankings = data?.result?.rankings ?? [];
   const awards = data?.result?.awards ?? [];
+
+  const sortedAwards = [...awards].sort((a, b) => a.displayOrder - b.displayOrder);
+  const [revealedIds, setRevealedIds] = useState<string[]>([]);
+  const [isRevealing, setIsRevealing] = useState(false);
+
+  useEffect(() => {
+    const socket = socketRef.current;
+    if (!socket) return;
+    const onInit = ({ revealedAwardIds }: { revealedAwardIds: string[] }) => {
+      setRevealedIds(revealedAwardIds);
+    };
+    const onRevealed = ({ revealedAwardIds }: { revealedAwardIds: string[] }) => {
+      setRevealedIds(revealedAwardIds);
+    };
+    socket.on("leaderboard:init", onInit);
+    socket.on("award:revealed", onRevealed);
+    return () => {
+      socket.off("leaderboard:init", onInit);
+      socket.off("award:revealed", onRevealed);
+    };
+  }, [socketRef]);
+
+  const nextAward = sortedAwards.find((a) => !revealedIds.includes(a.id));
+
+  const handleReveal = useCallback(() => {
+    if (!nextAward || isRevealing) return;
+    setIsRevealing(true);
+    socketRef.current?.emit("award:reveal", { awardId: nextAward.id });
+    setTimeout(() => setIsRevealing(false), 1500);
+  }, [nextAward, isRevealing, socketRef]);
 
   if (isLoading)
     return (
@@ -245,6 +280,74 @@ const Leaderboard = () => {
           )}
         </div>
       </section>
+
+      {isMC && (
+        <section style={{ paddingBottom: 40 }}>
+          <div className="con" style={{ maxWidth: 700, margin: "0 auto" }}>
+            <div
+              style={{
+                background: "var(--bg2)",
+                border: "1px solid rgba(251,140,5,.25)",
+                borderRadius: 14,
+                padding: "20px 24px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 12,
+              }}
+            >
+              <p
+                style={{
+                  fontSize: 11,
+                  fontWeight: 800,
+                  letterSpacing: ".2em",
+                  color: "var(--orange)",
+                  textTransform: "uppercase",
+                  margin: 0,
+                }}
+              >
+                MC Control
+              </p>
+              {nextAward ? (
+                <>
+                  <p style={{ fontSize: 13, color: "var(--dim)", margin: 0 }}>
+                    Giải tiếp theo:{" "}
+                    <strong style={{ color: "var(--text)" }}>{nextAward.name}</strong>
+                  </p>
+                  <button
+                    onClick={handleReveal}
+                    disabled={isRevealing}
+                    style={{
+                      padding: "14px 24px",
+                      fontSize: 16,
+                      fontWeight: 800,
+                      letterSpacing: ".05em",
+                      background: isRevealing ? "rgba(251,140,5,.3)" : "var(--orange)",
+                      color: "#000",
+                      border: "none",
+                      borderRadius: 10,
+                      cursor: isRevealing ? "not-allowed" : "pointer",
+                      transition: "all .2s",
+                      width: "100%",
+                    }}
+                  >
+                    {isRevealing ? "⏳ Đang công bố..." : `🏆 Công bố: ${nextAward.name}`}
+                  </button>
+                </>
+              ) : (
+                <p style={{ fontSize: 14, color: "var(--dim)", margin: 0 }}>
+                  ✅ Đã công bố tất cả giải thưởng
+                </p>
+              )}
+              <p style={{ fontSize: 12, color: "var(--dim)", margin: 0 }}>
+                {revealedIds.length}/{sortedAwards.length} giải đã công bố •{" "}
+                <a href="/screen" target="_blank" style={{ color: "var(--orange)" }}>
+                  Mở màn hình chiếu ↗
+                </a>
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
 
       <style>{`
         @media (max-width: 600px) {
