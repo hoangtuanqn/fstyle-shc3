@@ -43,7 +43,7 @@ const Btc = () => {
               lineHeight: 1.75,
             }}
           >
-            Đội ngũ tổ chức FStyle SHC3 — những người làm việc không ngừng nghỉ
+            Đội ngũ tổ chức FStyle SHC3 - những người làm việc không ngừng nghỉ
             để đêm Showcase diễn ra hoàn hảo.
           </p>
         </div>
