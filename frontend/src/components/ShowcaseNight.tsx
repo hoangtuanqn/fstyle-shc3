@@ -1,83 +1,27 @@
-import { useState } from "react";
-import { MapPin, Theater, Scale } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MapPin, Theater, Scale, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 type Performance = {
   num: string;
   name: string;
   by: string;
-  tag: string;
-  tagColor?: string;
-  tagBg?: string;
   teamColor?: string;
   image?: string;
 };
 
 const performances: Performance[] = [
-  {
-    num: "01",
-    name: "Earth Song",
-    by: "Trần Ngọc Vi Lam · Top 18 Sing Out Loud 2026",
-    tag: "Mở màn",
-    tagColor: "var(--gold)",
-    tagBg: "rgba(254,230,34,.1)",
-    image: "/assets/pptx-extracted/performer-vilam.png",
-  },
-  {
-    num: "02",
-    name: "Tứ Kỵ Sĩ Khải Huyền",
-    by: "SHIRO KURO · Emptiness",
-    tag: "Team",
-    teamColor: "var(--shiro)",
-    image: "/assets/pptx-extracted/team-shiro-kuro.png",
-  },
-  {
-    num: "03",
-    name: "Tứ Kỵ Sĩ Khải Huyền",
-    by: "Apex Aura · Inner Conflict",
-    tag: "Team",
-    teamColor: "var(--apex)",
-    image: "/assets/pptx-extracted/team-apex-aura.png",
-  },
-  {
-    num: "04",
-    name: "Tứ Kỵ Sĩ Khải Huyền",
-    by: "SLATT · Awakening",
-    tag: "Team",
-    teamColor: "var(--slatt)",
-    image: "/assets/pptx-extracted/team-slatt.png",
-  },
-  {
-    num: "05",
-    name: "Tứ Kỵ Sĩ Khải Huyền",
-    by: "ANTI-X · Letting Go",
-    tag: "Team",
-    teamColor: "var(--anti)",
-    image: "/assets/pptx-extracted/team-anti-x.png",
-  },
-  {
-    num: "06",
-    name: "Công Lý",
-    by: "FStyle Crew · Performer",
-    tag: "FStyle",
-    tagColor: "var(--orange)",
-    tagBg: "rgba(251,140,5,.08)",
-  },
-  {
-    num: "07",
-    name: "Special Guest Performance",
-    by: "M Tú",
-    tag: "★ Guest",
-    tagColor: "var(--gold)",
-    tagBg: "rgba(254,230,34,.1)",
-    image: "/assets/pptx-extracted/performer-mtu.png",
-  },
-  {
-    num: "08",
-    name: "Sự Tĩnh Lặng Từ Thiên Đường",
-    by: "Remix One Crew",
-    tag: "Finale",
-  },
+  { num: "01", name: "Hotel California", by: "Lamie Trần x F# Live Music Club", image: "/assets/images/performers/lamie-x-f.webp" },
+  { num: "02", name: "FREVKQU3NC!E", by: "IU ArTeam", image: "/assets/images/performers/iu-arteam.webp" },
+  { num: "03", name: "Huyền Khúc Sử Việt", by: "SLATT from FStyle Crew", teamColor: "var(--slatt)" },
+  { num: "04", name: "QUEEN NEVER CRY", by: "Apex Aura from FStyle Crew", teamColor: "var(--apex)" },
+  { num: "05", name: "CARIBBEAN", by: "Giai Điệu Trẻ", image: "/assets/images/performers/giai-dieu-tre.webp" },
+  { num: "06", name: "境界 (Kyōkai)", by: "Shiro Kuro from FStyle Crew", teamColor: "var(--shiro)" },
+  { num: "07", name: "Girly Breaks Free", by: "Anti-X from FStyle Crew", teamColor: "var(--anti)" },
+  { num: "08", name: "Detonex", by: "Jaeger Squad", image: "/assets/images/performers/jaeger-squad.webp" },
+  { num: "09", name: "Wall to Wall", by: "The 07ERA", image: "/assets/images/performers/the-07era.webp" },
+  { num: "10", name: "Sự Tĩnh Lặng Từ Thiên Đường", by: "Ca sĩ M Tú", image: "/assets/images/performers/m-tu.webp" },
+  { num: "11", name: "Like We Own The Morning", by: "FStyle Crew", image: "/assets/images/performers/fstyle-crew.webp" },
 ];
 
 const judges = [
@@ -107,7 +51,14 @@ const judges = [
 const ShowcaseNight = () => {
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const [hoveredJudge, setHoveredJudge] = useState<number | null>(null);
-  const [previewImg, setPreviewImg] = useState<string | null>(null);
+  const [modal, setModal] = useState<Performance | null>(null);
+
+  useEffect(() => {
+    if (!modal) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setModal(null); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [modal]);
 
   return (
     <section
@@ -213,260 +164,121 @@ const ShowcaseNight = () => {
             }}
           >
             <InfoChip Icon={MapPin} text="Hall A, FPT University HCM" />
-            <InfoChip Icon={Theater} text="8 Tiết mục · 4 Đội thi" />
+            <InfoChip Icon={Theater} text="11 Tiết mục · 4 Đội thi" />
             <InfoChip Icon={Scale} text="3 Ban Giám Khảo" />
           </div>
         </div>
       </div>
 
       {/* ── MAIN CONTENT ── */}
-      <div className="con" style={{ paddingTop: 64, paddingBottom: 100 }}>
-        <div
-          className="sn-grid"
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64 }}
-        >
-          {/* LEFT - Program with image preview */}
-          <div className="rv">
-            <div
-              style={{
-                fontSize: 12,
-                fontWeight: 800,
-                letterSpacing: ".2em",
-                color: "var(--orange)",
-                textTransform: "uppercase",
-                marginBottom: 18,
-              }}
-            >
-              Chương Trình Biểu Diễn
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {performances.map((p, i) => (
+      <div className="con" style={{ paddingTop: 56, paddingBottom: 100 }}>
+        {/* Section label */}
+        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 28 }}>
+          <div
+            style={{
+              fontSize: 10,
+              fontWeight: 800,
+              letterSpacing: ".4em",
+              color: "var(--orange)",
+              textTransform: "uppercase",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Chương Trình Biểu Diễn
+          </div>
+          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,.07)" }} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          {performances.map((p, i) => {
+            const active = hoveredRow === i;
+            const tc = p.teamColor || "var(--gold)";
+            const clickable = !!p.image;
+            return (
+              <div
+                key={p.num}
+                className="rv perf-row"
+                onMouseEnter={() => setHoveredRow(i)}
+                onMouseLeave={() => setHoveredRow(null)}
+                onClick={() => clickable && setModal(p)}
+                style={{
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                  padding: "10px 16px",
+                  borderRadius: 10,
+                  background: active ? "rgba(255,255,255,.04)" : "transparent",
+                  border: `1px solid ${active ? "rgba(255,255,255,.09)" : "rgba(255,255,255,.05)"}`,
+                  transition: "background .2s, border-color .2s",
+                  cursor: clickable ? "pointer" : "default",
+                  overflow: "hidden",
+                }}
+              >
+                {/* Left accent bar */}
                 <div
-                  key={p.num}
-                  className="rv"
-                  onMouseEnter={() => {
-                    setHoveredRow(i);
-                    if (p.image) setPreviewImg(p.image);
-                  }}
-                  onMouseLeave={() => {
-                    setHoveredRow(null);
-                    setPreviewImg(null);
-                  }}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 16,
-                    padding: "14px 18px",
-                    borderRadius: 12,
-                    background:
-                      hoveredRow === i
-                        ? "rgba(254,230,34,.03)"
-                        : "rgba(255,255,255,.03)",
-                    border: `1px solid ${hoveredRow === i ? p.teamColor || "rgba(254,230,34,.2)" : "rgba(255,255,255,.07)"}`,
-                    transition: "all .3s",
-                    transitionDelay: `${i * 0.06}s`,
-                    cursor: p.image ? "pointer" : "default",
+                    position: "absolute",
+                    left: 0, top: 0, bottom: 0,
+                    width: 3,
+                    background: tc,
+                    opacity: active ? 1 : 0.2,
+                    transition: "opacity .2s",
+                  }}
+                />
+
+                {/* Number */}
+                <span
+                  style={{
+                    fontFamily: "Anton, sans-serif",
+                    fontSize: 20,
+                    lineHeight: 1,
+                    color: active ? tc : "rgba(255,255,255,.15)",
+                    transition: "color .2s",
+                    minWidth: 32,
+                    textAlign: "right",
+                    flexShrink: 0,
                   }}
                 >
-                  <span
+                  {p.num}
+                </span>
+
+                {/* Text */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
                     style={{
-                      fontFamily: "Anton, sans-serif",
-                      fontSize: 20,
-                      color: p.teamColor || "var(--dim)",
-                      minWidth: 30,
+                      fontSize: 14,
+                      fontWeight: 700,
+                      color: "var(--text)",
+                      lineHeight: 1.3,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}
                   >
-                    {p.num}
-                  </span>
-
-                  {p.image && (
-                    <div
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 8,
-                        overflow: "hidden",
-                        flexShrink: 0,
-                        border: `1px solid ${p.teamColor || "rgba(255,255,255,.12)"}`,
-                      }}
-                    >
-                      <img
-                        src={p.image}
-                        alt=""
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          display: "block",
-                        }}
-                      />
-                    </div>
-                  )}
-
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div
-                      style={{
-                        fontSize: 15,
-                        fontWeight: 700,
-                        color: "var(--text)",
-                      }}
-                    >
-                      {p.name}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 12.5,
-                        color: "var(--dim)",
-                        marginTop: 3,
-                      }}
-                    >
-                      {p.by}
-                    </div>
+                    {p.name}
                   </div>
+                  <div style={{ fontSize: 11.5, color: active ? tc : "var(--dim)", marginTop: 2, transition: "color .2s" }}>
+                    {p.by}
+                  </div>
+                </div>
+
+                {/* Click hint for items with image */}
+                {clickable && (
                   <span
                     style={{
                       fontSize: 10,
-                      fontWeight: 800,
-                      letterSpacing: ".1em",
-                      textTransform: "uppercase",
-                      padding: "5px 11px",
-                      borderRadius: 100,
-                      whiteSpace: "nowrap",
-                      color: p.teamColor || p.tagColor || "var(--dim)",
-                      background: p.tagBg || "rgba(255,255,255,.04)",
-                      border: `1px solid ${p.teamColor || p.tagColor || "rgba(255,255,255,.12)"}`,
+                      color: active ? "var(--gold)" : "rgba(255,255,255,.2)",
+                      transition: "color .2s",
+                      flexShrink: 0,
                     }}
                   >
-                    {p.tag}
+                    ↗
                   </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* RIGHT - Preview image + Judges */}
-          <div className="rv d2">
-            {/* Image preview area */}
-            <div
-              style={{
-                width: "100%",
-                aspectRatio: "3 / 4",
-                borderRadius: 16,
-                overflow: "hidden",
-                marginBottom: 28,
-                border: "1px solid rgba(254,230,34,.12)",
-                background: "rgba(255,255,255,.02)",
-                position: "relative",
-              }}
-            >
-              {previewImg ? (
-                <img
-                  src={previewImg}
-                  alt="Preview"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
-                    animation: "showcaseImgIn .4s ease-out",
-                  }}
-                />
-              ) : (
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 16,
-                  }}
-                >
-                  <img
-                    src="/assets/pptx-extracted/golden-gate.png"
-                    alt="Showcase Night"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      objectPosition: "center top",
-                      opacity: 0.5,
-                      position: "absolute",
-                      inset: 0,
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background:
-                        "linear-gradient(to top, rgba(10,7,3,.95) 0%, rgba(10,7,3,.4) 100%)",
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: "relative",
-                      zIndex: 2,
-                      textAlign: "center",
-                      padding: 28,
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontFamily: "'Anton', sans-serif",
-                        fontSize: 28,
-                        color: "var(--gold)",
-                        textShadow: "0 0 30px rgba(254,230,34,.5)",
-                        marginBottom: 10,
-                      }}
-                    >
-                      SHOWCASE NIGHT
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 13,
-                        color: "var(--dim)",
-                        lineHeight: 1.7,
-                      }}
-                    >
-                      Hover lên từng tiết mục bên trái để xem hình ảnh
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Vote box */}
-            <div
-              style={{
-                marginTop: 24,
-                border: "1px solid rgba(254,230,34,.15)",
-                background: "rgba(254,230,34,.05)",
-                borderRadius: 14,
-                padding: "22px 26px",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "Anton, sans-serif",
-                  fontSize: 20,
-                  color: "var(--gold)",
-                  textShadow: "0 0 18px rgba(254,230,34,.4)",
-                  marginBottom: 8,
-                }}
-              >
-                Team Được Yêu Thích Nhất
+                )}
               </div>
-              <div
-                style={{ fontSize: 13.5, color: "var(--dim)", lineHeight: 1.7 }}
-              >
-                Giải bình chọn dựa trên 50% vote online từ khán giả và 50% bình
-                chọn trực tiếp tại đêm diễn. Hãy cùng cổ vũ cho team bạn yêu
-                thích nhất!
-              </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
 
         {/* ── JUDGES - full-width centered ── */}
@@ -595,18 +407,129 @@ const ShowcaseNight = () => {
         </div>
       </div>
 
+      {/* ── LIGHTBOX MODAL ── */}
+      {modal && (
+        <div
+          onClick={() => setModal(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "rgba(0,0,0,.85)",
+            backdropFilter: "blur(10px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 24,
+            animation: "modalIn .25s ease-out",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: "relative",
+              maxWidth: 560,
+              width: "100%",
+              borderRadius: 20,
+              overflow: "hidden",
+              border: "1px solid rgba(255,255,255,.12)",
+              boxShadow: "0 32px 80px rgba(0,0,0,.7)",
+            }}
+          >
+            {/* Image */}
+            <div style={{ position: "relative", aspectRatio: "4 / 3" }}>
+              <img
+                src={modal.image}
+                alt={modal.by}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center top",
+                  display: "block",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(to top, rgba(5,3,1,1) 0%, rgba(5,3,1,.3) 50%, transparent 100%)",
+                  pointerEvents: "none",
+                }}
+              />
+              {/* Info overlay at bottom */}
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  padding: "24px 28px",
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "Anton, sans-serif",
+                    fontSize: 11,
+                    letterSpacing: ".3em",
+                    color: "var(--gold)",
+                    textTransform: "uppercase",
+                    marginBottom: 8,
+                    opacity: 0.8,
+                  }}
+                >
+                  Tiết mục {modal.num}
+                </div>
+                <div
+                  style={{
+                    fontFamily: "Anton, sans-serif",
+                    fontSize: "clamp(22px, 4vw, 32px)",
+                    color: "var(--text)",
+                    lineHeight: 1.1,
+                    marginBottom: 8,
+                  }}
+                >
+                  {modal.name}
+                </div>
+                <div style={{ fontSize: 14, color: "var(--dim)" }}>{modal.by}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Close button */}
+          <button
+            onClick={() => setModal(null)}
+            style={{
+              position: "fixed",
+              top: 20,
+              right: 20,
+              width: 40,
+              height: 40,
+              borderRadius: "50%",
+              border: "1px solid rgba(255,255,255,.15)",
+              background: "rgba(255,255,255,.08)",
+              color: "var(--text)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            <X size={18} />
+          </button>
+        </div>
+      )}
+
       <style>{`
-        @keyframes showcaseImgIn {
-          from { opacity: 0; transform: scale(1.05); }
+        @keyframes modalIn {
+          from { opacity: 0; transform: scale(.97); }
           to   { opacity: 1; transform: scale(1); }
         }
-        @media (max-width: 1024px) {
-          .sn-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
-          .showcase-hero { min-height: 360px !important; }
-        }
         @media (max-width: 600px) {
+          .showcase-hero { min-height: 300px !important; }
           .judges-grid { grid-template-columns: repeat(2, 1fr) !important; }
-          .showcase-hero { min-height: 320px !important; }
+          .perf-row { padding: 9px 12px !important; }
         }
       `}</style>
     </section>
