@@ -86,7 +86,8 @@ async function seed() {
     },
   ];
   const mcUsers = [
-    { name: "Trấn Thành", email: "mc@gmail.com", role: "MC" as const },
+    { name: "Ngọc Duy", email: "phamngocduy7777777@gmail.com", role: "MC" as const },
+    { name: "Như Sương", email: "vothinhusuong2512@gmail.com", role: "MC" as const },
   ];
 
   const B = "/assets/images/members";
@@ -128,7 +129,7 @@ async function seed() {
     { name: "Bùi Minh Châu", email: "buiminhchau24@gmail.com", avatarUrls: [`${B}/slatt-bui-minh-chau-1.webp`, `${B}/slatt-bui-minh-chau-2.webp`] },
     { name: "Phạm Lê Hải Ngọc", email: "leessanghn123@gmail.com", avatarUrls: [`${B}/slatt-pham-le-hai-ngoc-1.webp`, `${B}/slatt-pham-le-hai-ngoc-2.webp`] },
     { name: "Võ Phương Nga", email: "vpnga23@gmail.com", avatarUrls: [`${B}/slatt-vo-phuong-nga-1.webp`] },
-    { name: "Nguyễn Hoàng Bảo Trân", email: "baotran.slatt@placeholder.com", avatarUrls: [`${B}/slatt-nguyen-hoang-bao-tran-1.webp`] }, // email cần xác nhận
+    { name: "Nguyễn Hoàng Bảo Trân", email: "nguyenhoangbaotran2006g@gmail.com", avatarUrls: [`${B}/slatt-nguyen-hoang-bao-tran-1.webp`] }, // email cần xác nhận
     { name: "Phạm Lê Thắng Hùng", email: "phamlethanghung1806@gmail.com", avatarUrls: [`${B}/slatt-pham-le-thang-hung-1.webp`] },
   ];
 
