@@ -86,7 +86,7 @@ const About = () => {
             rèn luyện tư duy sáng tạo, kỹ năng biên đạo và bản lĩnh sân khấu.
           </p>
           <p style={paragraphStyle}>
-            Mùa 3 mang chủ đề APOCALYPSE, lấy cảm hứng từ Book of Revelation. Bốn đội thi hiện thân bốn Kỵ Sĩ Khải Huyền,
+            Mùa 3 mang chủ đề APOCALYPSE, lấy cảm hứng từ Book of Revelation. Bốn đội thi hiện thân Tứ Kỵ Sĩ Khải Huyền,
             kể câu chuyện về sự sụp đổ và tái sinh qua ngôn ngữ vũ đạo.
           </p>
 
@@ -102,8 +102,9 @@ const About = () => {
           />
           <InfoRow
             icon={<TeamsIcon />}
-            title="4 Đội Thi Tranh Tài"
-            sub="SHIRO KURO · Apex Aura · SLATT · ANTI"
+            title="4 Đội Thi Tranh Tài
+"
+            sub="SHIRO KURO · Apex Aura · SLATT · ANTI-X"
           />
         </div>
 

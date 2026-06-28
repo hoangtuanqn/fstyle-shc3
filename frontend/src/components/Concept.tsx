@@ -99,7 +99,7 @@ const Concept = () => {
             margin: '0 auto',
           }}
         >
-          Bốn đội thi hiện thân bốn Kỵ Sĩ Khải Huyền, mỗi đội mang một trạng thái cảm xúc tận cùng, kể câu chuyện về
+          Bốn đội thi hiện thân Tứ Kỵ Sĩ Khải Huyền, mỗi đội mang một trạng thái cảm xúc tận cùng, kể câu chuyện về
           sự sụp đổ và tái sinh qua ngôn ngữ vũ đạo.
         </p>
 

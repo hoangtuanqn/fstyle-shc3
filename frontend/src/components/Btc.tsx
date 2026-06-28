@@ -8,17 +8,17 @@ const btcMembers = [
   },
   {
     name: "Nguyễn Hoàng Gia Phúc",
-    role: "BTC FStyle",
+    role: "Phó BTC",
     img: "/assets/images/members/btc-nguyen-hoang-gia-phuc-1.webp",
   },
   {
     name: "Nguyễn Thanh Lâm",
-    role: "BTC FStyle",
+    role: "Thành viên BTC",
     img: "/assets/images/members/btc-nguyen-thanh-lam-1.webp",
   },
   {
     name: "Phạm Hải Yến",
-    role: "BTC FStyle",
+    role: "Thành viên BTC",
     img: "/assets/images/members/btc-pham-hai-yen-1.webp",
   },
 ];
@@ -32,7 +32,7 @@ const Btc = () => {
         <div style={{ textAlign: "center", marginBottom: 40 }} className="rv">
           <span className="ey">Đứng Sau Sân Khấu</span>
           <h2 className="st">
-            BTC <em>F-Style</em>
+            BTC <em>FStyle</em>
           </h2>
           <p
             style={{
@@ -43,7 +43,7 @@ const Btc = () => {
               lineHeight: 1.75,
             }}
           >
-            Đội ngũ tổ chức F-Style SHC3 — những người làm việc không ngừng nghỉ
+            Đội ngũ tổ chức FStyle SHC3 — những người làm việc không ngừng nghỉ
             để đêm Showcase diễn ra hoàn hảo.
           </p>
         </div>
