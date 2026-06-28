@@ -293,6 +293,25 @@ export const AwardOverlay = ({ award, onDismiss }: Props) => {
           0%   { background-position: -700px 0; }
           100% { background-position: 700px 0; }
         }
+
+        /* ── Radial light burst from center ── */
+        @keyframes ao-door-burst {
+          0%   { clip-path: circle(0% at 50% 50%);   filter: brightness(18) saturate(0); opacity: 1; }
+          6%   { clip-path: circle(4% at 50% 50%);   filter: brightness(16) saturate(0); }
+          18%  { clip-path: circle(22% at 50% 50%);  filter: brightness(12) saturate(.2); }
+          34%  { clip-path: circle(55% at 50% 50%);  filter: brightness(7)  saturate(.5); }
+          52%  { clip-path: circle(120% at 50% 50%); filter: brightness(4)  saturate(.8); opacity: 1; }
+          70%  { filter: brightness(2); opacity: 0.75; }
+          86%  { opacity: 0.2;  filter: brightness(1.2); }
+          100% { opacity: 0;   filter: brightness(1); clip-path: circle(120% at 50% 50%); }
+        }
+        @keyframes ao-door-rays {
+          0%   { opacity: 0;    transform: scale(0.05); filter: brightness(6); }
+          12%  { opacity: 1;    transform: scale(0.4);  filter: brightness(5); }
+          40%  { opacity: 0.7;  transform: scale(1.1);  filter: brightness(2); }
+          75%  { opacity: 0.25; transform: scale(1.3); }
+          100% { opacity: 0;    transform: scale(1.5); }
+        }
       `}</style>
 
       <div
@@ -301,6 +320,35 @@ export const AwardOverlay = ({ award, onDismiss }: Props) => {
         role="button"
         aria-label="Bỏ qua"
       >
+        {/* ── Radial light burst from center ── */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: tier === 5
+              ? "radial-gradient(circle at 50% 50%, #fffde0 0%, #ffffff 30%, #fffbe0 60%, #fff8c0 100%)"
+              : tier === 4
+                ? "radial-gradient(circle at 50% 50%, #ffffff 0%, #e8e8e8 40%, #c0c0c0 100%)"
+                : "radial-gradient(circle at 50% 50%, #ffffff 0%, #f0f0f0 50%, #d8d8d8 100%)",
+            zIndex: 30,
+            pointerEvents: "none",
+            animation: "ao-door-burst 1.6s cubic-bezier(.12,.8,.3,1) forwards",
+          }}
+        />
+        {/* Halo glow expanding from center */}
+        <div
+          style={{
+            position: "absolute",
+            inset: "-20%",
+            background: `radial-gradient(circle at 50% 50%, ${
+              tier === 5 ? "rgba(254,230,34,0.9)" : tier === 4 ? "rgba(240,240,240,0.8)" : "rgba(255,255,255,0.7)"
+            } 0%, transparent 55%)`,
+            zIndex: 29,
+            pointerEvents: "none",
+            animation: "ao-door-rays 1.8s ease-out forwards",
+          }}
+        />
+
         {tier >= 4 && <ConfettiCanvas tier={tier} />}
 
         {/* Expanding shockwave rings (tier 4+) */}
@@ -449,35 +497,64 @@ export const AwardOverlay = ({ award, onDismiss }: Props) => {
 
           {/* Shimmer placeholder → winner names */}
           {!nameRevealed ? (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 14,
-                alignItems: "center",
-                animation: "ao-up .5s .52s both",
-              }}
-            >
-              {(winnerNames.length > 0 ? winnerNames : [""]).map((_, i) => (
-                <div
-                  key={i}
-                  style={{
-                    width:
-                      winnerNames.length <= 1
-                        ? "clamp(240px, 48vw, 440px)"
-                        : "clamp(180px, 36vw, 360px)",
-                    height:
-                      winnerNames.length <= 1
-                        ? "clamp(42px, 6.5vw, 78px)"
-                        : "clamp(30px, 4.5vw, 58px)",
-                    borderRadius: 10,
-                    background: `linear-gradient(90deg, transparent 0%, ${colors.glow} 35%, rgba(255,255,255,.88) 50%, ${colors.glow} 65%, transparent 100%)`,
-                    backgroundSize: "700px 100%",
-                    animation: `ao-shimmer 1.7s ${i * 0.18}s ease-in-out infinite`,
-                  }}
-                />
-              ))}
-            </div>
+            winnerNames.length >= 8 ? (
+              <div
+                style={{
+                  display: "flex",
+                  gap: "clamp(24px, 5vw, 60px)",
+                  justifyContent: "center",
+                  animation: "ao-up .5s .52s both",
+                }}
+              >
+                {[winnerNames.slice(0, 7), winnerNames.slice(7)].map((col, ci) => (
+                  <div key={ci} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {col.map((_, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          width: "clamp(130px, 22vw, 260px)",
+                          height: "clamp(20px, 3vw, 36px)",
+                          borderRadius: 7,
+                          background: `linear-gradient(90deg, transparent 0%, ${colors.glow} 35%, rgba(255,255,255,.88) 50%, ${colors.glow} 65%, transparent 100%)`,
+                          backgroundSize: "700px 100%",
+                          animation: `ao-shimmer 1.7s ${(ci * 7 + i) * 0.1}s ease-in-out infinite`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 14,
+                  alignItems: "center",
+                  animation: "ao-up .5s .52s both",
+                }}
+              >
+                {(winnerNames.length > 0 ? winnerNames : [""]).map((_, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      width:
+                        winnerNames.length <= 1
+                          ? "clamp(240px, 48vw, 440px)"
+                          : "clamp(180px, 36vw, 360px)",
+                      height:
+                        winnerNames.length <= 1
+                          ? "clamp(42px, 6.5vw, 78px)"
+                          : "clamp(30px, 4.5vw, 58px)",
+                      borderRadius: 10,
+                      background: `linear-gradient(90deg, transparent 0%, ${colors.glow} 35%, rgba(255,255,255,.88) 50%, ${colors.glow} 65%, transparent 100%)`,
+                      backgroundSize: "700px 100%",
+                      animation: `ao-shimmer 1.7s ${i * 0.18}s ease-in-out infinite`,
+                    }}
+                  />
+                ))}
+              </div>
+            )
           ) : (
             <>
               {winnerNames.length === 1 && (
@@ -495,7 +572,7 @@ export const AwardOverlay = ({ award, onDismiss }: Props) => {
                   {winnerNames[0]}
                 </p>
               )}
-              {winnerNames.length >= 2 && (
+              {winnerNames.length >= 2 && winnerNames.length < 8 && (
                 <div
                   style={{ display: "flex", flexDirection: "column", gap: 10 }}
                 >
@@ -514,6 +591,37 @@ export const AwardOverlay = ({ award, onDismiss }: Props) => {
                     >
                       {name}
                     </p>
+                  ))}
+                </div>
+              )}
+              {winnerNames.length >= 8 && (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "clamp(24px, 5vw, 60px)",
+                    justifyContent: "center",
+                  }}
+                >
+                  {[winnerNames.slice(0, 7), winnerNames.slice(7)].map((col, ci) => (
+                    <div key={ci} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {col.map((name, i) => (
+                        <p
+                          key={i}
+                          style={{
+                            fontFamily: "'Anton', sans-serif",
+                            fontSize: "clamp(16px, 2.2vw, 30px)",
+                            color: "#ffffff",
+                            letterSpacing: ".04em",
+                            lineHeight: 1.2,
+                            margin: 0,
+                            textAlign: "left",
+                            animation: `ao-sub .5s ${(ci * 7 + i) * 0.07}s both`,
+                          }}
+                        >
+                          {name}
+                        </p>
+                      ))}
+                    </div>
                   ))}
                 </div>
               )}
