@@ -68,6 +68,29 @@ export const initSocket = (server: HttpServer) => {
       console.log(`✓ Award revealed: ${awardId} by ${socket.data.userId}`);
     });
 
+    socket.on('award:unreveal', ({ awardId }: { awardId: string }) => {
+      const role = socket.data.role as RoleType | undefined;
+      if (role !== RoleType.ADMIN && role !== RoleType.MC) {
+        socket.emit('award:reveal:error', { message: 'Bạn không có quyền thực hiện hành động này!' });
+        return;
+      }
+
+      if (!awardId || typeof awardId !== 'string') {
+        socket.emit('award:reveal:error', { message: 'awardId không hợp lệ!' });
+        return;
+      }
+
+      const idx = revealedAwardIds.indexOf(awardId);
+      if (idx === -1) {
+        socket.emit('award:reveal:error', { message: 'Giải này chưa được công bố!' });
+        return;
+      }
+
+      revealedAwardIds.splice(idx, 1);
+      io.emit('award:revealed', { awardId: null, revealedAwardIds: [...revealedAwardIds] });
+      console.log(`✓ Award unreveal: ${awardId} by ${socket.data.userId}`);
+    });
+
     socket.on('disconnect', () => {
       console.log(`✗ Socket disconnected: ${socket.id}`);
     });
