@@ -10,9 +10,13 @@ import Scoring from '~/pages/Scoring';
 import Leaderboard from '~/pages/Leaderboard';
 import VotingLeaderboard from '~/pages/VotingLeaderboard';
 import Awards from '~/pages/Awards';
+import Screen from '~/pages/Screen';
 
 export const AppRoutes = () => (
   <>
+    {/* Public screen display — no auth, no layout */}
+    <Route path="/screen" element={<Screen />} />
+
     {/* Public */}
     <Route element={<MainLayout />}>
       <Route index element={<Home />} />
