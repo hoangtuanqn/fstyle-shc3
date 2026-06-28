@@ -87,7 +87,7 @@ const TeamCard = ({ team }: { team: Team }) => {
 
   const imgStyle: CSSProperties = {
     width: "100%",
-    aspectRatio: "3 / 4",
+    aspectRatio: "1 / 1",
     objectFit: "cover",
     objectPosition: "center top",
     display: "block",
@@ -136,6 +136,7 @@ const TeamCard = ({ team }: { team: Team }) => {
         </h3>
 
         <p
+          className="h-[90px]"
           style={{
             fontSize: "12.5px",
             color: "var(--dim)",
@@ -207,7 +208,7 @@ const Teams = () => {
         </div>
 
         <div
-          className="teams-grid rv d1"
+          className="teams-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(4, 1fr)",
@@ -217,8 +218,8 @@ const Teams = () => {
           {teams.map((team, i) => (
             <div
               key={team.id}
-              className="rv"
-              style={{ transitionDelay: `${i * 0.1}s` }}
+              className="rv rv-strong"
+              style={{ transitionDelay: `${i * 0.15}s` }}
             >
               <TeamCard team={team} />
             </div>
