@@ -14,6 +14,20 @@ import { AwardOverlay } from './AwardOverlay';
 
 const SOCKET_URL = import.meta.env.VITE_API_BACKEND as string;
 
+const MEDAL_MAP: Record<string, string> = {
+  'quán quân': '/assets/images/gold-medal.png',
+  'á quân': '/assets/images/silver-medal.png',
+  'khuyến khích': '/assets/images/bronze-medal.png',
+};
+
+const getMedalImg = (name: string): string | null => {
+  const n = name.toLowerCase();
+  for (const [key, src] of Object.entries(MEDAL_MAP)) {
+    if (n.includes(key)) return src;
+  }
+  return null;
+};
+
 const thS: CSSProperties = {
   padding: '16px 24px',
   textAlign: 'left',
@@ -315,7 +329,18 @@ const Screen = () => {
                       : award.winners.map((w) => w.winnerName).filter(Boolean) as string[];
                     return (
                       <tr key={award.id} style={{ animation: `screen-up .45s ${idx * 0.06}s both` }}>
-                        <td style={{ ...tdS, fontWeight: 700, fontSize: 15 }}>{award.name}</td>
+                        <td style={{ ...tdS, fontWeight: 700, fontSize: 15 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                            {getMedalImg(award.name) && (
+                              <img
+                                src={getMedalImg(award.name)!}
+                                alt=""
+                                style={{ width: 52, height: 52, objectFit: 'contain', flexShrink: 0 }}
+                              />
+                            )}
+                            <span>{award.name}</span>
+                          </div>
+                        </td>
                         <td style={tdS}>
                           {names.map((n, i) => (
                             <div key={i} style={{ fontFamily: "'Anton', sans-serif", fontSize: 22, letterSpacing: '.03em', marginBottom: i < names.length - 1 ? 6 : 0 }}>{n}</div>
@@ -333,6 +358,7 @@ const Screen = () => {
 
       {overlayAward && (
         <AwardOverlay
+          key={overlayAward.id}
           award={overlayAward}
           onDismiss={() => {
             setDisplayedIds((prev) => (overlayAward && !prev.includes(overlayAward.id) ? [...prev, overlayAward.id] : prev));
