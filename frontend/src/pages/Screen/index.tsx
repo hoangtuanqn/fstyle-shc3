@@ -3,6 +3,8 @@ import type { CSSProperties } from 'react';
 import { io } from 'socket.io-client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { Trophy } from 'lucide-react';
+
 import { publicApi } from '~/utils/axiosInstance';
 import ParticleCanvas from '~/components/ParticleCanvas';
 import type { AwardType } from '~/types/award';
@@ -38,9 +40,104 @@ const fetchPublicLeaderboard = async () => {
 };
 
 
+const WaitingScreen = () => {
+  const [dots, setDots] = useState('.');
+  useEffect(() => {
+    const id = setInterval(() => setDots((d) => (d.length >= 3 ? '.' : d + '.')), 500);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '55vh',
+        padding: '40px 24px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Radar rings + center orb */}
+      <div style={{ position: 'relative', width: 160, height: 160, marginBottom: 52 }}>
+        {([0, 1, 2, 3] as const).map((i) => (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: '50%',
+              border: '1.5px solid var(--orange)',
+              animation: `radar-ping 2.8s ${i * 0.7}s ease-out infinite`,
+            }}
+          />
+        ))}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: '50%',
+            background: 'rgba(10,6,2,.88)',
+            border: '2px solid var(--orange)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            animation: 'orb-pulse 2.2s ease-in-out infinite',
+          }}
+        >
+          <Trophy size={40} strokeWidth={1.5} style={{ color: 'var(--orange)' }} />
+        </div>
+      </div>
+
+      <h2
+        style={{
+          fontFamily: "'Anton', sans-serif",
+          fontSize: 'clamp(36px, 6vw, 72px)',
+          letterSpacing: '.05em',
+          color: 'var(--orange)',
+          textShadow: '0 0 40px rgba(251,140,5,.6)',
+          margin: '0 0 16px',
+          animation: 'wait-up .7s both',
+        }}
+      >
+        SẮP CÔNG BỐ
+      </h2>
+
+      <p
+        style={{
+          fontSize: 12,
+          letterSpacing: '.22em',
+          textTransform: 'uppercase',
+          color: 'rgba(255,255,255,.3)',
+          margin: 0,
+          animation: 'wait-up .7s .15s both',
+        }}
+      >
+        Đang chuẩn bị{dots}
+      </p>
+
+      {/* Scanline sweep */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          height: 2,
+          background: 'linear-gradient(90deg, transparent, rgba(251,140,5,.18), transparent)',
+          animation: 'scanline 4s linear infinite',
+          pointerEvents: 'none',
+        }}
+      />
+    </div>
+  );
+};
+
 const Screen = () => {
   const queryClient = useQueryClient();
   const [revealedIds, setRevealedIds] = useState<string[]>([]);
+  const [displayedIds, setDisplayedIds] = useState<string[]>([]);
   const [overlayAward, setOverlayAward] = useState<AwardType | null>(null);
 
   const { data } = useQuery({
@@ -69,18 +166,24 @@ const Screen = () => {
   }
 
   const revealedAwards = awards
-    .filter((a) => revealedIds.includes(a.id))
-    .sort((a, b) => revealedIds.indexOf(b.id) - revealedIds.indexOf(a.id));
+    .filter((a) => displayedIds.includes(a.id))
+    .sort((a, b) => displayedIds.indexOf(b.id) - displayedIds.indexOf(a.id));
 
   useEffect(() => {
     const socket = io(SOCKET_URL, { withCredentials: true });
 
     socket.on('leaderboard:init', ({ revealedAwardIds }: { revealedAwardIds: string[] }) => {
       setRevealedIds(revealedAwardIds);
+      setDisplayedIds(revealedAwardIds);
     });
 
     socket.on('award:revealed', ({ awardId, revealedAwardIds }: { awardId: string | null; revealedAwardIds: string[] }) => {
       setRevealedIds(revealedAwardIds);
+      if (!awardId) {
+        // unreveal: sync displayed to server list, dismiss overlay if its award was removed
+        setDisplayedIds(revealedAwardIds);
+        setOverlayAward((prev) => (prev && !revealedAwardIds.includes(prev.id) ? null : prev));
+      }
       queryClient.invalidateQueries({ queryKey: ['leaderboard-public'] });
       if (awardId) {
         setTimeout(() => {
@@ -184,6 +287,8 @@ const Screen = () => {
 
         <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 28px 100px' }}>
 
+          {revealedAwards.length === 0 && <WaitingScreen />}
+
           {/* Revealed awards */}
           {revealedAwards.length > 0 && (
             <div style={{
@@ -226,7 +331,15 @@ const Screen = () => {
         </div>
       </div>
 
-      {overlayAward && <AwardOverlay award={overlayAward} onDismiss={() => setOverlayAward(null)} />}
+      {overlayAward && (
+        <AwardOverlay
+          award={overlayAward}
+          onDismiss={() => {
+            setDisplayedIds((prev) => (overlayAward && !prev.includes(overlayAward.id) ? [...prev, overlayAward.id] : prev));
+            setOverlayAward(null);
+          }}
+        />
+      )}
 
       <style>{`
         @keyframes hzoom { from { transform: scale(1) } to { transform: scale(1.06) } }
@@ -248,6 +361,21 @@ const Screen = () => {
           50%       { text-shadow: 0 0 80px rgba(251,140,5,1), 0 0 140px rgba(251,140,5,.4), 0 2px 0 rgba(251,140,5,.3); }
         }
         @keyframes awards-enter { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+        @keyframes radar-ping {
+          0%   { transform: scale(0.05); opacity: 0.85; }
+          100% { transform: scale(3.2); opacity: 0; }
+        }
+        @keyframes orb-pulse {
+          0%, 100% { box-shadow: 0 0 20px rgba(251,140,5,.3), inset 0 0 16px rgba(251,140,5,.06); }
+          50%       { box-shadow: 0 0 55px rgba(251,140,5,.85), inset 0 0 28px rgba(251,140,5,.15); }
+        }
+        @keyframes scanline {
+          0%   { top: 5%; opacity: 0; }
+          8%   { opacity: 1; }
+          92%  { opacity: 0.5; }
+          100% { top: 95%; opacity: 0; }
+        }
+        @keyframes wait-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
       `}</style>
     </div>
   );
