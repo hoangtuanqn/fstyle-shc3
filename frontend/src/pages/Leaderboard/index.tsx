@@ -594,17 +594,6 @@ const Leaderboard = () => {
                           Chưa nhập người nhận
                         </div>
                       )}
-                      {!hasWinners && isAuto && (
-                        <div
-                          style={{
-                            fontSize: 11,
-                            color: "rgba(255,255,255,.2)",
-                            fontStyle: "italic",
-                          }}
-                        >
-                          Chưa tính điểm
-                        </div>
-                      )}
                     </div>
 
                     {/* Action button */}
