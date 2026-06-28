@@ -260,6 +260,7 @@ const Scoring = () => {
     setSelectedJudge(1);
   };
   const [subScores, setSubScores] = useState<Record<string, number>>({});
+  const [dirtyCategories, setDirtyCategories] = useState<Set<number>>(new Set());
 
   const getSubKey = (catId: number, subIdx: number) => `${catId}-${subIdx}`;
   const getSubScore = (catId: number, subIdx: number) =>
@@ -270,6 +271,7 @@ const Scoring = () => {
     val: number,
     maxScore: number,
   ) => {
+    setDirtyCategories((prev) => new Set(prev).add(catId));
     setSubScores((prev) => ({
       ...prev,
       [getSubKey(catId, subIdx)]: Math.min(Math.max(0, val), maxScore),
@@ -298,6 +300,7 @@ const Scoring = () => {
   useEffect(() => {
     if (!teamScoresRes?.result) {
       setSubScores({});
+      setDirtyCategories(new Set());
       return;
     }
     const { judgeScores: judgeRows, btcScore } = teamScoresRes.result;
@@ -324,31 +327,51 @@ const Scoring = () => {
     fillSubs(criteriaData[5], disciplineVal);
 
     setSubScores(filled);
+    setDirtyCategories(new Set());
   }, [teamScoresRes, selectedJudge]);
 
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveAllScores = async () => {
     if (!selectedTeamId) return toast.error("Chọn đội trước!");
+
+    const judgeCategories = criteriaData.slice(0, 5);
+    const judgeChanged = judgeCategories.some((cat) => dirtyCategories.has(cat.id));
+    const disciplineChanged = dirtyCategories.has(criteriaData[5].id);
+
+    if (!judgeChanged && !disciplineChanged) return toast.info("Chưa có thay đổi!");
+
     setIsSaving(true);
     try {
-      await Promise.all([
-        ScoringApi.saveJudgeScores({
-          teamId: selectedTeamId,
-          data: {
-            judgeNumber: selectedJudge,
-            ideaConcept: getCategoryTotal(criteriaData[0]),
-            choreography: getCategoryTotal(criteriaData[1]),
-            synchronization: getCategoryTotal(criteriaData[2]),
-            performance: getCategoryTotal(criteriaData[3]),
-            costume: getCategoryTotal(criteriaData[4]),
-          },
-        }),
-        ScoringApi.saveBtcScore({
-          teamId: selectedTeamId,
-          data: { discipline: getCategoryTotal(criteriaData[5]) },
-        }),
-      ]);
+      const saves: Promise<unknown>[] = [];
+
+      if (judgeChanged) {
+        saves.push(
+          ScoringApi.saveJudgeScores({
+            teamId: selectedTeamId,
+            data: {
+              judgeNumber: selectedJudge,
+              ideaConcept: getCategoryTotal(criteriaData[0]),
+              choreography: getCategoryTotal(criteriaData[1]),
+              synchronization: getCategoryTotal(criteriaData[2]),
+              performance: getCategoryTotal(criteriaData[3]),
+              costume: getCategoryTotal(criteriaData[4]),
+            },
+          }),
+        );
+      }
+
+      if (disciplineChanged) {
+        saves.push(
+          ScoringApi.saveBtcScore({
+            teamId: selectedTeamId,
+            data: { discipline: getCategoryTotal(criteriaData[5]) },
+          }),
+        );
+      }
+
+      await Promise.all(saves);
+      setDirtyCategories(new Set());
       queryClient.invalidateQueries({ queryKey: ["scoring-teams"] });
       queryClient.invalidateQueries({
         queryKey: ["scoring-team-scores", selectedTeamId],
