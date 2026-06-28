@@ -60,7 +60,7 @@ const Nav = () => {
 
   const userRole = user?.role ?? "";
   const pageLinks = allPageLinks.filter((pl) =>
-    pl.roles.includes(userRole as RoleType),
+    pl.roles.some((r) => r === userRole),
   );
 
   useEffect(() => {

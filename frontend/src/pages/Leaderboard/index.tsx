@@ -88,40 +88,7 @@ const Leaderboard = () => {
   const rankFiltered = rankings
     .filter((r) => r.totalScore > 0)
     .sort((a, b) => b.totalScore - a.totalScore);
-  const awardsWithWinners = awards.filter((a) => a.winners.length > 0);
-
   const autoAwards = sortedAwards.filter((a) => a.type === "AUTO");
-  const publicAwards = sortedAwards
-    .map((award) => {
-      let displayNames: string[];
-      if (award.type === "AUTO") {
-        const idx = autoAwards.indexOf(award);
-        const isLast = idx === autoAwards.length - 1;
-        if (isLast) {
-          displayNames = rankFiltered
-            .filter((r) => r.rank >= idx + 1)
-            .map((r) => r.team.name);
-        } else {
-          const rankName = rankFiltered.find((r) => r.rank === idx + 1)?.team
-            .name;
-          displayNames = rankName ? [rankName] : [];
-        }
-      } else {
-        displayNames = award.winners
-          .map((w) => w.winnerName)
-          .filter((n): n is string => !!n);
-      }
-      return { ...award, displayNames };
-    })
-    .filter((a) => a.displayNames.length > 0);
-
-  const revealedCount = sortedAwards.filter(
-    (a) => a.winners.length > 0 && revealedIds.includes(a.id),
-  ).length;
-  const totalRevealable = sortedAwards.filter(
-    (a) => a.winners.length > 0,
-  ).length;
-
   return (
     <div style={{ minHeight: "100vh", paddingTop: 88, paddingBottom: 60 }}>
       {/* ── Page header ── */}

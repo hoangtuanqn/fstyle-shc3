@@ -150,7 +150,7 @@ const WaitingScreen = () => {
 
 const Screen = () => {
   const queryClient = useQueryClient();
-  const [revealedIds, setRevealedIds] = useState<string[]>([]);
+  const [, setRevealedIds] = useState<string[]>([]);
   const [displayedIds, setDisplayedIds] = useState<string[]>([]);
   const [overlayAward, setOverlayAward] = useState<AwardType | null>(null);
 

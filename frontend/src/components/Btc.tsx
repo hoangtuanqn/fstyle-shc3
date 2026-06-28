@@ -145,7 +145,7 @@ const Btc = () => {
 
   const makeDrag = (
     drag: React.MutableRefObject<DragState>,
-    trackRef: React.RefObject<HTMLDivElement>,
+    trackRef: React.RefObject<HTMLDivElement | null>,
     pos: React.MutableRefObject<number>,
   ) => ({
     onMouseDown: (e: React.MouseEvent) => {
