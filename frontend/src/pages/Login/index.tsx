@@ -109,10 +109,10 @@ const Login = () => {
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <Link to="/">
             <img
-              src="/assets/images/logo-ngang.png"
+              src="/assets/images/logo-chunhat.png"
               alt="FStyle Crew"
               style={{
-                height: 36,
+                height: 69,
                 maxWidth: "100%",
                 display: "inline-block",
                 marginBottom: 18,
