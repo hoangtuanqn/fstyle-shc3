@@ -56,6 +56,76 @@ const labelSt: React.CSSProperties = {
   marginBottom: 6,
 };
 
+type UserFormProps = {
+  formName: string;
+  setFormName: (v: string) => void;
+  formEmail: string;
+  setFormEmail: (v: string) => void;
+  formRole: RoleType;
+  setFormRole: (v: RoleType) => void;
+  formTeamId: string;
+  setFormTeamId: (v: string) => void;
+  teamList: { id: string; name: string }[];
+  onSubmit: (e: React.FormEvent) => void;
+  isPending: boolean;
+};
+
+function UserForm({ formName, setFormName, formEmail, setFormEmail, formRole, setFormRole, formTeamId, setFormTeamId, teamList, onSubmit, isPending }: UserFormProps) {
+  return (
+    <form onSubmit={onSubmit}>
+      <div style={{ marginBottom: 16 }}>
+        <label style={labelSt}>Tên</label>
+        <input style={inputSt} value={formName} onChange={(e) => setFormName(e.target.value)} required placeholder="Nguyễn Văn A" />
+      </div>
+      <div style={{ marginBottom: 16 }}>
+        <label style={labelSt}>Email</label>
+        <input style={inputSt} type="email" value={formEmail} onChange={(e) => setFormEmail(e.target.value)} required placeholder="email@gmail.com" />
+      </div>
+      <div style={{ marginBottom: 16 }}>
+        <label style={labelSt}>Role</label>
+        <select
+          style={selectSt}
+          value={formRole}
+          onChange={(e) => { setFormRole(e.target.value as RoleType); if (e.target.value !== 'MEMBER') setFormTeamId(''); }}
+        >
+          {['ADMIN', 'BTC_FSTYLE', 'MC', 'MEMBER'].map((r) => (
+            <option key={r} value={r}>{ROLE_LABELS[r]}</option>
+          ))}
+        </select>
+      </div>
+      {formRole === RoleType.MEMBER && (
+        <div style={{ marginBottom: 20 }}>
+          <label style={labelSt}>Team</label>
+          <select style={selectSt} value={formTeamId} onChange={(e) => setFormTeamId(e.target.value)} required>
+            <option value="">-- Chọn team --</option>
+            {teamList.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+          </select>
+        </div>
+      )}
+      <button
+        type="submit"
+        disabled={isPending}
+        style={{
+          width: '100%',
+          padding: '13px 0',
+          background: isPending ? 'rgba(254,230,34,.15)' : 'var(--gold)',
+          border: 'none',
+          borderRadius: 8,
+          color: isPending ? 'var(--gold)' : '#050301',
+          fontSize: 12,
+          fontWeight: 800,
+          fontFamily: 'Montserrat, sans-serif',
+          letterSpacing: '.18em',
+          textTransform: 'uppercase',
+          cursor: isPending ? 'not-allowed' : 'pointer',
+        }}
+      >
+        {isPending ? 'Đang xử lý...' : 'Xác nhận'}
+      </button>
+    </form>
+  );
+}
+
 function CopyBox({ value }: { value: string }) {
   const [copied, setCopied] = useState(false);
   return (
@@ -260,60 +330,6 @@ const Members = () => {
     });
   };
 
-  const UserForm = ({ onSubmit, isPending }: { onSubmit: (e: React.FormEvent) => void; isPending: boolean }) => (
-    <form onSubmit={onSubmit}>
-      <div style={{ marginBottom: 16 }}>
-        <label style={labelSt}>Tên</label>
-        <input style={inputSt} value={formName} onChange={(e) => setFormName(e.target.value)} required placeholder="Nguyễn Văn A" />
-      </div>
-      <div style={{ marginBottom: 16 }}>
-        <label style={labelSt}>Email</label>
-        <input style={inputSt} type="email" value={formEmail} onChange={(e) => setFormEmail(e.target.value)} required placeholder="email@gmail.com" />
-      </div>
-      <div style={{ marginBottom: 16 }}>
-        <label style={labelSt}>Role</label>
-        <select
-          style={selectSt}
-          value={formRole}
-          onChange={(e) => { setFormRole(e.target.value as RoleType); if (e.target.value !== 'MEMBER') setFormTeamId(''); }}
-        >
-          {['ADMIN', 'BTC_FSTYLE', 'MC', 'MEMBER'].map((r) => (
-            <option key={r} value={r}>{ROLE_LABELS[r]}</option>
-          ))}
-        </select>
-      </div>
-      {formRole === RoleType.MEMBER && (
-        <div style={{ marginBottom: 20 }}>
-          <label style={labelSt}>Team</label>
-          <select style={selectSt} value={formTeamId} onChange={(e) => setFormTeamId(e.target.value)} required>
-            <option value="">-- Chọn team --</option>
-            {teamList.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
-          </select>
-        </div>
-      )}
-      <button
-        type="submit"
-        disabled={isPending}
-        style={{
-          width: '100%',
-          padding: '13px 0',
-          background: isPending ? 'rgba(254,230,34,.15)' : 'var(--gold)',
-          border: 'none',
-          borderRadius: 8,
-          color: isPending ? 'var(--gold)' : '#050301',
-          fontSize: 12,
-          fontWeight: 800,
-          fontFamily: 'Montserrat, sans-serif',
-          letterSpacing: '.18em',
-          textTransform: 'uppercase',
-          cursor: isPending ? 'not-allowed' : 'pointer',
-        }}
-      >
-        {isPending ? 'Đang xử lý...' : 'Xác nhận'}
-      </button>
-    </form>
-  );
-
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', paddingTop: 88, paddingBottom: 60 }}>
       <div className="con">
@@ -514,13 +530,37 @@ const Members = () => {
 
       {dialog.type === 'create' && (
         <Dialog title="Thêm tài khoản" onClose={() => setDialog({ type: 'none' })}>
-          <UserForm onSubmit={handleCreateSubmit} isPending={createMutation.isPending} />
+          <UserForm
+            formName={formName}
+            setFormName={setFormName}
+            formEmail={formEmail}
+            setFormEmail={setFormEmail}
+            formRole={formRole}
+            setFormRole={setFormRole}
+            formTeamId={formTeamId}
+            setFormTeamId={setFormTeamId}
+            teamList={teamList}
+            onSubmit={handleCreateSubmit}
+            isPending={createMutation.isPending}
+          />
         </Dialog>
       )}
 
       {dialog.type === 'edit' && (
         <Dialog title="Sửa tài khoản" onClose={() => setDialog({ type: 'none' })}>
-          <UserForm onSubmit={handleEditSubmit} isPending={updateMutation.isPending} />
+          <UserForm
+            formName={formName}
+            setFormName={setFormName}
+            formEmail={formEmail}
+            setFormEmail={setFormEmail}
+            formRole={formRole}
+            setFormRole={setFormRole}
+            formTeamId={formTeamId}
+            setFormTeamId={setFormTeamId}
+            teamList={teamList}
+            onSubmit={handleEditSubmit}
+            isPending={updateMutation.isPending}
+          />
         </Dialog>
       )}
 
