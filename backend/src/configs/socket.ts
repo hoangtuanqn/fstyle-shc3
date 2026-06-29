@@ -1,4 +1,4 @@
-import { parseCookie } from 'cookie';
+import { parse as parseCookie } from 'cookie';
 import type { Server as HttpServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
 
@@ -19,14 +19,19 @@ export const initSocket = (server: HttpServer) => {
     },
   });
 
-  // Auth middleware — extracts role from cookie JWT, non-blocking (public viewers allowed)
+  // Auth middleware — extracts role from JWT, non-blocking (public viewers allowed)
   io.use(async (socket, next) => {
     try {
-      const cookieHeader = socket.handshake.headers.cookie;
-      if (!cookieHeader) return next();
+      // Try cookie first, then fall back to auth handshake token (frontend stores in localStorage)
+      let token: string | undefined;
+      try {
+        const cookieHeader = socket.handshake.headers.cookie;
+        if (cookieHeader) token = parseCookie(cookieHeader).access_token;
+      } catch {
+        // ignore cookie parse errors
+      }
+      if (!token) token = (socket.handshake.auth as { token?: string })?.token;
 
-      const cookies = parseCookie(cookieHeader);
-      const token = cookies.access_token;
       if (!token) return next();
 
       const payload = await AlgoJwt.verifyToken(token);

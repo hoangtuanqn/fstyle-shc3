@@ -177,22 +177,31 @@ const Leaderboard = () => {
                 const apiNames = award.winners
                   .map((w) => w.winnerName)
                   .filter((n): n is string => !!n);
-                const names = isAuto
+                type Entry = { name: string; score?: number };
+                const entries: Entry[] = isAuto
                   ? (() => {
                       const idx = autoAwards.indexOf(award);
                       const isLast = idx === autoAwards.length - 1;
                       if (isLast) {
-                        const remaining = rankFiltered
-                          .filter((r) => r.rank >= idx + 1)
-                          .map((r) => r.team.name);
-                        return remaining.length > 0 ? remaining : apiNames;
+                        const remaining = rankFiltered.filter(
+                          (r) => r.rank >= idx + 1,
+                        );
+                        return remaining.length > 0
+                          ? remaining.map((r) => ({
+                              name: r.team.name,
+                              score: r.totalScore,
+                            }))
+                          : apiNames.map((n) => ({ name: n }));
                       }
-                      const rankName = rankFiltered.find(
+                      const ranked = rankFiltered.find(
                         (r) => r.rank === idx + 1,
-                      )?.team.name;
-                      return rankName ? [rankName] : apiNames;
+                      );
+                      return ranked
+                        ? [{ name: ranked.team.name, score: ranked.totalScore }]
+                        : apiNames.map((n) => ({ name: n }));
                     })()
-                  : apiNames;
+                  : apiNames.map((n) => ({ name: n }));
+                const names = entries.map((e) => e.name);
 
                 if (isAuto && names.length === 0) return null;
 
@@ -325,18 +334,32 @@ const Leaderboard = () => {
                       </div>
                     </div>
                     {/* Winner names - vertical */}
-                    {names.length > 0 && (
+                    {entries.length > 0 && (
                       <div style={{ paddingLeft: 18, marginTop: 7 }}>
-                        {names.map((n, i) => (
+                        {entries.map((entry, i) => (
                           <div
                             key={i}
                             style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 8,
                               fontSize: 13,
                               color: "var(--dim)",
                               marginTop: i > 0 ? 2 : 0,
                             }}
                           >
-                            {n}
+                            <span>{entry.name} -</span>
+                            {entry.score === undefined ? (
+                              <span>Chưa nhập điểm</span>
+                            ) : (
+                              <span
+                                style={{
+                                  color: "rgba(255,255,255,.35)",
+                                }}
+                              >
+                                {entry.score.toFixed(2)} điểm
+                              </span>
+                            )}
                           </div>
                         ))}
                       </div>

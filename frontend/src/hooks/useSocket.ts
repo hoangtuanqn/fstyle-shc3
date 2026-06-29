@@ -4,6 +4,8 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import type { Socket } from 'socket.io-client';
 
+import LocalStorage from '~/utils/localStorage';
+
 const SOCKET_URL = import.meta.env.VITE_API_BACKEND as string;
 
 const useSocket = () => {
@@ -11,7 +13,8 @@ const useSocket = () => {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io(SOCKET_URL, { withCredentials: true });
+    const token = LocalStorage.getItem('access_token');
+    const socket = io(SOCKET_URL, { withCredentials: true, auth: { token } });
     socketRef.current = socket;
 
     socket.on('scores:updated', () => {

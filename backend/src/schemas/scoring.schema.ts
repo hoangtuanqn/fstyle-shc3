@@ -17,6 +17,7 @@ export const judgeScoresSchema = z.object({
     synchronization: z.number().min(0).max(20),
     performance: z.number().min(0).max(20),
     costume: z.number().min(0).max(10),
+    subScores: z.record(z.string(), z.number()).optional(),
   }),
 });
 
@@ -26,5 +27,6 @@ export const btcScoreSchema = z.object({
   }),
   body: z.object({
     discipline: z.number().min(0).max(5),
+    subScores: z.record(z.string(), z.number()).optional(),
   }),
 });

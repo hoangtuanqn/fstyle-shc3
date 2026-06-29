@@ -16,43 +16,43 @@ class ScoringRepository {
   upsertJudgeScores = async (
     teamId: string,
     judgeNumber: number,
-    scores: { ideaConcept: number; choreography: number; synchronization: number; performance: number; costume: number },
+    scores: {
+      ideaConcept: number;
+      choreography: number;
+      synchronization: number;
+      performance: number;
+      costume: number;
+      subScores?: Record<string, number>;
+    },
   ) => {
     const existing = await db
       .select({ id: judgeScores.id })
       .from(judgeScores)
       .where(and(eq(judgeScores.teamId, teamId), eq(judgeScores.judgeNumber, judgeNumber)));
 
+    const payload = {
+      ideaConcept: String(scores.ideaConcept),
+      choreography: String(scores.choreography),
+      synchronization: String(scores.synchronization),
+      performance: String(scores.performance),
+      costume: String(scores.costume),
+      subScores: scores.subScores ?? null,
+    };
+
     if (existing.length > 0) {
-      await db
-        .update(judgeScores)
-        .set({
-          ideaConcept: String(scores.ideaConcept),
-          choreography: String(scores.choreography),
-          synchronization: String(scores.synchronization),
-          performance: String(scores.performance),
-          costume: String(scores.costume),
-        })
-        .where(and(eq(judgeScores.teamId, teamId), eq(judgeScores.judgeNumber, judgeNumber)));
+      await db.update(judgeScores).set(payload).where(and(eq(judgeScores.teamId, teamId), eq(judgeScores.judgeNumber, judgeNumber)));
     } else {
-      await db.insert(judgeScores).values({
-        teamId,
-        judgeNumber,
-        ideaConcept: String(scores.ideaConcept),
-        choreography: String(scores.choreography),
-        synchronization: String(scores.synchronization),
-        performance: String(scores.performance),
-        costume: String(scores.costume),
-      });
+      await db.insert(judgeScores).values({ teamId, judgeNumber, ...payload });
     }
   };
 
-  upsertBtcScore = async (teamId: string, discipline: number) => {
+  upsertBtcScore = async (teamId: string, discipline: number, subScores?: Record<string, number>) => {
     const existing = await db.select({ id: btcScores.id }).from(btcScores).where(eq(btcScores.teamId, teamId));
+    const payload = { discipline: String(discipline), subScores: subScores ?? null };
     if (existing.length > 0) {
-      await db.update(btcScores).set({ discipline: String(discipline) }).where(eq(btcScores.teamId, teamId));
+      await db.update(btcScores).set(payload).where(eq(btcScores.teamId, teamId));
     } else {
-      await db.insert(btcScores).values({ teamId, discipline: String(discipline) });
+      await db.insert(btcScores).values({ teamId, ...payload });
     }
   };
 
