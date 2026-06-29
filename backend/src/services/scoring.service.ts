@@ -16,6 +16,7 @@ type JudgeScoreInput = {
   synchronization: number;
   performance: number;
   costume: number;
+  subScores?: Record<string, number>;
 };
 
 class ScoringService {
@@ -46,12 +47,13 @@ class ScoringService {
       synchronization: data.synchronization,
       performance: data.performance,
       costume: data.costume,
+      subScores: data.subScores,
     });
     getIO().emit('scores:updated', { teamId, type: 'judge' });
   };
 
-  saveBtcScore = async (teamId: string, discipline: number) => {
-    await scoringRepository.upsertBtcScore(teamId, discipline);
+  saveBtcScore = async (teamId: string, discipline: number, subScores?: Record<string, number>) => {
+    await scoringRepository.upsertBtcScore(teamId, discipline, subScores);
     getIO().emit('scores:updated', { teamId, type: 'btc' });
   };
 

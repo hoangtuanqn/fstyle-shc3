@@ -230,22 +230,6 @@ const totalMax = criteriaData.reduce((s, c) => s + c.maxScore, 0);
 
 const getSubKey = (catId: number, subIdx: number) => `${catId}-${subIdx}`;
 
-const judgeSubsKey = (teamId: string, judge: number) => `scoring_subs_${teamId}_judge${judge}`;
-const btcSubsKey = (teamId: string) => `scoring_subs_${teamId}_btc`;
-
-const loadStoredSubs = (key: string, cats: Criteria[], fallbackTotal: Record<number, number>) => {
-  const stored = localStorage.getItem(key);
-  if (stored) {
-    try {
-      const parsed: Record<string, number> = JSON.parse(stored);
-      const storedSum = cats.reduce((s, cat) => s + cat.subs.reduce((ss, _, i) => ss + (parsed[getSubKey(cat.id, i)] ?? 0), 0), 0);
-      const apiSum = cats.reduce((s, cat) => s + (fallbackTotal[cat.id] ?? 0), 0);
-      if (Math.abs(storedSum - apiSum) < 0.01) return parsed;
-    } catch {}
-  }
-  return null;
-};
-
 const thStyle: CSSProperties = {
   padding: "14px 16px",
   textAlign: "left",
@@ -345,23 +329,15 @@ const Scoring = () => {
     const filled: Record<string, number> = {};
 
     const judgeCats = criteriaData.slice(0, 5);
-    const judgeTotals: Record<number, number> = {};
-    for (let i = 0; i < 5; i++) {
-      const cat = criteriaData[i];
-      judgeTotals[cat.id] = judgeRow ? Number((judgeRow as Record<string, unknown>)[cat.apiKey] ?? 0) : 0;
-    }
-    const storedJudge = loadStoredSubs(judgeSubsKey(selectedTeamId, selectedJudge), judgeCats, judgeTotals);
-    if (storedJudge) {
-      Object.assign(filled, storedJudge);
+    if (judgeRow?.subScores) {
+      Object.assign(filled, judgeRow.subScores);
     } else {
       judgeCats.forEach((cat) => cat.subs.forEach((_, i) => { filled[getSubKey(cat.id, i)] = 0; }));
     }
 
     const btcCat = criteriaData[5];
-    const disciplineTotal = btcScore ? Number(btcScore.discipline) : 0;
-    const storedBtc = loadStoredSubs(btcSubsKey(selectedTeamId), [btcCat], { [btcCat.id]: disciplineTotal });
-    if (storedBtc) {
-      Object.assign(filled, storedBtc);
+    if (btcScore?.subScores) {
+      Object.assign(filled, btcScore.subScores);
     } else {
       btcCat.subs.forEach((_, i) => { filled[getSubKey(btcCat.id, i)] = 0; });
     }
@@ -386,6 +362,8 @@ const Scoring = () => {
       const saves: Promise<unknown>[] = [];
 
       if (judgeChanged) {
+        const judgeSubScores: Record<string, number> = {};
+        criteriaData.slice(0, 5).forEach((cat) => cat.subs.forEach((_, i) => { judgeSubScores[getSubKey(cat.id, i)] = getSubScore(cat.id, i); }));
         saves.push(
           ScoringApi.saveJudgeScores({
             teamId: selectedTeamId,
@@ -396,33 +374,25 @@ const Scoring = () => {
               synchronization: getCategoryTotal(criteriaData[2]),
               performance: getCategoryTotal(criteriaData[3]),
               costume: getCategoryTotal(criteriaData[4]),
+              subScores: judgeSubScores,
             },
           }),
         );
       }
 
       if (disciplineChanged) {
+        const btcSubScores: Record<string, number> = {};
+        criteriaData[5].subs.forEach((_, i) => { btcSubScores[getSubKey(criteriaData[5].id, i)] = getSubScore(criteriaData[5].id, i); });
         saves.push(
           ScoringApi.saveBtcScore({
             teamId: selectedTeamId,
-            data: { discipline: getCategoryTotal(criteriaData[5]) },
+            data: { discipline: getCategoryTotal(criteriaData[5]), subScores: btcSubScores },
           }),
         );
       }
 
       await Promise.all(saves);
       setDirtyCategories(new Set());
-
-      if (judgeChanged) {
-        const judgeSubScores: Record<string, number> = {};
-        criteriaData.slice(0, 5).forEach((cat) => cat.subs.forEach((_, i) => { judgeSubScores[getSubKey(cat.id, i)] = getSubScore(cat.id, i); }));
-        localStorage.setItem(judgeSubsKey(selectedTeamId, selectedJudge), JSON.stringify(judgeSubScores));
-      }
-      if (disciplineChanged) {
-        const btcSubScores: Record<string, number> = {};
-        criteriaData[5].subs.forEach((_, i) => { btcSubScores[getSubKey(criteriaData[5].id, i)] = getSubScore(criteriaData[5].id, i); });
-        localStorage.setItem(btcSubsKey(selectedTeamId), JSON.stringify(btcSubScores));
-      }
 
       queryClient.invalidateQueries({ queryKey: ["scoring-teams"] });
       queryClient.invalidateQueries({

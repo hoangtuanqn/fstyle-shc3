@@ -65,6 +65,7 @@ export const judgeScores = mysqlTable(
       "0",
     ), // max 20
     costume: decimal("costume", { precision: 4, scale: 1 }).default("0"), // max 10
+    subScores: json("sub_scores").$type<Record<string, number>>(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   },
@@ -83,6 +84,7 @@ export const btcScores = mysqlTable("btc_scores", {
     .references(() => teams.id)
     .unique(),
   discipline: decimal("discipline", { precision: 3, scale: 1 }).default("0"), // max 5
+  subScores: json("sub_scores").$type<Record<string, number>>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });

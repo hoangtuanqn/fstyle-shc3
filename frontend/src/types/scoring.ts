@@ -18,12 +18,14 @@ export type JudgeScoreRow = {
   synchronization: string;
   performance: string;
   costume: string;
+  subScores?: Record<string, number> | null;
 };
 
 export type BtcScoreRow = {
   id: string;
   teamId: string;
   discipline: string;
+  subScores?: Record<string, number> | null;
 } | null;
 
 export type TeamScoreDetail = {
@@ -38,10 +40,12 @@ export type JudgeScoresInput = {
   synchronization: number;
   performance: number;
   costume: number;
+  subScores?: Record<string, number>;
 };
 
 export type BtcScoreInput = {
   discipline: number;
+  subScores?: Record<string, number>;
 };
 
 export type TeamStatistic = {

@@ -36,7 +36,7 @@ class ScoringController {
 
   saveBtcScore = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await scoringService.saveBtcScore(req.params.teamId as string, req.body.discipline);
+      await scoringService.saveBtcScore(req.params.teamId as string, req.body.discipline, req.body.subScores);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Lưu điểm BTC thành công!' }));
       awardService.autoCalculate().catch(console.error);
     } catch (err) {
