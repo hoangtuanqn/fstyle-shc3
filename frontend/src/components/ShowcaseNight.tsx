@@ -11,17 +11,72 @@ type Performance = {
 };
 
 const performances: Performance[] = [
-  { num: "01", name: "Hotel California", by: "Lamie Trần x F# Live Music Club", image: "/assets/images/performers/lamie-x-f.webp" },
-  { num: "02", name: "FREVKQU3NC!E", by: "IU ArTeam", image: "/assets/images/performers/iu-arteam.webp" },
-  { num: "03", name: "Huyền Khúc Sử Việt", by: "SLATT from FStyle Crew", teamColor: "var(--slatt)" },
-  { num: "04", name: "QUEEN NEVER CRY", by: "Apex Aura from FStyle Crew", teamColor: "var(--apex)" },
-  { num: "05", name: "CARIBBEAN", by: "Giai Điệu Trẻ", image: "/assets/images/performers/giai-dieu-tre.webp" },
-  { num: "06", name: "境界 (Kyōkai)", by: "Shiro Kuro from FStyle Crew", teamColor: "var(--shiro)" },
-  { num: "07", name: "Girly Breaks Free", by: "Anti-X from FStyle Crew", teamColor: "var(--anti)" },
-  { num: "08", name: "Detonex", by: "Jaeger Squad", image: "/assets/images/performers/jaeger-squad.webp" },
-  { num: "09", name: "Wall to Wall", by: "The 07ERA", image: "/assets/images/performers/the-07era.webp" },
-  { num: "10", name: "Sự Tĩnh Lặng Từ Thiên Đường", by: "Ca sĩ M Tú", image: "/assets/images/performers/m-tu.webp" },
-  { num: "11", name: "Like We Own The Morning", by: "FStyle Crew", image: "/assets/images/performers/fstyle-crew.webp" },
+  {
+    num: "01",
+    name: "Hotel California",
+    by: "Lamie Trần x F# Live Music Club",
+    image: "/assets/images/performers/lamie-x-f.webp",
+  },
+  {
+    num: "02",
+    name: "FREVKQU3NC!E",
+    by: "IU ArTeam",
+    image: "/assets/images/performers/iu-arteam.webp",
+  },
+  {
+    num: "03",
+    name: "Huyền Khúc Sử Việt",
+    by: "SLATT from FStyle Crew",
+    teamColor: "var(--slatt)",
+  },
+  {
+    num: "04",
+    name: "QUEEN NEVER CRY",
+    by: "Apex Aura from FStyle Crew",
+    teamColor: "var(--apex)",
+  },
+  {
+    num: "05",
+    name: "CARIBBEAN",
+    by: "Giai Điệu Trẻ",
+    image: "/assets/images/performers/giai-dieu-tre.webp",
+  },
+  {
+    num: "06",
+    name: "境界 (Kyōkai)",
+    by: "Shiro Kuro from FStyle Crew",
+    teamColor: "var(--shiro)",
+  },
+  {
+    num: "07",
+    name: "Girly Breaks Free",
+    by: "Anti-X from FStyle Crew",
+    teamColor: "var(--anti)",
+  },
+  {
+    num: "08",
+    name: "Detonex",
+    by: "Jaeger Squad",
+    image: "/assets/images/performers/jaeger-squad.webp",
+  },
+  {
+    num: "09",
+    name: "Wall to Wall",
+    by: "The 07ERA",
+    image: "/assets/images/performers/the-07era.webp",
+  },
+  {
+    num: "10",
+    name: "Sự Tĩnh Lặng Từ Thiên Đường",
+    by: "Ca sĩ M Tú",
+    image: "/assets/images/performers/m-tu.webp",
+  },
+  {
+    num: "11",
+    name: "Like We Own The Morning",
+    by: "FStyle Crew",
+    image: "/assets/images/performers/fstyle-crew.webp",
+  },
 ];
 
 const judges = [
@@ -37,7 +92,7 @@ const judges = [
     role: "Ban Giám Khảo",
     crew: "",
     img: "/assets/images/members/bgk-trinh-mai-phuong-1.webp",
-    img2: null,
+    img2: "/assets/images/members/bgk-trinh-mai-phuong-2.webp",
   },
   {
     name: "Võ Ngọc Toàn",
@@ -55,7 +110,9 @@ const ShowcaseNight = () => {
 
   useEffect(() => {
     if (!modal) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setModal(null); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setModal(null);
+    };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [modal]);
@@ -173,7 +230,14 @@ const ShowcaseNight = () => {
       {/* ── MAIN CONTENT ── */}
       <div className="con" style={{ paddingTop: 56, paddingBottom: 100 }}>
         {/* Section label */}
-        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 28 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            marginBottom: 28,
+          }}
+        >
           <div
             style={{
               fontSize: 10,
@@ -186,7 +250,9 @@ const ShowcaseNight = () => {
           >
             Chương Trình Biểu Diễn
           </div>
-          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,.07)" }} />
+          <div
+            style={{ flex: 1, height: 1, background: "rgba(255,255,255,.07)" }}
+          />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
@@ -219,7 +285,9 @@ const ShowcaseNight = () => {
                 <div
                   style={{
                     position: "absolute",
-                    left: 0, top: 0, bottom: 0,
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
                     width: 3,
                     background: tc,
                     opacity: active ? 1 : 0.2,
@@ -258,7 +326,14 @@ const ShowcaseNight = () => {
                   >
                     {p.name}
                   </div>
-                  <div style={{ fontSize: 11.5, color: active ? tc : "var(--dim)", marginTop: 2, transition: "color .2s" }}>
+                  <div
+                    style={{
+                      fontSize: 11.5,
+                      color: active ? tc : "var(--dim)",
+                      marginTop: 2,
+                      transition: "color .2s",
+                    }}
+                  >
                     {p.by}
                   </div>
                 </div>
@@ -348,7 +423,8 @@ const ShowcaseNight = () => {
                       objectPosition: "center top",
                       filter:
                         hoveredJudge === i ? "grayscale(0%)" : "grayscale(30%)",
-                      transition: "filter .4s, transform .4s, opacity .45s ease",
+                      transition:
+                        "filter .4s, transform .4s, opacity .45s ease",
                       transform:
                         hoveredJudge === i ? "scale(1.05)" : "scale(1)",
                       display: "block",
@@ -453,7 +529,8 @@ const ShowcaseNight = () => {
                 style={{
                   position: "absolute",
                   inset: 0,
-                  background: "linear-gradient(to top, rgba(5,3,1,1) 0%, rgba(5,3,1,.3) 50%, transparent 100%)",
+                  background:
+                    "linear-gradient(to top, rgba(5,3,1,1) 0%, rgba(5,3,1,.3) 50%, transparent 100%)",
                   pointerEvents: "none",
                 }}
               />
@@ -491,7 +568,9 @@ const ShowcaseNight = () => {
                 >
                   {modal.name}
                 </div>
-                <div style={{ fontSize: 14, color: "var(--dim)" }}>{modal.by}</div>
+                <div style={{ fontSize: 14, color: "var(--dim)" }}>
+                  {modal.by}
+                </div>
               </div>
             </div>
           </div>
