@@ -17,6 +17,11 @@ class AuthApi {
     const response = await privateApi.post<ApiResponse<null>>('/auth/logout');
     return response.data;
   };
+
+  static changePassword = async (data: { newPassword: string; confirmPassword: string }) => {
+    const response = await privateApi.post<ApiResponse<null>>('/auth/change-password', data);
+    return response.data;
+  };
 }
 
 export default AuthApi;
