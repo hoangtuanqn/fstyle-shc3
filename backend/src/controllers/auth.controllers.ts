@@ -73,6 +73,17 @@ class AuthController {
       next(err);
     }
   };
+
+  changePassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await authService.changePassword(req.userId!, req.body.newPassword);
+      res.status(HTTP_STATUS.OK).json(
+        new ResponseClient({ message: 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.' }),
+      );
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default new AuthController();
