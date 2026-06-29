@@ -11,7 +11,20 @@ type FindAllFilter = {
 
 class UserRepository {
   findByEmail = async (email: string) => {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
+    const [user] = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        password: users.password,
+        role: users.role,
+        teamId: users.teamId,
+        isFirstLogin: users.isFirstLogin,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+      })
+      .from(users)
+      .where(eq(users.email, email));
     return user ?? null;
   };
 
@@ -110,10 +123,6 @@ class UserRepository {
 
   updateFirstLoginAndPassword = async (id: string, password: string) => {
     await db.update(users).set({ password, isFirstLogin: 0 }).where(eq(users.id, id));
-  };
-
-  updatePassword = async (id: string, password: string) => {
-    await db.update(users).set({ password }).where(eq(users.id, id));
   };
 }
 

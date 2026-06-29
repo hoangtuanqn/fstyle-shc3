@@ -1,5 +1,5 @@
 // frontend/src/pages/Members/index.tsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -223,6 +223,7 @@ const Members = () => {
   const queryClient = useQueryClient();
 
   const [searchText, setSearchText] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filterRole, setFilterRole] = useState('');
   const [filterTeam, setFilterTeam] = useState('');
   const [dialog, setDialog] = useState<DialogState>({ type: 'none' });
@@ -233,9 +234,14 @@ const Members = () => {
   const [formRole, setFormRole] = useState<RoleType>(RoleType.MEMBER);
   const [formTeamId, setFormTeamId] = useState('');
 
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchText), 300);
+    return () => clearTimeout(timer);
+  }, [searchText]);
+
   const { data: usersRes, isLoading } = useQuery({
-    queryKey: ['admin-users', searchText, filterRole, filterTeam],
-    queryFn: () => UserApi.getAll({ search: searchText || undefined, role: filterRole || undefined, teamId: filterTeam || undefined }),
+    queryKey: ['admin-users', debouncedSearch, filterRole, filterTeam],
+    queryFn: () => UserApi.getAll({ search: debouncedSearch || undefined, role: filterRole || undefined, teamId: filterTeam || undefined }),
   });
 
   const { data: teamsRes } = useQuery({

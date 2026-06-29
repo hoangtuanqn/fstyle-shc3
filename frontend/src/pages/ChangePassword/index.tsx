@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Navigate, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import axios from 'axios';
 
@@ -22,8 +22,7 @@ const ChangePassword = () => {
   const [loading, setLoading] = useState(false);
 
   if (user && user.isFirstLogin === 0) {
-    navigate('/', { replace: true });
-    return null;
+    return <Navigate to="/" replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -1,3 +1,5 @@
+import { toast } from 'sonner';
+
 import { privateApi } from '~/utils/axiosInstance';
 
 import type { ApiResponse } from '~/types/auth';
@@ -53,7 +55,8 @@ class UserApi {
         link.click();
         link.remove();
         window.URL.revokeObjectURL(url);
-      });
+      })
+      .catch(() => toast.error('Xuất Excel thất bại!'));
   };
 }
 
