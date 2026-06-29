@@ -18,7 +18,7 @@ Set up project foundation for Heatwave SHC3 landing page. Copy assets, write glo
 - Preserve existing vite.config.ts
 
 ## Asset Mapping
-Source: `C:\Users\MSI\Downloads\F-Style Crew Design System\assets\element\`
+Source: `C:\Users\MSI\Downloads\FStyle Crew Design System\assets\element\`
 Target: `frontend/public/assets/`
 - `element/*.png` → `assets/images/*.png`
 - `element/fonts/*` → `assets/fonts/*`

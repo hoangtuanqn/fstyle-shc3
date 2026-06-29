@@ -37,7 +37,7 @@ Spawn `landing-setup` agent (model: opus):
 - Write `frontend/src/App.tsx` shell
 
 **Data source:** TASK.md at project root
-**Asset source:** `C:\Users\MSI\Downloads\F-Style Crew Design System\assets\element\`
+**Asset source:** `C:\Users\MSI\Downloads\FStyle Crew Design System\assets\element\`
 
 Wait for setup completion before Phase 2.
 

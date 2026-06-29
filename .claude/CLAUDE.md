@@ -1,4 +1,4 @@
-# F-Style SHC3
+# FStyle SHC3
 
 F-Code recruitment system — Challenge 3 platform for F21 cohort. Full-stack monorepo with separate frontend and backend.
 
