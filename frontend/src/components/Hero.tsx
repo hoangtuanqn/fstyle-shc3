@@ -93,12 +93,13 @@ const Hero = () => {
         {/* 1. Eyebrow */}
         <span
           style={{
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: 800,
-            letterSpacing: ".42em",
-            color: "var(--orange)",
+            letterSpacing: ".38em",
+            color: "var(--gold)",
             textTransform: "uppercase",
-            textShadow: "0 0 20px rgba(251,140,5,.8)",
+            textShadow:
+              "rgba(0, 0, 0, 0.95) 0px 0px 6px, rgb(0 0 0 / 85%) 0px 0px 18px",
             animation: "fu .9s .1s both",
           }}
         >
@@ -108,7 +109,11 @@ const Hero = () => {
         {/* 2. Logo */}
         <div
           className="relative"
-          style={{ width: "min(580px, 84vw)", marginTop: 22, animation: "fu 1s .3s both" }}
+          style={{
+            width: "min(580px, 84vw)",
+            marginTop: 22,
+            animation: "fu 1s .3s both",
+          }}
         >
           {/* Stage light bloom */}
           <div
@@ -131,7 +136,10 @@ const Hero = () => {
             }}
           />
           {/* Orbit ring */}
-          <div className="logo-orbit-ring pointer-events-none absolute" style={{ inset: "-18px -10px" }} />
+          <div
+            className="logo-orbit-ring pointer-events-none absolute"
+            style={{ inset: "-18px -10px" }}
+          />
           <img
             src="/assets/images/typography-apocalypse-gold.png"
             alt="APOCALYPSE"
@@ -151,7 +159,8 @@ const Hero = () => {
             fontStyle: "italic",
             color: "rgba(242,237,224,.92)",
             marginTop: 18,
-            textShadow: "0 0 20px rgba(255,255,255,.35), 0 1px 8px rgba(0,0,0,.8)",
+            textShadow:
+              "0 0 20px rgba(255,255,255,.35), 0 1px 8px rgba(0,0,0,.8)",
             animation: "fu .9s .5s both",
           }}
         >
@@ -271,7 +280,10 @@ const Hero = () => {
           style={{ marginTop: 36, animation: "fu .9s .9s both" }}
         >
           {countItems.map((item, i) => (
-            <div key={item.label} className="flex items-center gap-1 sm:gap-1.5">
+            <div
+              key={item.label}
+              className="flex items-center gap-1 sm:gap-1.5"
+            >
               <div
                 className="flex flex-col items-center rounded-[10px]"
                 style={{
