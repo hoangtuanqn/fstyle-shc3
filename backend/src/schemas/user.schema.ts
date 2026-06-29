@@ -31,7 +31,7 @@ export const updateUserSchema = z.object({
     })
     .refine(
       (data) => {
-        if (data.role === 'MEMBER' && data.teamId === null) return false;
+        if (data.role === 'MEMBER' && !data.teamId) return false;
         if (data.role && data.role !== 'MEMBER' && data.teamId) return false;
         return true;
       },
