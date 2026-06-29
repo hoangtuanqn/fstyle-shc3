@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const BASE = 'F-Style SHC3';
+const BASE = 'FStyle SHC3';
 
 const usePageTitle = (title?: string) => {
   useEffect(() => {
