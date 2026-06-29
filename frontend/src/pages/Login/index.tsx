@@ -42,7 +42,11 @@ const Login = () => {
       dispatch(setUser(data.result));
       toast.success(data.message);
       const role = data.result.role;
-      navigate(redirectByRole[role] ?? "/dashboard", { replace: true });
+      if (data.result.isFirstLogin === 1) {
+        navigate('/change-password', { replace: true });
+      } else {
+        navigate(redirectByRole[role] ?? '/dashboard', { replace: true });
+      }
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.data?.message) {
         toast.error(err.response.data.message);
