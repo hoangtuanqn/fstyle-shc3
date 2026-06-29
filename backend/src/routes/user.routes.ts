@@ -11,6 +11,7 @@ const userRouter = Router();
 const adminOnly = [middlewareAuth.auth, isRole([RoleType.ADMIN])];
 
 userRouter.get('/teams', ...adminOnly, userController.getTeams);
+userRouter.get('/export', ...adminOnly, userController.exportExcel);
 userRouter.get('/', ...adminOnly, userController.getAll);
 userRouter.post('/', ...adminOnly, validate(createUserSchema), userController.create);
 userRouter.put('/:id', ...adminOnly, validate(updateUserSchema), userController.update);
