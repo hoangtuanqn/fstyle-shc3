@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
+import { useSearchParams } from "react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -227,6 +228,24 @@ const criteriaData: Criteria[] = [
 
 const totalMax = criteriaData.reduce((s, c) => s + c.maxScore, 0);
 
+const getSubKey = (catId: number, subIdx: number) => `${catId}-${subIdx}`;
+
+const judgeSubsKey = (teamId: string, judge: number) => `scoring_subs_${teamId}_judge${judge}`;
+const btcSubsKey = (teamId: string) => `scoring_subs_${teamId}_btc`;
+
+const loadStoredSubs = (key: string, cats: Criteria[], fallbackTotal: Record<number, number>) => {
+  const stored = localStorage.getItem(key);
+  if (stored) {
+    try {
+      const parsed: Record<string, number> = JSON.parse(stored);
+      const storedSum = cats.reduce((s, cat) => s + cat.subs.reduce((ss, _, i) => ss + (parsed[getSubKey(cat.id, i)] ?? 0), 0), 0);
+      const apiSum = cats.reduce((s, cat) => s + (fallbackTotal[cat.id] ?? 0), 0);
+      if (Math.abs(storedSum - apiSum) < 0.01) return parsed;
+    } catch {}
+  }
+  return null;
+};
+
 const thStyle: CSSProperties = {
   padding: "14px 16px",
   textAlign: "left",
@@ -251,18 +270,35 @@ const tdBase: CSSProperties = {
 const Scoring = () => {
   usePageTitle("Chấm Điểm");
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
-  const [selectedJudge, setSelectedJudge] = useState<1 | 2 | 3>(1);
+  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(
+    searchParams.get("team"),
+  );
+  const [selectedJudge, setSelectedJudge] = useState<1 | 2 | 3>(() => {
+    const j = parseInt(searchParams.get("judge") ?? "1");
+    return ([1, 2, 3] as const).includes(j as 1 | 2 | 3) ? (j as 1 | 2 | 3) : 1;
+  });
+
+  const syncUrl = (teamId: string | null, judge: 1 | 2 | 3) => {
+    const params: Record<string, string> = { judge: String(judge) };
+    if (teamId) params.team = teamId;
+    setSearchParams(params, { replace: true });
+  };
 
   const handleSelectTeam = (teamId: string) => {
     setSelectedTeamId(teamId);
     setSelectedJudge(1);
+    syncUrl(teamId, 1);
+  };
+
+  const handleSelectJudge = (judge: 1 | 2 | 3) => {
+    setSelectedJudge(judge);
+    syncUrl(selectedTeamId, judge);
   };
   const [subScores, setSubScores] = useState<Record<string, number>>({});
   const [dirtyCategories, setDirtyCategories] = useState<Set<number>>(new Set());
 
-  const getSubKey = (catId: number, subIdx: number) => `${catId}-${subIdx}`;
   const getSubScore = (catId: number, subIdx: number) =>
     subScores[getSubKey(catId, subIdx)] ?? 0;
   const setSubScore = (
@@ -298,7 +334,7 @@ const Scoring = () => {
   }, [teamsRes, selectedTeamId]);
 
   useEffect(() => {
-    if (!teamScoresRes?.result) {
+    if (!teamScoresRes?.result || !selectedTeamId) {
       setSubScores({});
       setDirtyCategories(new Set());
       return;
@@ -307,28 +343,32 @@ const Scoring = () => {
     const judgeRow = judgeRows.find((r) => r.judgeNumber === selectedJudge);
 
     const filled: Record<string, number> = {};
-    const fillSubs = (cat: Criteria, total: number) => {
-      let remaining = total;
-      for (let i = 0; i < cat.subs.length; i++) {
-        const val = Math.min(remaining, cat.subs[i].maxScore);
-        filled[getSubKey(cat.id, i)] = Math.round(val * 100) / 100;
-        remaining = Math.round((remaining - val) * 100) / 100;
-      }
-    };
 
+    const judgeCats = criteriaData.slice(0, 5);
+    const judgeTotals: Record<number, number> = {};
     for (let i = 0; i < 5; i++) {
       const cat = criteriaData[i];
-      const val = judgeRow
-        ? Number((judgeRow as Record<string, unknown>)[cat.apiKey] ?? 0)
-        : 0;
-      fillSubs(cat, val);
+      judgeTotals[cat.id] = judgeRow ? Number((judgeRow as Record<string, unknown>)[cat.apiKey] ?? 0) : 0;
     }
-    const disciplineVal = btcScore ? Number(btcScore.discipline) : 0;
-    fillSubs(criteriaData[5], disciplineVal);
+    const storedJudge = loadStoredSubs(judgeSubsKey(selectedTeamId, selectedJudge), judgeCats, judgeTotals);
+    if (storedJudge) {
+      Object.assign(filled, storedJudge);
+    } else {
+      judgeCats.forEach((cat) => cat.subs.forEach((_, i) => { filled[getSubKey(cat.id, i)] = 0; }));
+    }
+
+    const btcCat = criteriaData[5];
+    const disciplineTotal = btcScore ? Number(btcScore.discipline) : 0;
+    const storedBtc = loadStoredSubs(btcSubsKey(selectedTeamId), [btcCat], { [btcCat.id]: disciplineTotal });
+    if (storedBtc) {
+      Object.assign(filled, storedBtc);
+    } else {
+      btcCat.subs.forEach((_, i) => { filled[getSubKey(btcCat.id, i)] = 0; });
+    }
 
     setSubScores(filled);
     setDirtyCategories(new Set());
-  }, [teamScoresRes, selectedJudge]);
+  }, [teamScoresRes, selectedJudge, selectedTeamId]);
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -372,6 +412,18 @@ const Scoring = () => {
 
       await Promise.all(saves);
       setDirtyCategories(new Set());
+
+      if (judgeChanged) {
+        const judgeSubScores: Record<string, number> = {};
+        criteriaData.slice(0, 5).forEach((cat) => cat.subs.forEach((_, i) => { judgeSubScores[getSubKey(cat.id, i)] = getSubScore(cat.id, i); }));
+        localStorage.setItem(judgeSubsKey(selectedTeamId, selectedJudge), JSON.stringify(judgeSubScores));
+      }
+      if (disciplineChanged) {
+        const btcSubScores: Record<string, number> = {};
+        criteriaData[5].subs.forEach((_, i) => { btcSubScores[getSubKey(criteriaData[5].id, i)] = getSubScore(criteriaData[5].id, i); });
+        localStorage.setItem(btcSubsKey(selectedTeamId), JSON.stringify(btcSubScores));
+      }
+
       queryClient.invalidateQueries({ queryKey: ["scoring-teams"] });
       queryClient.invalidateQueries({
         queryKey: ["scoring-team-scores", selectedTeamId],
@@ -521,7 +573,7 @@ const Scoring = () => {
               {([1, 2, 3] as const).map((n) => (
                 <button
                   key={n}
-                  onClick={() => setSelectedJudge(n)}
+                  onClick={() => handleSelectJudge(n)}
                   style={{
                     padding: "8px 20px",
                     borderRadius: 8,
