@@ -70,29 +70,14 @@ class UserController {
       const sheet = workbook.addWorksheet('Tài khoản');
 
       sheet.columns = [
-        { header: 'STT', key: 'stt', width: 6 },
-        { header: 'Tên', key: 'name', width: 30 },
         { header: 'Email', key: 'email', width: 36 },
-        { header: 'Mật khẩu (ban đầu)', key: 'rawPassword', width: 20 },
-        { header: 'Role', key: 'role', width: 14 },
-        { header: 'Team', key: 'teamName', width: 18 },
+        { header: 'Mật khẩu (ban đầu)', key: 'rawPassword', width: 24 },
       ];
 
-      const roleDisplay: Record<string, string> = {
-        ADMIN: 'Admin (BTC F-Code)',
-        BTC_FSTYLE: 'BTC FStyle',
-        MC: 'MC',
-        MEMBER: 'Thành viên',
-      };
-
-      allUsers.forEach((user, i) => {
+      allUsers.forEach((user) => {
         sheet.addRow({
-          stt: i + 1,
-          name: user.name,
           email: user.email,
           rawPassword: user.rawPassword ?? '',
-          role: roleDisplay[user.role] ?? user.role,
-          teamName: user.teamName ?? '',
         });
       });
 
