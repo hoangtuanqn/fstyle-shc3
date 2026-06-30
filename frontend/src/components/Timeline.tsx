@@ -60,29 +60,18 @@ const Timeline = () => {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <section id="timeline" className="sec" style={{ background: 'var(--bg3)' }}>
+    <section id="timeline" className="sec bg-[var(--bg3)]">
       <div className="con">
-        <div className="rv" style={{ textAlign: 'center', marginBottom: 56 }}>
+        <div className="rv text-center mb-14">
           <span className="ey">Lộ Trình</span>
           <h2 className="st">
             Hành Trình <em>SHC3</em>
           </h2>
         </div>
 
-        <div className="tl-wrap rv d1" style={{ position: 'relative', maxWidth: 900, margin: '0 auto' }}>
+        <div className="tl-wrap rv d1 relative max-w-[900px] mx-auto">
           {/* Center line */}
-          <div
-            className="tl-line"
-            style={{
-              position: 'absolute',
-              left: '50%',
-              top: 0,
-              bottom: 0,
-              width: 2,
-              transform: 'translateX(-50%)',
-              background: 'linear-gradient(to bottom, var(--orange), var(--gold), transparent)',
-            }}
-          />
+          <div className="tl-line absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-[linear-gradient(to_bottom,var(--orange),var(--gold),transparent)]" />
 
           {events.map((ev, i) => {
             const isLeft = i % 2 === 0;
@@ -90,12 +79,10 @@ const Timeline = () => {
             return (
               <div
                 key={ev.name}
-                className={`tl-item rv`}
+                className="tl-item rv flex items-start"
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
                 style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
                   marginBottom: i === events.length - 1 ? 0 : 40,
                   flexDirection: isLeft ? 'row' : 'row-reverse',
                   transitionDelay: `${i * 0.08}s`,
@@ -103,77 +90,48 @@ const Timeline = () => {
               >
                 {/* Card */}
                 <div
-                  className="tl-card"
+                  className="tl-card w-[calc(50%-32px)] py-[18px] px-5 rounded-[14px] transition-[transform_.35s_cubic-bezier(.22,.8,.42,1),border-color_.3s]"
                   style={{
-                    width: 'calc(50% - 32px)',
-                    padding: '18px 20px',
-                    borderRadius: 14,
                     background: ev.highlight ? 'rgba(254,230,34,.06)' : 'rgba(255,255,255,.03)',
                     border: `1px solid ${ev.highlight ? 'rgba(254,230,34,.2)' : isHover ? 'rgba(254,230,34,.15)' : 'rgba(255,255,255,.07)'}`,
                     textAlign: isLeft ? 'right' : 'left',
-                    transition: 'transform .35s cubic-bezier(.22,.8,.42,1), border-color .3s',
                     transform: isHover ? `translateX(${isLeft ? '-6px' : '6px'})` : 'translateX(0)',
                   }}
                 >
-                  <ev.Icon
-                    size={16}
-                    color={ev.highlight ? 'var(--gold)' : 'var(--orange)'}
-                    style={{ marginBottom: 8 }}
-                  />
-                  <div
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 800,
-                      letterSpacing: '.2em',
-                      color: 'var(--orange)',
-                      textTransform: 'uppercase',
-                      marginBottom: 6,
-                    }}
-                  >
+                  <ev.Icon size={16} color={ev.highlight ? 'var(--gold)' : 'var(--orange)'} className="mb-2" />
+                  <div className="text-[10px] font-extrabold tracking-[.2em] text-[var(--orange)] uppercase mb-[6px]">
                     {ev.date}
                   </div>
                   <div
+                    className="text-[17px] mb-[6px] font-anton"
                     style={{
-                      fontFamily: 'Anton, sans-serif',
-                      fontSize: 17,
                       color: ev.highlight ? 'var(--gold)' : 'var(--text)',
                       textShadow: ev.highlight ? '0 0 24px rgba(254,230,34,.6)' : 'none',
-                      marginBottom: 6,
                     }}
                   >
                     {ev.name}
                   </div>
-                  <div style={{ fontSize: 12.5, color: 'var(--dim)', lineHeight: 1.6 }}>{ev.desc}</div>
+                  <div className="text-[12.5px] text-[var(--dim)] leading-[1.6]">{ev.desc}</div>
                 </div>
 
                 {/* Dot on center line */}
-                <div
-                  style={{
-                    width: 64,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    paddingTop: 18,
-                  }}
-                >
+                <div className="w-16 flex justify-center shrink-0 pt-[18px]">
                   <div
+                    className="rounded-full bg-[var(--gold)] transition-[box-shadow_.3s]"
                     style={{
                       width: ev.highlight ? 16 : 12,
                       height: ev.highlight ? 16 : 12,
-                      borderRadius: '50%',
-                      background: 'var(--gold)',
                       boxShadow: ev.highlight
                         ? '0 0 22px rgba(254,230,34,1)'
                         : isHover
                           ? '0 0 18px rgba(254,230,34,.9)'
                           : '0 0 10px rgba(254,230,34,.6)',
-                      transition: 'box-shadow .3s',
                     }}
                   />
                 </div>
 
                 {/* Spacer for the other side */}
-                <div className="tl-spacer" style={{ width: 'calc(50% - 32px)' }} />
+                <div className="tl-spacer w-[calc(50%-32px)]" />
               </div>
             );
           })}

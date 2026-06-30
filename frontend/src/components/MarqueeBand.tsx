@@ -10,28 +10,15 @@ const SEGMENTS = [
 ];
 
 const MarqueeContent = () => (
-  <div
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-      flexShrink: 0,
-      whiteSpace: 'nowrap',
-    }}
-  >
+  <div className="flex items-center flex-shrink-0 whitespace-nowrap">
     {SEGMENTS.map((seg, i) => (
-      <span key={i} style={{ display: 'inline-flex', alignItems: 'center' }}>
+      <span key={i} className="inline-flex items-center">
         <span
-          style={{
-            fontFamily: 'Anton, sans-serif',
-            fontSize: 16,
-            color: 'var(--bg)',
-            letterSpacing: '.04em',
-            padding: '0 16px',
-          }}
+          className="text-[16px] text-[var(--bg)] tracking-[.04em] px-4 font-anton"
         >
           {seg}
         </span>
-        <span style={{ color: 'var(--orange)', fontSize: 16 }}>✦</span>
+        <span className="text-[var(--orange)] text-[16px]">✦</span>
       </span>
     ))}
   </div>
@@ -39,22 +26,8 @@ const MarqueeContent = () => (
 
 const MarqueeBand = () => {
   return (
-    <div
-      style={{
-        height: 52,
-        background: 'var(--gold)',
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          animation: 'ma 22s linear infinite',
-        }}
-      >
+    <div className="h-[52px] bg-[var(--gold)] overflow-hidden flex items-center">
+      <div className="flex items-center animate-[ma_22s_linear_infinite]">
         <MarqueeContent />
         <MarqueeContent />
       </div>

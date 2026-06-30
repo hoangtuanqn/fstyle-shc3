@@ -113,17 +113,8 @@ const Nav = () => {
   return (
     <>
       <nav
+        className="fixed top-0 left-0 right-0 z-[1000] flex items-center h-[68px] [transition:background_.35s,backdrop-filter_.35s,border-color_.35s]"
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-          display: "flex",
-          alignItems: "center",
-          height: 68,
-          transition:
-            "background .35s, backdrop-filter .35s, border-color .35s",
           background: scrolled || menuOpen ? "rgba(5,3,1,0.95)" : "transparent",
           backdropFilter: scrolled || menuOpen ? "blur(16px)" : "none",
           WebkitBackdropFilter: scrolled || menuOpen ? "blur(16px)" : "none",
@@ -134,18 +125,7 @@ const Nav = () => {
         }}
       >
         {/* Logo zone - fixed-width left panel */}
-        <div
-          className="nav-logo-zone"
-          style={{
-            width: 220,
-            minWidth: 220,
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            paddingLeft: 48,
-            borderRight: "1px solid rgba(254,230,34,.08)",
-          }}
-        >
+        <div className="nav-logo-zone w-[220px] min-w-[220px] h-full flex items-center pl-12 border-r border-[rgba(254,230,34,.08)]">
           <a
             href="/"
             title="Về trang chủ"
@@ -158,22 +138,12 @@ const Nav = () => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }
             }}
-            style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+            className="flex items-center cursor-pointer"
           >
             <img
               src="/assets/images/FStyle.jpg"
               alt="FStyle Crew"
-              className="nav-logo"
-              style={{
-                display: "block",
-                width: 42,
-                height: 42,
-                borderRadius: "50%",
-                objectFit: "cover",
-                border: "2px solid rgba(254,230,34,.35)",
-                boxShadow: "0 0 12px rgba(254,230,34,.25)",
-                transition: "transform .3s ease, box-shadow .3s ease",
-              }}
+              className="nav-logo block w-[42px] h-[42px] rounded-full object-cover border-2 border-[rgba(254,230,34,.35)] shadow-[0_0_12px_rgba(254,230,34,.25)] [transition:transform_.3s_ease,box-shadow_.3s_ease]"
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "scale(1.08)";
                 e.currentTarget.style.boxShadow =
@@ -189,23 +159,9 @@ const Nav = () => {
         </div>
 
         {/* Menu zone - fills remaining space */}
-        <div
-          className="nav-menu-zone"
-          style={{
-            flex: 1,
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingLeft: 40,
-            paddingRight: 48,
-          }}
-        >
+        <div className="nav-menu-zone flex-1 h-full flex items-center justify-between pl-10 pr-12">
           {/* Nav links */}
-          <div
-            className="nav-links"
-            style={{ display: "flex", alignItems: "center", gap: 28 }}
-          >
+          <div className="nav-links flex items-center gap-7">
             {links.map((link) => (
               <button
                 key={link.id}
@@ -213,18 +169,8 @@ const Nav = () => {
                 onClick={() => handleSectionClick(link.id)}
                 onMouseEnter={() => setHovered(link.id)}
                 onMouseLeave={() => setHovered(null)}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: 11,
-                  fontWeight: 800,
-                  letterSpacing: ".18em",
-                  textTransform: "uppercase",
-                  color: hovered === link.id ? "var(--gold)" : "var(--dim)",
-                  transition: "color .25s",
-                  fontFamily: "Montserrat, sans-serif",
-                }}
+                className="bg-transparent border-none cursor-pointer text-[11px] font-extrabold tracking-[.18em] uppercase transition-colors duration-[250ms] font-montserrat"
+                style={{ color: hovered === link.id ? "var(--gold)" : "var(--dim)" }}
               >
                 {link.label}
               </button>
@@ -232,19 +178,9 @@ const Nav = () => {
           </div>
 
           {/* Right section */}
-          <div
-            className="nav-right"
-            style={{ display: "flex", alignItems: "center", gap: 24 }}
-          >
+          <div className="nav-right flex items-center gap-6">
             <div
-              className="nav-date"
-              style={{
-                fontFamily: "Anton, sans-serif",
-                color: "var(--gold)",
-                fontSize: 18,
-                letterSpacing: ".04em",
-                textShadow: "0 0 18px rgba(254,230,34,.6)",
-              }}
+              className="nav-date text-[var(--gold)] text-[18px] tracking-[.04em] [text-shadow:0_0_18px_rgba(254,230,34,.6)] font-anton"
             >
               05.07.2026
             </div>
@@ -252,58 +188,28 @@ const Nav = () => {
             {isAuthenticated && user ? (
               <div
                 ref={dropdownRef}
-                style={{ position: "relative" }}
+                className="relative"
                 onMouseEnter={openDropdown}
                 onMouseLeave={closeDropdown}
               >
                 {/* Avatar trigger */}
                 <button
                   type="button"
+                  className="flex items-center gap-[10px] pt-[5px] pr-3 pb-[5px] pl-[5px] rounded-[30px] cursor-pointer [transition:background_.25s,border-color_.25s]"
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 10,
-                    padding: "5px 12px 5px 5px",
                     background: dropdownOpen
                       ? "rgba(254,230,34,.1)"
                       : "transparent",
                     border: `1px solid ${dropdownOpen ? "rgba(254,230,34,.5)" : "rgba(254,230,34,.2)"}`,
-                    borderRadius: 30,
-                    cursor: "pointer",
-                    transition: "background .25s, border-color .25s",
                   }}
                 >
                   <div
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: "50%",
-                      background: "rgba(254,230,34,.15)",
-                      border: "1px solid rgba(254,230,34,.3)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 13,
-                      fontWeight: 800,
-                      color: "var(--gold)",
-                      fontFamily: "Montserrat, sans-serif",
-                    }}
+                    className="w-8 h-8 rounded-full bg-[rgba(254,230,34,.15)] border border-[rgba(254,230,34,.3)] flex items-center justify-center text-[13px] font-extrabold text-[var(--gold)] font-montserrat"
                   >
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                   <span
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 800,
-                      fontFamily: "Montserrat, sans-serif",
-                      letterSpacing: ".08em",
-                      textTransform: "uppercase",
-                      color: "var(--gold)",
-                      maxWidth: 120,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
+                    className="text-[11px] font-extrabold tracking-[.08em] uppercase text-[var(--gold)] max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap font-montserrat"
                   >
                     {user.name}
                   </span>
@@ -312,10 +218,9 @@ const Nav = () => {
                     height="6"
                     viewBox="0 0 10 6"
                     fill="none"
+                    className="shrink-0 [transition:transform_.25s]"
                     style={{
-                      transition: "transform .25s",
                       transform: dropdownOpen ? "rotate(180deg)" : "rotate(0)",
-                      flexShrink: 0,
                     }}
                   >
                     <path
@@ -330,82 +235,30 @@ const Nav = () => {
 
                 {/* Dropdown panel */}
                 <div
+                  className="absolute top-[calc(100%+8px)] right-0 w-60 bg-[rgba(10,7,3,0.98)] border border-[rgba(254,230,34,.15)] rounded-[14px] shadow-[0_12px_40px_rgba(0,0,0,.6),0_0_20px_rgba(254,230,34,.08)] overflow-hidden z-[1001] backdrop-blur-[20px] [transition:opacity_.2s,transform_.2s]"
                   style={{
-                    position: "absolute",
-                    top: "calc(100% + 8px)",
-                    right: 0,
-                    width: 240,
-                    background: "rgba(10,7,3,0.98)",
-                    backdropFilter: "blur(20px)",
-                    WebkitBackdropFilter: "blur(20px)",
-                    border: "1px solid rgba(254,230,34,.15)",
-                    borderRadius: 14,
-                    boxShadow:
-                      "0 12px 40px rgba(0,0,0,.6), 0 0 20px rgba(254,230,34,.08)",
-                    overflow: "hidden",
                     opacity: dropdownOpen ? 1 : 0,
                     transform: dropdownOpen
                       ? "translateY(0) scale(1)"
                       : "translateY(-8px) scale(0.97)",
                     pointerEvents: dropdownOpen ? "all" : "none",
-                    transition: "opacity .2s, transform .2s",
-                    zIndex: 1001,
                   }}
                 >
                   {/* User info */}
-                  <div
-                    style={{
-                      padding: "16px 18px",
-                      borderBottom: "1px solid rgba(255,255,255,.06)",
-                    }}
-                  >
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 10 }}
-                    >
+                  <div className="px-[18px] py-4 border-b border-[rgba(255,255,255,.06)]">
+                    <div className="flex items-center gap-[10px]">
                       <div
-                        style={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: "50%",
-                          background: "rgba(254,230,34,.15)",
-                          border: "1px solid rgba(254,230,34,.3)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: 14,
-                          fontWeight: 800,
-                          color: "var(--gold)",
-                          fontFamily: "Montserrat, sans-serif",
-                          flexShrink: 0,
-                        }}
+                        className="w-9 h-9 rounded-full bg-[rgba(254,230,34,.15)] border border-[rgba(254,230,34,.3)] flex items-center justify-center text-[14px] font-extrabold text-[var(--gold)] shrink-0 font-montserrat"
                       >
                         {user.name.charAt(0).toUpperCase()}
                       </div>
-                      <div style={{ overflow: "hidden" }}>
+                      <div className="overflow-hidden">
                         <p
-                          style={{
-                            fontSize: 13,
-                            fontWeight: 800,
-                            color: "var(--text)",
-                            fontFamily: "Montserrat, sans-serif",
-                            letterSpacing: ".04em",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
+                          className="text-[13px] font-extrabold text-[var(--text)] tracking-[.04em] overflow-hidden text-ellipsis whitespace-nowrap font-montserrat"
                         >
                           {user.name}
                         </p>
-                        <p
-                          style={{
-                            fontSize: 10,
-                            fontWeight: 700,
-                            letterSpacing: ".12em",
-                            textTransform: "uppercase",
-                            color: "var(--orange)",
-                            marginTop: 2,
-                          }}
-                        >
+                        <p className="text-[10px] font-bold tracking-[.12em] uppercase text-[var(--orange)] mt-[2px]">
                           {roleLabels[user.role] ?? user.role}
                         </p>
                       </div>
@@ -414,12 +267,7 @@ const Nav = () => {
 
                   {/* Page links */}
                   {pageLinks.length > 0 && (
-                    <div
-                      style={{
-                        padding: "8px 6px",
-                        borderBottom: "1px solid rgba(255,255,255,.06)",
-                      }}
-                    >
+                    <div className="px-[6px] py-2 border-b border-[rgba(255,255,255,.06)]">
                       {pageLinks.map((pl) => {
                         const isActive = location.pathname === pl.to;
                         return (
@@ -427,20 +275,12 @@ const Nav = () => {
                             key={pl.to}
                             to={pl.to}
                             onClick={() => setDropdownOpen(false)}
+                            className="block px-3 py-[10px] rounded-[8px] no-underline text-[12px] font-bold tracking-[.06em] [transition:background_.2s,color_.2s] font-montserrat"
                             style={{
-                              display: "block",
-                              padding: "10px 12px",
-                              borderRadius: 8,
-                              textDecoration: "none",
-                              fontSize: 12,
-                              fontWeight: 700,
-                              fontFamily: "Montserrat, sans-serif",
-                              letterSpacing: ".06em",
                               color: isActive ? "var(--gold)" : "var(--text)",
                               background: isActive
                                 ? "rgba(254,230,34,.08)"
                                 : "transparent",
-                              transition: "background .2s, color .2s",
                             }}
                             onMouseEnter={(e) => {
                               if (!isActive) {
@@ -465,29 +305,14 @@ const Nav = () => {
                   )}
 
                   {/* Logout */}
-                  <div style={{ padding: "8px 6px" }}>
+                  <div className="px-[6px] py-2">
                     <button
                       type="button"
                       onClick={() => {
                         setDropdownOpen(false);
                         logout();
                       }}
-                      style={{
-                        display: "block",
-                        width: "100%",
-                        padding: "10px 12px",
-                        borderRadius: 8,
-                        background: "transparent",
-                        border: "none",
-                        textAlign: "left",
-                        fontSize: 12,
-                        fontWeight: 700,
-                        fontFamily: "Montserrat, sans-serif",
-                        letterSpacing: ".06em",
-                        color: "#D04047",
-                        cursor: "pointer",
-                        transition: "background .2s",
-                      }}
+                      className="block w-full px-3 py-[10px] rounded-[8px] border-none text-left text-[12px] font-bold tracking-[.06em] text-[#D04047] cursor-pointer bg-transparent [transition:background_.2s] font-montserrat"
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background =
                           "rgba(208,64,71,.08)";
@@ -504,24 +329,7 @@ const Nav = () => {
             ) : (
               <Link
                 to="/login"
-                style={{
-                  padding: "8px 22px",
-                  background: "var(--gold)",
-                  border: "none",
-                  borderRadius: 6,
-                  color: "#050301",
-                  fontSize: 11,
-                  fontWeight: 800,
-                  fontFamily: "Montserrat, sans-serif",
-                  letterSpacing: ".14em",
-                  textTransform: "uppercase",
-                  textDecoration: "none",
-                  cursor: "pointer",
-                  transition:
-                    "background .25s, box-shadow .25s, transform .15s",
-                  boxShadow: "0 0 20px rgba(254,230,34,.25)",
-                  display: "inline-block",
-                }}
+                className="px-[22px] py-2 border-none rounded-[6px] text-[#050301] text-[11px] font-extrabold tracking-[.14em] uppercase no-underline cursor-pointer inline-block bg-[var(--gold)] shadow-[0_0_20px_rgba(254,230,34,.25)] [transition:background_.25s,box-shadow_.25s,transform_.15s] font-montserrat"
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "#ffe94a";
                   e.currentTarget.style.transform = "translateY(-1px)";
@@ -543,53 +351,25 @@ const Nav = () => {
 
         {/* Hamburger button - mobile only (hidden via CSS on desktop) */}
         <button
-          className="nav-hamburger"
+          className="nav-hamburger flex-col justify-center items-center gap-[5px] w-10 h-10 bg-transparent border-none cursor-pointer p-1 rounded"
           aria-label={menuOpen ? "Đóng menu" : "Mở menu"}
           onClick={() => setMenuOpen((v) => !v)}
-          style={{
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 5,
-            width: 40,
-            height: 40,
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: 4,
-            borderRadius: 6,
-          }}
         >
           <span
+            className="block w-[22px] h-[2px] bg-[var(--gold)] rounded-[2px] [transition:transform_.3s,opacity_.3s]"
             style={{
-              display: "block",
-              width: 22,
-              height: 2,
-              background: "var(--gold)",
-              borderRadius: 2,
-              transition: "transform .3s, opacity .3s",
               transform: menuOpen ? "translateY(7px) rotate(45deg)" : "none",
             }}
           />
           <span
+            className="block w-[22px] h-[2px] bg-[var(--gold)] rounded-[2px] [transition:opacity_.3s]"
             style={{
-              display: "block",
-              width: 22,
-              height: 2,
-              background: "var(--gold)",
-              borderRadius: 2,
-              transition: "opacity .3s",
               opacity: menuOpen ? 0 : 1,
             }}
           />
           <span
+            className="block w-[22px] h-[2px] bg-[var(--gold)] rounded-[2px] [transition:transform_.3s,opacity_.3s]"
             style={{
-              display: "block",
-              width: 22,
-              height: 2,
-              background: "var(--gold)",
-              borderRadius: 2,
-              transition: "transform .3s, opacity .3s",
               transform: menuOpen ? "translateY(-7px) rotate(-45deg)" : "none",
             }}
           />
@@ -599,62 +379,25 @@ const Nav = () => {
       {/* Mobile menu overlay */}
       <div
         ref={menuRef}
+        className="nav-mobile-menu fixed top-[68px] left-0 right-0 bottom-0 z-[999] bg-[rgba(5,3,1,0.97)] flex flex-col pt-8 px-7 pb-10 overflow-y-auto backdrop-blur-[20px] [transition:opacity_.3s,transform_.3s]"
         style={{
-          position: "fixed",
-          top: 68,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 999,
-          background: "rgba(5,3,1,0.97)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          display: "flex",
-          flexDirection: "column",
-          padding: "32px 28px 40px",
-          overflowY: "auto",
-          transition: "opacity .3s, transform .3s",
           opacity: menuOpen ? 1 : 0,
           transform: menuOpen ? "translateY(0)" : "translateY(-12px)",
           pointerEvents: menuOpen ? "all" : "none",
         }}
-        className="nav-mobile-menu"
       >
         {/* Section links */}
-        <div style={{ marginBottom: 32 }}>
-          <p
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: ".2em",
-              textTransform: "uppercase",
-              color: "rgba(255,255,255,.25)",
-              marginBottom: 16,
-            }}
-          >
+        <div className="mb-8">
+          <p className="text-[10px] font-bold tracking-[.2em] uppercase text-[rgba(255,255,255,.25)] mb-4">
             Trang chủ
           </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <div className="flex flex-col gap-1">
             {links.map((link) => (
               <button
                 key={link.id}
                 type="button"
                 onClick={() => handleSectionClick(link.id)}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  textAlign: "left",
-                  padding: "12px 0",
-                  fontSize: 22,
-                  fontWeight: 800,
-                  letterSpacing: ".06em",
-                  textTransform: "uppercase",
-                  color: "var(--text)",
-                  fontFamily: "Montserrat, sans-serif",
-                  borderBottom: "1px solid rgba(255,255,255,.06)",
-                  transition: "color .2s",
-                }}
+                className="bg-transparent border-b border-[rgba(255,255,255,.06)] cursor-pointer text-left py-3 text-[22px] font-extrabold tracking-[.06em] uppercase text-[var(--text)] [transition:color_.2s] font-montserrat"
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = "var(--gold)";
                 }}
@@ -670,38 +413,17 @@ const Nav = () => {
 
         {/* Page links */}
         {pageLinks.length > 0 && (
-          <div style={{ marginBottom: 32 }}>
-            <p
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: ".2em",
-                textTransform: "uppercase",
-                color: "rgba(255,255,255,.25)",
-                marginBottom: 16,
-              }}
-            >
+          <div className="mb-8">
+            <p className="text-[10px] font-bold tracking-[.2em] uppercase text-[rgba(255,255,255,.25)] mb-4">
               Trang
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <div className="flex flex-col gap-1">
               {pageLinks.map((pl) => (
                 <Link
                   key={pl.to}
                   to={pl.to}
                   onClick={() => setMenuOpen(false)}
-                  style={{
-                    display: "block",
-                    padding: "12px 0",
-                    fontSize: 22,
-                    fontWeight: 800,
-                    letterSpacing: ".06em",
-                    textTransform: "uppercase",
-                    color: "var(--text)",
-                    fontFamily: "Montserrat, sans-serif",
-                    textDecoration: "none",
-                    borderBottom: "1px solid rgba(255,255,255,.06)",
-                    transition: "color .2s",
-                  }}
+                  className="block py-3 text-[22px] font-extrabold tracking-[.06em] uppercase no-underline border-b border-[rgba(255,255,255,.06)] text-[var(--text)] [transition:color_.2s] font-montserrat"
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = "var(--gold)";
                   }}
@@ -717,47 +439,22 @@ const Nav = () => {
         )}
 
         {/* Auth section */}
-        <div
-          style={{
-            marginTop: "auto",
-            paddingTop: 24,
-            borderTop: "1px solid rgba(255,255,255,.08)",
-          }}
-        >
+        <div className="mt-auto pt-6 border-t border-[rgba(255,255,255,.08)]">
           {isAuthenticated && user ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-[10px]">
                 <div
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: "50%",
-                    background: "rgba(254,230,34,.15)",
-                    border: "1px solid rgba(254,230,34,.3)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 14,
-                    fontWeight: 800,
-                    color: "var(--gold)",
-                    fontFamily: "Montserrat, sans-serif",
-                  }}
+                  className="w-9 h-9 rounded-full bg-[rgba(254,230,34,.15)] border border-[rgba(254,230,34,.3)] flex items-center justify-center text-[14px] font-extrabold text-[var(--gold)] font-montserrat"
                 >
                   {user.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
                   <p
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 800,
-                      color: "var(--gold)",
-                      fontFamily: "Montserrat, sans-serif",
-                      letterSpacing: ".06em",
-                    }}
+                    className="text-[13px] font-extrabold text-[var(--gold)] tracking-[.06em] font-montserrat"
                   >
                     {user.name}
                   </p>
-                  <p style={{ fontSize: 11, color: "var(--dim)" }}>
+                  <p className="text-[11px] text-[var(--dim)]">
                     {user.email}
                   </p>
                 </div>
@@ -767,19 +464,7 @@ const Nav = () => {
                   setMenuOpen(false);
                   logout();
                 }}
-                style={{
-                  padding: "12px",
-                  background: "rgba(254,230,34,.08)",
-                  border: "1px solid rgba(254,230,34,.25)",
-                  borderRadius: 8,
-                  color: "var(--gold)",
-                  fontSize: 12,
-                  fontWeight: 800,
-                  fontFamily: "Montserrat, sans-serif",
-                  letterSpacing: ".14em",
-                  textTransform: "uppercase",
-                  cursor: "pointer",
-                }}
+                className="p-3 bg-[rgba(254,230,34,.08)] border border-[rgba(254,230,34,.25)] rounded-[8px] text-[var(--gold)] text-[12px] font-extrabold tracking-[.14em] uppercase cursor-pointer font-montserrat"
               >
                 Đăng xuất
               </button>
@@ -788,20 +473,7 @@ const Nav = () => {
             <Link
               to="/login"
               onClick={() => setMenuOpen(false)}
-              style={{
-                display: "block",
-                padding: "14px",
-                background: "var(--gold)",
-                borderRadius: 8,
-                color: "#050301",
-                fontSize: 13,
-                fontWeight: 800,
-                fontFamily: "Montserrat, sans-serif",
-                letterSpacing: ".14em",
-                textTransform: "uppercase",
-                textDecoration: "none",
-                textAlign: "center",
-              }}
+              className="block p-[14px] bg-[var(--gold)] rounded-[8px] text-[#050301] text-[13px] font-extrabold tracking-[.14em] uppercase no-underline text-center font-montserrat"
             >
               Đăng nhập
             </Link>
@@ -810,14 +482,7 @@ const Nav = () => {
 
         {/* Date */}
         <div
-          style={{
-            marginTop: 20,
-            fontFamily: "Anton, sans-serif",
-            color: "rgba(254,230,34,.3)",
-            fontSize: 14,
-            letterSpacing: ".12em",
-            textAlign: "center",
-          }}
+          className="mt-5 text-[rgba(254,230,34,.3)] text-[14px] tracking-[.12em] text-center font-anton"
         >
           SHOWCASE NIGHT · 05.07.2026
         </div>

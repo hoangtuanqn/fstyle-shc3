@@ -470,8 +470,8 @@ export const AwardOverlay = ({ award, onDismiss }: Props) => {
 
           {/* Award name */}
           <h2
+            className="font-anton"
             style={{
-              fontFamily: "'Anton', sans-serif",
               fontSize: "clamp(44px, 8.5vw, 100px)",
               lineHeight: 1,
               color: colors.primary,
@@ -559,8 +559,8 @@ export const AwardOverlay = ({ award, onDismiss }: Props) => {
             <>
               {winnerNames.length === 1 && (
                 <p
+                  className="font-anton"
                   style={{
-                    fontFamily: "'Anton', sans-serif",
                     fontSize: "clamp(30px, 5.5vw, 68px)",
                     color: "#ffffff",
                     letterSpacing: ".04em",
@@ -579,8 +579,8 @@ export const AwardOverlay = ({ award, onDismiss }: Props) => {
                   {winnerNames.map((name, i) => (
                     <p
                       key={i}
+                      className="font-anton"
                       style={{
-                        fontFamily: "'Anton', sans-serif",
                         fontSize: "clamp(24px, 4vw, 52px)",
                         color: "#ffffff",
                         letterSpacing: ".04em",
@@ -607,8 +607,8 @@ export const AwardOverlay = ({ award, onDismiss }: Props) => {
                       {col.map((name, i) => (
                         <p
                           key={i}
+                          className="font-anton"
                           style={{
-                            fontFamily: "'Anton', sans-serif",
                             fontSize: "clamp(16px, 2.2vw, 30px)",
                             color: "#ffffff",
                             letterSpacing: ".04em",

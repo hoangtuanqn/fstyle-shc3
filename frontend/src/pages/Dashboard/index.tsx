@@ -181,8 +181,8 @@ const VoteCard = ({
         >
           <span style={{ fontSize: 14 }}>🔥</span>
           <span
+            className="font-anton"
             style={{
-              fontFamily: "'Anton', sans-serif",
               fontSize: 18,
               color: "var(--gold)",
               textShadow: "0 0 12px rgba(254,230,34,.6)",
@@ -233,8 +233,8 @@ const VoteCard = ({
       {/* Info + Vote */}
       <div style={{ padding: "18px 18px 20px" }}>
         <h3
+          className="font-anton"
           style={{
-            fontFamily: "'Anton', sans-serif",
             fontSize: 22,
             letterSpacing: ".03em",
             marginBottom: 4,
@@ -260,12 +260,12 @@ const VoteCard = ({
           type="button"
           onClick={handleVote}
           disabled={disabled || isPending}
+          className="font-montserrat"
           style={{
             width: "100%",
             padding: "12px 0",
             borderRadius: 10,
             cursor: disabled || isPending ? "not-allowed" : "pointer",
-            fontFamily: "'Montserrat', sans-serif",
             fontSize: 11,
             fontWeight: 800,
             letterSpacing: ".18em",
@@ -429,8 +429,8 @@ const Dashboard = () => {
         <div className="con">
           <span className="ey">Bình Chọn Thành Viên Yêu Thích</span>
           <h1
+            className="font-anton"
             style={{
-              fontFamily: "'Anton', sans-serif",
               fontSize: "clamp(36px, 5vw, 64px)",
               letterSpacing: ".03em",
               lineHeight: 1.05,
@@ -483,8 +483,8 @@ const Dashboard = () => {
               >
                 <span style={{ fontSize: 18 }}>🔥</span>
                 <span
+                  className="font-anton"
                   style={{
-                    fontFamily: "'Anton', sans-serif",
                     fontSize: 26,
                     color: "var(--gold)",
                     textShadow: "0 0 12px rgba(254,230,34,.5)",
@@ -523,8 +523,8 @@ const Dashboard = () => {
             >
               <span style={{ fontSize: 18 }}>✋</span>
               <span
+                className="font-anton"
                 style={{
-                  fontFamily: "'Anton', sans-serif",
                   fontSize: 26,
                   color: remainingVotes > 0 ? "#5EAF7C" : "#D04047",
                   lineHeight: 1,
@@ -571,6 +571,7 @@ const Dashboard = () => {
                     key={f.id}
                     type="button"
                     onClick={() => setActiveFilter(f.id)}
+                    className="font-montserrat"
                     style={{
                       padding: "8px 18px",
                       borderRadius: 10,
@@ -587,7 +588,6 @@ const Dashboard = () => {
                       fontWeight: 800,
                       letterSpacing: ".18em",
                       textTransform: "uppercase",
-                      fontFamily: "'Montserrat', sans-serif",
                       cursor: "pointer",
                       transition: "all .25s",
                     }}

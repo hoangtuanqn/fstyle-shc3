@@ -2,172 +2,81 @@ const teamDots = ["var(--shiro)", "var(--apex)", "var(--slatt)", "var(--anti)"];
 
 const Footer = () => {
   return (
-    <footer
-      style={{
-        background: "#030201",
-        borderTop: "1px solid rgba(254,230,34,.1)",
-        padding: "52px 0 28px",
-      }}
-    >
+    <footer className="bg-[#030201] border-t border-[rgba(254,230,34,.1)] pt-[52px] pb-[28px]">
       <div className="con">
         {/* TOP SECTION */}
-        <div
-          className="footer-top"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            gap: 32,
-            flexWrap: "wrap",
-          }}
-        >
+        <div className="flex justify-between items-start gap-8 flex-wrap max-[600px]:flex-col">
           <div>
             <img
               src="/assets/images/logo-ngang.png"
               alt="FStyle Crew"
-              className="footer-logo-top"
-              style={{
-                height: 28,
-                opacity: 0.9,
-                display: "block",
-                marginBottom: 16,
-              }}
+              className="h-7 opacity-90 mb-4"
             />
-            <div style={{ display: "flex", gap: 8 }}>
+            <div className="flex gap-2">
               {teamDots.map((c, i) => (
                 <span
                   key={i}
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: "50%",
-                    background: c,
-                    display: "inline-block",
-                  }}
+                  className="w-2 h-2 rounded-full inline-block"
+                  style={{ background: c }}
                 />
               ))}
             </div>
           </div>
 
-          <div style={{ textAlign: "right" }}>
+          <div className="text-right max-[600px]:text-left">
             <div
-              style={{
-                fontFamily: "Anton, sans-serif",
-                fontSize: 18,
-                color: "var(--gold)",
-                textShadow: "0 0 18px rgba(254,230,34,.5)",
-                marginBottom: 8,
-              }}
+              className="text-[18px] text-(--gold) text-shadow-[0_0_18px_rgba(254,230,34,.5)] mb-2 font-anton"
             >
               Heatwave Showcase #3: APOCALYPSE
             </div>
-            <div
-              style={{
-                fontSize: 13,
-                color: "var(--dim)",
-                marginBottom: 8,
-                lineHeight: 1.6,
-              }}
-            >
+            <div className="text-[13px] text-[var(--dim)] mb-2 leading-[1.6]">
               05 tháng 07 năm 2026 · 18:00 / Hall A, FPT University HCM Campus
             </div>
-            <div
-              style={{
-                fontSize: 11,
-                fontWeight: 800,
-                letterSpacing: ".16em",
-                textTransform: "uppercase",
-                color: "var(--orange)",
-              }}
-            >
+            <div className="text-[11px] font-extrabold tracking-[.16em] uppercase text-[var(--orange)]">
               Never Stop Trying!
             </div>
           </div>
         </div>
 
         {/* SPONSORS BAR */}
-        <div
-          style={{
-            margin: "44px 0",
-            paddingTop: 32,
-            borderTop: "1px solid rgba(255,255,255,.06)",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 9,
-              fontWeight: 800,
-              letterSpacing: ".3em",
-              textTransform: "uppercase",
-              color: "var(--dim)",
-              marginBottom: 20,
-            }}
-          >
+        <div className="my-[44px] pt-8 border-t border-[rgba(255,255,255,.06)] text-center">
+          <div className="text-[9px] font-extrabold tracking-[.3em] uppercase text-[var(--dim)] mb-5">
             Đơn vị tổ chức &amp; đối tác
           </div>
           <img
             src="/assets/images/logo-ngang.png"
             alt="Đơn vị tổ chức & đối tác"
-            style={{
-              maxWidth: 680,
-              width: "100%",
-              opacity: 0.55,
-              display: "block",
-              margin: "0 auto",
-            }}
+            className="max-w-[680px] w-full opacity-55 block mx-auto"
           />
         </div>
 
         {/* BOTTOM */}
-        <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: 11, color: "rgba(242,237,224,.22)" }}>
+        <div className="text-center">
+          <div className="text-[11px] text-[rgba(242,237,224,.22)]">
             © 2026 FStyle Crew · FPT University HCM Campus · All rights reserved
           </div>
-          <div
-            style={{
-              fontSize: 12,
-              color: "rgba(242,237,224,.4)",
-              marginTop: 10,
-            }}
-          >
+          <div className="text-[12px] text-[rgba(242,237,224,.4)] mt-[10px]">
             Website được phát triển bởi{" "}
             <a
               href="https://www.facebook.com/fcodeclub"
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                color: "var(--gold)",
-                textDecoration: "none",
-                fontWeight: 700,
-              }}
+              className="text-(--gold) no-underline font-bold"
             >
               CLB F-Code
             </a>{" "}
-            x {" "}
+            x{" "}
             <a
               href="https://www.facebook.com/mstsoftware.vn/"
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                color: "var(--gold)",
-                textDecoration: "none",
-                fontWeight: 700,
-              }}
+              className="text-(--gold) no-underline font-bold"
             >
               MST Software Co., Ltd
             </a>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 600px) {
-          .footer-top { flex-direction: column; }
-          .footer-top > div:last-child { text-align: left !important; }
-          .footer-logo-top { max-width: 140px; height: auto !important; object-fit: contain; }
-        }
-      `}</style>
     </footer>
   );
 };

@@ -167,8 +167,8 @@ const VotingLeaderboard = () => {
           >
             <span style={{ fontSize: 18 }}>🔥</span>
             <span
+              className="font-anton"
               style={{
-                fontFamily: "'Anton', sans-serif",
                 fontSize: 28,
                 color: "var(--gold)",
                 textShadow: "0 0 12px rgba(254,230,34,.5)",
@@ -249,8 +249,8 @@ const VotingLeaderboard = () => {
                         }}
                       />
                       <h2
+                        className="font-anton"
                         style={{
-                          fontFamily: "'Anton', sans-serif",
                           fontSize: 22,
                           letterSpacing: ".04em",
                           color: team.teamColor,
@@ -272,8 +272,8 @@ const VotingLeaderboard = () => {
                       }}
                     >
                       <span
+                        className="font-anton"
                         style={{
-                          fontFamily: "'Anton', sans-serif",
                           fontSize: 20,
                           color: team.teamColor,
                           lineHeight: 1,
@@ -387,8 +387,8 @@ const VotingLeaderboard = () => {
                                 }}
                               >
                                 <span
+                                  className="font-anton"
                                   style={{
-                                    fontFamily: "'Anton', sans-serif",
                                     fontSize: 18,
                                     color: isTop
                                       ? team.teamColor

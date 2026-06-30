@@ -639,9 +639,9 @@ const Scoring = () => {
                           <>
                             <td
                               rowSpan={cat.subs.length}
+                              className="font-anton"
                               style={{
                                 ...tdBase,
-                                fontFamily: "'Anton', sans-serif",
                                 fontSize: 16,
                                 letterSpacing: ".03em",
                                 color: cat.accent,
@@ -653,8 +653,8 @@ const Scoring = () => {
                               {cat.id}. {cat.name}
                               <div style={{ marginTop: 8 }}>
                                 <span
+                                  className="font-anton"
                                   style={{
-                                    fontFamily: "'Anton', sans-serif",
                                     fontSize: 20,
                                     color:
                                       getCategoryTotal(cat) > 0
@@ -678,9 +678,9 @@ const Scoring = () => {
                             </td>
                             <td
                               rowSpan={cat.subs.length}
+                              className="font-anton"
                               style={{
                                 ...tdBase,
-                                fontFamily: "'Anton', sans-serif",
                                 fontSize: 20,
                                 textAlign: "center",
                                 color: cat.accent,
@@ -703,9 +703,9 @@ const Scoring = () => {
                           {sub.name}
                         </td>
                         <td
+                          className="font-anton"
                           style={{
                             ...tdBase,
-                            fontFamily: "'Anton', sans-serif",
                             fontSize: 16,
                             textAlign: "center",
                             color: "var(--dim)",
@@ -740,6 +740,7 @@ const Scoring = () => {
                                 max={sub.maxScore}
                                 step={0.5}
                                 value={subVal || ""}
+                                className="font-anton"
                                 onChange={(e) => {
                                   const val = parseFloat(e.target.value);
                                   if (!isNaN(val))
@@ -767,7 +768,6 @@ const Scoring = () => {
                                     ? `${cat.accent}0D`
                                     : "rgba(255,255,255,.04)",
                                   color: hasSub ? cat.accent : "var(--dim)",
-                                  fontFamily: "'Anton', sans-serif",
                                   fontSize: 18,
                                   textAlign: "center",
                                   outline: "none",
@@ -847,9 +847,9 @@ const Scoring = () => {
                   }}
                 >
                   <td
+                    className="font-anton"
                     style={{
                       ...tdBase,
-                      fontFamily: "'Anton', sans-serif",
                       fontSize: 14,
                       color: "var(--dim)",
                       borderBottom: "1px solid rgba(254,230,34,.15)",
@@ -898,8 +898,8 @@ const Scoring = () => {
                             {cat.id}.
                           </span>
                           <span
+                            className="font-anton"
                             style={{
-                              fontFamily: "'Anton', sans-serif",
                               fontSize: 18,
                               color: cat.accent,
                               textShadow: `0 0 10px ${cat.accent}44`,
@@ -924,9 +924,9 @@ const Scoring = () => {
                 {/* Grand total */}
                 <tr style={{ background: "rgba(254,230,34,.06)" }}>
                   <td
+                    className="font-anton"
                     style={{
                       ...tdBase,
-                      fontFamily: "'Anton', sans-serif",
                       fontSize: 22,
                       color: "var(--gold)",
                       borderBottom: "none",
@@ -937,9 +937,9 @@ const Scoring = () => {
                     Tổng cộng
                   </td>
                   <td
+                    className="font-anton"
                     style={{
                       ...tdBase,
-                      fontFamily: "'Anton', sans-serif",
                       fontSize: 24,
                       textAlign: "center",
                       color: "var(--gold)",
@@ -951,9 +951,9 @@ const Scoring = () => {
                   </td>
                   <td colSpan={4} style={{ ...tdBase, borderBottom: "none" }} />
                   <td
+                    className="font-anton"
                     style={{
                       ...tdBase,
-                      fontFamily: "'Anton', sans-serif",
                       fontSize: 26,
                       textAlign: "center",
                       borderBottom: "none",
@@ -983,6 +983,7 @@ const Scoring = () => {
             <button
               onClick={handleSaveAllScores}
               disabled={!selectedTeamId || isSaving}
+              className="font-anton"
               style={{
                 padding: "12px 32px",
                 borderRadius: 10,
@@ -991,7 +992,6 @@ const Scoring = () => {
                   ? "rgba(254,230,34,.12)"
                   : "rgba(255,255,255,.04)",
                 color: selectedTeamId ? "var(--gold)" : "var(--dim)",
-                fontFamily: "'Anton', sans-serif",
                 fontSize: 15,
                 letterSpacing: ".1em",
                 cursor: selectedTeamId ? "pointer" : "not-allowed",

@@ -17,11 +17,8 @@ const allBtcMembers = [
 ];
 
 const maskStyle: CSSProperties = {
-  overflow: "hidden",
   maskImage: "linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%)",
   WebkitMaskImage: "linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%)",
-  maxWidth: 900,
-  margin: "0 auto",
 };
 
 type DragState = { active: boolean; startX: number; startPos: number };
@@ -29,75 +26,39 @@ type DragState = { active: boolean; startX: number; startPos: number };
 const BtcCard = ({ m }: { m: (typeof allBtcMembers)[0] }) => {
   const isLead = m.role === "Trưởng BTC" || m.role === "Phó BTC";
   return (
-    <div className="btc-card" style={{ width: isLead ? 150 : 130, marginRight: 24 }}>
+    <div className="btc-card mr-6" style={{ width: isLead ? 150 : 130 }}>
       <div
+        className="aspect-[3/4] rounded-[12px] overflow-hidden relative"
         style={{
           width: isLead ? 150 : 130,
-          aspectRatio: "3 / 4",
-          borderRadius: 12,
-          overflow: "hidden",
           border: isLead ? "1.5px solid rgba(254,230,34,.55)" : "1px solid rgba(255,255,255,.08)",
           boxShadow: isLead ? "0 0 18px rgba(254,230,34,.18)" : "none",
-          position: "relative",
         }}
       >
         <img
           src={m.img}
           alt={m.name}
           draggable={false}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "center top",
-            display: "block",
-            pointerEvents: "none",
-          }}
+          className="w-full h-full object-cover object-top block pointer-events-none"
         />
         {isLead && (
-          <div
-            style={{
-              position: "absolute",
-              top: 8,
-              left: 8,
-              background: "var(--gold)",
-              color: "#0a0804",
-              fontSize: 7,
-              fontWeight: 900,
-              letterSpacing: ".12em",
-              textTransform: "uppercase",
-              padding: "3px 7px",
-              borderRadius: 4,
-            }}
-          >
+          <div className="absolute top-2 left-2 bg-[var(--gold)] text-[#0a0804] text-[7px] font-black tracking-[.12em] uppercase px-[7px] py-[3px] rounded-[4px]">
             {m.role}
           </div>
         )}
       </div>
-      <div style={{ textAlign: "center", marginTop: 10 }}>
+      <div className="text-center mt-[10px]">
         <div
           style={{
-            fontFamily: "Anton, sans-serif",
             fontSize: isLead ? 14 : 13,
             color: isLead ? "var(--gold)" : "var(--text)",
-            lineHeight: 1.3,
-            whiteSpace: "nowrap",
           }}
+          className="leading-[1.3] whitespace-nowrap font-anton"
         >
           {m.name}
         </div>
         {!isLead && (
-          <div
-            style={{
-              fontSize: 8,
-              fontWeight: 800,
-              letterSpacing: ".15em",
-              textTransform: "uppercase",
-              color: "var(--gold)",
-              opacity: 0.5,
-              marginTop: 4,
-            }}
-          >
+          <div className="text-[8px] font-extrabold tracking-[.15em] uppercase text-[var(--gold)] opacity-50 mt-1">
             {m.role}
           </div>
         )}
@@ -177,28 +138,20 @@ const Btc = () => {
   const row2Members = allBtcMembers.filter((_, i) => i % 2 !== 0);
 
   return (
-    <section id="btc" className="sec" style={{ background: "var(--bg)" }}>
+    <section id="btc" className="sec bg-[var(--bg)]">
       <div className="con">
-        <div style={{ textAlign: "center", marginBottom: 48 }} className="rv">
+        <div className="rv text-center mb-12">
           <span className="ey">Đứng Sau Sân Khấu</span>
           <h2 className="st">
             BTC <em>FStyle</em>
           </h2>
-          <p
-            style={{
-              fontSize: 15,
-              color: "var(--dim)",
-              maxWidth: 480,
-              margin: "16px auto 0",
-              lineHeight: 1.75,
-            }}
-          >
+          <p className="text-[15px] text-[var(--dim)] max-w-[480px] mt-4 mx-auto leading-[1.75]">
             Đội ngũ tổ chức FStyle SHC3 - những người làm việc không ngừng nghỉ để đêm Showcase diễn ra hoàn hảo.
           </p>
         </div>
 
         {/* Row 1 — left to right */}
-        <div style={{ ...maskStyle, marginBottom: 16 }} className="btc-wrapper" {...makeDrag(drag1, track1Ref, pos1)}>
+        <div style={maskStyle} className="btc-wrapper overflow-hidden max-w-[900px] mx-auto mb-4" {...makeDrag(drag1, track1Ref, pos1)}>
           <div ref={track1Ref} className="btc-track">
             {[...row1Members, ...row1Members].map((m, i) => (
               <BtcCard key={i} m={m} />
@@ -207,7 +160,7 @@ const Btc = () => {
         </div>
 
         {/* Row 2 — right to left (reversed order for visual variety) */}
-        <div style={maskStyle} className="btc-wrapper" {...makeDrag(drag2, track2Ref, pos2)}>
+        <div style={maskStyle} className="btc-wrapper overflow-hidden max-w-[900px] mx-auto" {...makeDrag(drag2, track2Ref, pos2)}>
           <div ref={track2Ref} className="btc-track">
             {[...row2Members, ...row2Members].map((m, i) => (
               <BtcCard key={i} m={m} />
