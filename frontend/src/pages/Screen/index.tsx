@@ -106,8 +106,8 @@ const WaitingScreen = () => {
       </div>
 
       <h2
+        className="font-anton"
         style={{
-          fontFamily: "'Anton', sans-serif",
           fontSize: 'clamp(36px, 6vw, 72px)',
           letterSpacing: '.05em',
           color: 'var(--orange)',
@@ -277,8 +277,7 @@ const Screen = () => {
             <span style={{ height: 1, background: 'linear-gradient(90deg,var(--orange),transparent)', animation: 'hdr-line-r .5s .3s both' }} />
           </div>
 
-          <h1 style={{
-            fontFamily: "'Anton', sans-serif",
+          <h1 className="font-anton" style={{
             fontSize: 'clamp(48px, 8.5vw, 104px)',
             letterSpacing: '.05em',
             margin: 0,
@@ -343,7 +342,7 @@ const Screen = () => {
                         </td>
                         <td style={tdS}>
                           {names.map((n, i) => (
-                            <div key={i} style={{ fontFamily: "'Anton', sans-serif", fontSize: 22, letterSpacing: '.03em', marginBottom: i < names.length - 1 ? 6 : 0 }}>{n}</div>
+                            <div key={i} className="font-anton text-[22px] tracking-[.03em]" style={{ marginBottom: i < names.length - 1 ? 6 : 0 }}>{n}</div>
                           ))}
                         </td>
                       </tr>

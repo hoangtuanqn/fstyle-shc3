@@ -118,108 +118,36 @@ const ShowcaseNight = () => {
   }, [modal]);
 
   return (
-    <section
-      id="showcase"
-      className="sec"
-      style={{ background: "var(--bg2)", padding: 0, overflow: "hidden" }}
-    >
+    <section id="showcase" className="sec bg-[var(--bg2)] p-0 overflow-hidden">
       {/* ── HERO BANNER ── */}
-      <div
-        className="showcase-hero"
-        style={{
-          position: "relative",
-          minHeight: 480,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          overflow: "hidden",
-        }}
-      >
+      <div className="showcase-hero relative min-h-[480px] flex items-center justify-center text-center overflow-hidden">
         <img
           src="/assets/pptx-extracted/golden-gate.png"
           alt=""
           aria-hidden="true"
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "center top",
-            opacity: 0.35,
-            pointerEvents: "none",
-          }}
+          className="absolute inset-0 w-full h-full object-cover object-[center_top] opacity-[.35] pointer-events-none"
         />
         <div
           aria-hidden="true"
-          style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "linear-gradient(to bottom, rgba(5,3,1,.3) 0%, rgba(5,3,1,.6) 40%, rgba(10,7,3,1) 100%)",
-            pointerEvents: "none",
-          }}
+          className="absolute inset-0 [background:linear-gradient(to_bottom,rgba(5,3,1,.3)_0%,rgba(5,3,1,.6)_40%,rgba(10,7,3,1)_100%)] pointer-events-none"
         />
-        <div
-          style={{ position: "relative", zIndex: 2, padding: "80px 28px" }}
-          className="rv"
-        >
-          <div
-            style={{
-              fontSize: 10,
-              fontWeight: 800,
-              letterSpacing: ".5em",
-              color: "var(--orange)",
-              textTransform: "uppercase",
-              marginBottom: 20,
-              textShadow: "0 0 16px rgba(251,140,5,.5)",
-            }}
-          >
+        <div className="rv relative z-[2] py-20 px-7">
+          <div className="text-[10px] font-extrabold tracking-[.5em] text-[var(--orange)] uppercase mb-5 [text-shadow:0_0_16px_rgba(251,140,5,.5)]">
             Chủ Nhật, 05/07/2026 · 18:00
           </div>
           <h2
-            style={{
-              fontFamily: "'Anton', sans-serif",
-              fontSize: "clamp(42px, 6vw, 80px)",
-              lineHeight: 1,
-              letterSpacing: ".04em",
-              color: "var(--text)",
-              marginBottom: 16,
-            }}
+            className="text-[clamp(42px,6vw,80px)] leading-none tracking-[.04em] text-[var(--text)] mb-4 font-anton"
           >
             SHOWCASE{" "}
-            <em
-              style={{
-                color: "var(--gold)",
-                fontStyle: "normal",
-                textShadow: "0 0 40px rgba(254,230,34,.6)",
-              }}
-            >
+            <em className="text-[var(--gold)] not-italic [text-shadow:0_0_40px_rgba(254,230,34,.6)]">
               NIGHT
             </em>
           </h2>
-          <p
-            style={{
-              fontSize: 15,
-              color: "var(--dim)",
-              maxWidth: 560,
-              margin: "0 auto",
-              lineHeight: 1.75,
-            }}
-          >
+          <p className="text-[15px] text-[var(--dim)] max-w-[560px] mx-auto leading-[1.75]">
             Đêm trình diễn và thi đấu vũ đạo chính thức. Bốn đội thi cháy hết
             mình trên sân khấu Hall A, FPT University HCM.
           </p>
-          <div
-            style={{
-              display: "flex",
-              gap: 24,
-              justifyContent: "center",
-              marginTop: 28,
-              flexWrap: "wrap",
-            }}
-          >
+          <div className="flex gap-6 justify-center mt-7 flex-wrap">
             <InfoChip Icon={MapPin} text="Hall A, FPT University HCM" />
             <InfoChip Icon={Theater} text="11 Tiết mục · 4 Đội thi" />
             <InfoChip Icon={Scale} text="3 Ban Giám Khảo" />
@@ -228,34 +156,16 @@ const ShowcaseNight = () => {
       </div>
 
       {/* ── MAIN CONTENT ── */}
-      <div className="con" style={{ paddingTop: 56, paddingBottom: 100 }}>
+      <div className="con pt-14 pb-[100px]">
         {/* Section label */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 16,
-            marginBottom: 28,
-          }}
-        >
-          <div
-            style={{
-              fontSize: 10,
-              fontWeight: 800,
-              letterSpacing: ".4em",
-              color: "var(--orange)",
-              textTransform: "uppercase",
-              whiteSpace: "nowrap",
-            }}
-          >
+        <div className="flex items-center gap-4 mb-7">
+          <div className="text-[10px] font-extrabold tracking-[.4em] text-[var(--orange)] uppercase whitespace-nowrap">
             Chương Trình Biểu Diễn
           </div>
-          <div
-            style={{ flex: 1, height: 1, background: "rgba(255,255,255,.07)" }}
-          />
+          <div className="flex-1 h-px bg-[rgba(255,255,255,.07)]" />
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <div className="flex flex-col gap-1">
           {performances.map((p, i) => {
             const active = hoveredRow === i;
             const tc = p.teamColor || "var(--gold)";
@@ -263,76 +173,41 @@ const ShowcaseNight = () => {
             return (
               <div
                 key={p.num}
-                className="rv perf-row"
+                className="rv perf-row relative flex items-center gap-[14px] py-[10px] px-4 rounded-[10px] [transition:background_.2s,border-color_.2s] overflow-hidden"
                 onMouseEnter={() => setHoveredRow(i)}
                 onMouseLeave={() => setHoveredRow(null)}
                 onClick={() => clickable && setModal(p)}
                 style={{
-                  position: "relative",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 14,
-                  padding: "10px 16px",
-                  borderRadius: 10,
                   background: active ? "rgba(255,255,255,.04)" : "transparent",
                   border: `1px solid ${active ? "rgba(255,255,255,.09)" : "rgba(255,255,255,.05)"}`,
-                  transition: "background .2s, border-color .2s",
                   cursor: clickable ? "pointer" : "default",
-                  overflow: "hidden",
                 }}
               >
                 {/* Left accent bar */}
                 <div
+                  className="absolute left-0 top-0 bottom-0 w-[3px] [transition:opacity_.2s]"
                   style={{
-                    position: "absolute",
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                    width: 3,
                     background: tc,
                     opacity: active ? 1 : 0.2,
-                    transition: "opacity .2s",
                   }}
                 />
 
                 {/* Number */}
                 <span
-                  style={{
-                    fontFamily: "Anton, sans-serif",
-                    fontSize: 20,
-                    lineHeight: 1,
-                    color: active ? tc : "rgba(255,255,255,.15)",
-                    transition: "color .2s",
-                    minWidth: 32,
-                    textAlign: "right",
-                    flexShrink: 0,
-                  }}
+                  className="text-[20px] leading-none [transition:color_.2s] min-w-8 text-right shrink-0 font-anton"
+                  style={{ color: active ? tc : "rgba(255,255,255,.15)" }}
                 >
                   {p.num}
                 </span>
 
                 {/* Text */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 700,
-                      color: "var(--text)",
-                      lineHeight: 1.3,
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-[var(--text)] leading-[1.3] whitespace-nowrap overflow-hidden text-ellipsis">
                     {p.name}
                   </div>
                   <div
-                    style={{
-                      fontSize: 11.5,
-                      color: active ? tc : "var(--dim)",
-                      marginTop: 2,
-                      transition: "color .2s",
-                    }}
+                    className="text-[11.5px] mt-0.5 [transition:color_.2s]"
+                    style={{ color: active ? tc : "var(--dim)" }}
                   >
                     {p.by}
                   </div>
@@ -341,12 +216,8 @@ const ShowcaseNight = () => {
                 {/* Click hint for items with image */}
                 {clickable && (
                   <span
-                    style={{
-                      fontSize: 10,
-                      color: active ? "var(--gold)" : "rgba(255,255,255,.2)",
-                      transition: "color .2s",
-                      flexShrink: 0,
-                    }}
+                    className="text-[10px] [transition:color_.2s] shrink-0"
+                    style={{ color: active ? "var(--gold)" : "rgba(255,255,255,.2)" }}
                   >
                     ↗
                   </span>
@@ -357,77 +228,32 @@ const ShowcaseNight = () => {
         </div>
 
         {/* ── JUDGES - full-width centered ── */}
-        <div style={{ marginTop: 64, textAlign: "center" }} className="rv">
-          <div
-            style={{
-              fontSize: 12,
-              fontWeight: 800,
-              letterSpacing: ".2em",
-              color: "var(--orange)",
-              textTransform: "uppercase",
-              marginBottom: 18,
-            }}
-          >
+        <div className="rv mt-16 text-center">
+          <div className="text-xs font-extrabold tracking-[.2em] text-[var(--orange)] uppercase mb-[18px]">
             Ban Giám Khảo
           </div>
 
-          <div
-            className="judges-grid"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: 16,
-              maxWidth: 720,
-              margin: "0 auto",
-            }}
-          >
+          <div className="judges-grid grid grid-cols-3 gap-4 max-w-[720px] mx-auto">
             {judges.map((j, i) => (
               <div
                 key={j.name}
-                className="rv"
+                className="rv rounded-[14px] overflow-hidden bg-[rgba(255,255,255,.03)] border border-[rgba(255,255,255,.07)] [transition:transform_.4s_cubic-bezier(.22,.8,.42,1),box-shadow_.4s]"
                 onMouseEnter={() => setHoveredJudge(i)}
                 onMouseLeave={() => setHoveredJudge(null)}
                 style={{
-                  borderRadius: 14,
-                  overflow: "hidden",
-                  background: "rgba(255,255,255,.03)",
-                  border: "1px solid rgba(255,255,255,.07)",
-                  transform:
-                    hoveredJudge === i ? "translateY(-6px)" : "translateY(0)",
-                  transition:
-                    "transform .4s cubic-bezier(.22,.8,.42,1), box-shadow .4s",
+                  transform: hoveredJudge === i ? "translateY(-6px)" : "translateY(0)",
                   transitionDelay: `${i * 0.1}s`,
-                  boxShadow:
-                    hoveredJudge === i
-                      ? "0 12px 32px rgba(254,230,34,.08)"
-                      : "none",
+                  boxShadow: hoveredJudge === i ? "0 12px 32px rgba(254,230,34,.08)" : "none",
                 }}
               >
-                <div
-                  style={{
-                    position: "relative",
-                    aspectRatio: "1 / 1",
-                    overflow: "hidden",
-                    background: "rgba(255,255,255,.03)",
-                  }}
-                >
+                <div className="relative aspect-square overflow-hidden bg-[rgba(255,255,255,.03)]">
                   <img
                     src={j.img}
                     alt={j.name}
+                    className="absolute inset-0 w-full h-full object-cover object-[center_top] [transition:filter_.4s,transform_.4s,opacity_.45s_ease] block"
                     style={{
-                      position: "absolute",
-                      inset: 0,
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      objectPosition: "center top",
-                      filter:
-                        hoveredJudge === i ? "grayscale(0%)" : "grayscale(30%)",
-                      transition:
-                        "filter .4s, transform .4s, opacity .45s ease",
-                      transform:
-                        hoveredJudge === i ? "scale(1.05)" : "scale(1)",
-                      display: "block",
+                      filter: hoveredJudge === i ? "grayscale(0%)" : "grayscale(30%)",
+                      transform: hoveredJudge === i ? "scale(1.05)" : "scale(1)",
                       opacity: j.img2 && hoveredJudge === i ? 0 : 1,
                     }}
                   />
@@ -435,47 +261,24 @@ const ShowcaseNight = () => {
                     <img
                       src={j.img2}
                       alt={j.name}
+                      className="absolute inset-0 w-full h-full object-cover object-[center_top] [transition:transform_.4s,opacity_.45s_ease] block"
                       style={{
-                        position: "absolute",
-                        inset: 0,
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        objectPosition: "center top",
-                        transition: "transform .4s, opacity .45s ease",
-                        transform:
-                          hoveredJudge === i ? "scale(1.05)" : "scale(1.08)",
-                        display: "block",
+                        transform: hoveredJudge === i ? "scale(1.05)" : "scale(1.08)",
                         opacity: hoveredJudge === i ? 1 : 0,
                       }}
                     />
                   )}
                 </div>
-                <div style={{ padding: "14px 12px 16px", textAlign: "center" }}>
+                <div className="[padding:14px_12px_16px] text-center">
                   <div
-                    style={{
-                      fontFamily: "Anton, sans-serif",
-                      fontSize: 18,
-                      color: "var(--text)",
-                    }}
+                    className="text-[18px] text-[var(--text)] font-anton"
                   >
                     {j.name}
                   </div>
-                  <div
-                    style={{
-                      fontSize: 9,
-                      fontWeight: 800,
-                      letterSpacing: ".16em",
-                      textTransform: "uppercase",
-                      color: "var(--orange)",
-                      margin: "6px 0 3px",
-                    }}
-                  >
+                  <div className="text-[9px] font-extrabold tracking-[.16em] uppercase text-[var(--orange)] [margin:6px_0_3px]">
                     {j.role}
                   </div>
-                  <div style={{ fontSize: 11.5, color: "var(--dim)" }}>
-                    {j.crew}
-                  </div>
+                  <div className="text-[11.5px] text-[var(--dim)]">{j.crew}</div>
                 </div>
               </div>
             ))}
@@ -487,90 +290,33 @@ const ShowcaseNight = () => {
       {modal && (
         <div
           onClick={() => setModal(null)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 1000,
-            background: "rgba(0,0,0,.85)",
-            backdropFilter: "blur(10px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 24,
-            animation: "modalIn .25s ease-out",
-          }}
+          className="fixed inset-0 z-[1000] bg-[rgba(0,0,0,.85)] backdrop-blur-[10px] flex items-center justify-center p-6 [animation:modalIn_.25s_ease-out]"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            style={{
-              position: "relative",
-              maxWidth: 560,
-              width: "100%",
-              borderRadius: 20,
-              overflow: "hidden",
-              border: "1px solid rgba(255,255,255,.12)",
-              boxShadow: "0 32px 80px rgba(0,0,0,.7)",
-            }}
+            className="relative max-w-[560px] w-full rounded-[20px] overflow-hidden border border-[rgba(255,255,255,.12)] shadow-[0_32px_80px_rgba(0,0,0,.7)]"
           >
             {/* Image */}
-            <div style={{ position: "relative", aspectRatio: "4 / 3" }}>
+            <div className="relative aspect-[4/3]">
               <img
                 src={modal.image}
                 alt={modal.by}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  objectPosition: "center top",
-                  display: "block",
-                }}
+                className="w-full h-full object-cover object-[center_top] block"
               />
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background:
-                    "linear-gradient(to top, rgba(5,3,1,1) 0%, rgba(5,3,1,.3) 50%, transparent 100%)",
-                  pointerEvents: "none",
-                }}
-              />
+              <div className="absolute inset-0 [background:linear-gradient(to_top,rgba(5,3,1,1)_0%,rgba(5,3,1,.3)_50%,transparent_100%)] pointer-events-none" />
               {/* Info overlay at bottom */}
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  padding: "24px 28px",
-                }}
-              >
+              <div className="absolute bottom-0 left-0 right-0 py-6 px-7">
                 <div
-                  style={{
-                    fontFamily: "Anton, sans-serif",
-                    fontSize: 11,
-                    letterSpacing: ".3em",
-                    color: "var(--gold)",
-                    textTransform: "uppercase",
-                    marginBottom: 8,
-                    opacity: 0.8,
-                  }}
+                  className="text-[11px] tracking-[.3em] text-[var(--gold)] uppercase mb-2 opacity-80 font-anton"
                 >
                   Tiết mục {modal.num}
                 </div>
                 <div
-                  style={{
-                    fontFamily: "Anton, sans-serif",
-                    fontSize: "clamp(22px, 4vw, 32px)",
-                    color: "var(--text)",
-                    lineHeight: 1.1,
-                    marginBottom: 8,
-                  }}
+                  className="text-[clamp(22px,4vw,32px)] text-[var(--text)] leading-[1.1] mb-2 font-anton"
                 >
                   {modal.name}
                 </div>
-                <div style={{ fontSize: 14, color: "var(--dim)" }}>
-                  {modal.by}
-                </div>
+                <div className="text-sm text-[var(--dim)]">{modal.by}</div>
               </div>
             </div>
           </div>
@@ -578,22 +324,7 @@ const ShowcaseNight = () => {
           {/* Close button */}
           <button
             onClick={() => setModal(null)}
-            style={{
-              position: "fixed",
-              top: 20,
-              right: 20,
-              width: 40,
-              height: 40,
-              borderRadius: "50%",
-              border: "1px solid rgba(255,255,255,.15)",
-              background: "rgba(255,255,255,.08)",
-              color: "var(--text)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              backdropFilter: "blur(8px)",
-            }}
+            className="fixed top-5 right-5 w-10 h-10 rounded-full border border-[rgba(255,255,255,.15)] bg-[rgba(255,255,255,.08)] text-[var(--text)] flex items-center justify-center cursor-pointer backdrop-blur-[8px]"
           >
             <X size={18} />
           </button>
@@ -616,20 +347,7 @@ const ShowcaseNight = () => {
 };
 
 const InfoChip = ({ Icon, text }: { Icon: LucideIcon; text: string }) => (
-  <span
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 8,
-      fontSize: 12,
-      fontWeight: 600,
-      color: "var(--dim)",
-      background: "rgba(255,255,255,.05)",
-      border: "1px solid rgba(255,255,255,.1)",
-      borderRadius: 100,
-      padding: "8px 16px",
-    }}
-  >
+  <span className="inline-flex items-center gap-2 text-xs font-semibold text-[var(--dim)] bg-[rgba(255,255,255,.05)] border border-[rgba(255,255,255,.1)] rounded-[100px] py-2 px-4">
     <Icon size={14} color="var(--gold)" /> {text}
   </span>
 );

@@ -8,21 +8,7 @@ import useAuth from "~/hooks/useAuth";
 import useSocket from "~/hooks/useSocket";
 import usePageTitle from "~/hooks/usePageTitle";
 
-import type { CSSProperties } from "react";
 import type { AwardType, AwardWinner } from "~/types/award";
-
-const inputStyle: CSSProperties = {
-  width: "100%",
-  padding: "10px 14px",
-  borderRadius: 10,
-  border: "1px solid rgba(255,255,255,.1)",
-  background: "rgba(255,255,255,.04)",
-  color: "var(--text)",
-  fontFamily: "'Montserrat', sans-serif",
-  fontSize: 14,
-  outline: "none",
-  transition: "border-color .2s, box-shadow .2s",
-};
 
 // Must match BTC_FSTYLE_EDITABLE_RANGE in backend/src/services/award.service.ts
 const canEdit = (role: string, displayOrder: number): boolean => {
@@ -101,9 +87,7 @@ const Awards = () => {
     const slots = Array.from({ length: award.quantity }, (_, i) => i + 1);
 
     return (
-      <div
-        style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}
-      >
+      <div className="flex flex-col gap-2 flex-1">
         {slots.map((slot) => (
           <input
             key={slot}
@@ -115,7 +99,7 @@ const Awards = () => {
             }
             value={getDraft(award.id, slot, award.winners)}
             onChange={(e) => setDraft(award.id, slot, e.target.value)}
-            style={inputStyle}
+            className="w-full py-[10px] px-[14px] rounded-[10px] border border-[rgba(255,255,255,.1)] bg-[rgba(255,255,255,.04)] text-[var(--text)] text-[14px] outline-none transition-[border-color,box-shadow] duration-200 font-montserrat"
           />
         ))}
       </div>
@@ -123,154 +107,62 @@ const Awards = () => {
   };
 
   return (
-    <div style={{ minHeight: "100vh", paddingTop: 108 }}>
-      <section style={{ paddingBottom: 48 }}>
-        <div className="con" style={{ textAlign: "center" }}>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 10,
-              marginBottom: 18,
-            }}
-          >
-            <span
-              style={{
-                width: 40,
-                height: 1,
-                background: "linear-gradient(90deg, transparent, var(--gold))",
-              }}
-            />
-            <span
-              style={{
-                fontSize: 10,
-                fontWeight: 800,
-                letterSpacing: ".4em",
-                textTransform: "uppercase",
-                color: "var(--gold)",
-              }}
-            >
+    <div className="min-h-screen pt-[108px]">
+      <section className="pb-12">
+        <div className="con text-center">
+          <div className="inline-flex items-center gap-[10px] mb-[18px]">
+            <span className="w-10 h-px bg-[linear-gradient(90deg,transparent,var(--gold))]" />
+            <span className="text-[10px] font-extrabold tracking-[.4em] uppercase text-[var(--gold)]">
               BTC PANEL
             </span>
-            <span
-              style={{
-                width: 40,
-                height: 1,
-                background: "linear-gradient(90deg, var(--gold), transparent)",
-              }}
-            />
+            <span className="w-10 h-px bg-[linear-gradient(90deg,var(--gold),transparent)]" />
           </div>
-          <h1 className="st" style={{ marginBottom: 12 }}>
+          <h1 className="st mb-3">
             NHẬP <em>GIẢI THƯỞNG</em>
           </h1>
-          <p
-            style={{
-              color: "var(--dim)",
-              fontSize: 14,
-              maxWidth: 500,
-              margin: "0 auto",
-            }}
-          >
+          <p className="text-[var(--dim)] text-[14px] max-w-[500px] mx-auto">
             Nhập tên đội / cá nhân cho từng hạng giải - dữ liệu sẽ hiển thị trên
             trang Leaderboard
           </p>
         </div>
       </section>
 
-      <section style={{ paddingBottom: 80 }}>
-        <div className="con" style={{ maxWidth: 720, margin: "0 auto" }}>
+      <section className="pb-20">
+        <div className="con max-w-[720px] mx-auto">
           {isLoading ? (
-            <div
-              style={{
-                textAlign: "center",
-                color: "var(--dim)",
-                padding: "40px 0",
-                fontSize: 14,
-              }}
-            >
+            <div className="text-center text-[var(--dim)] py-[40px] text-[14px]">
               Đang tải danh sách giải thưởng...
             </div>
           ) : (
             <>
               {/* Manual Awards */}
               {manualAwards.length > 0 && (
-                <div
-                  style={{
-                    borderRadius: 16,
-                    border: "1px solid rgba(254,230,34,.15)",
-                    background: "var(--bg2)",
-                    padding: "32px 28px",
-                    marginBottom: 28,
-                    boxShadow: "0 8px 40px rgba(0,0,0,.5)",
-                  }}
-                >
+                <div className="rounded-2xl border border-[rgba(254,230,34,.15)] bg-[var(--bg2)] py-8 px-7 mb-7 shadow-[0_8px_40px_rgba(0,0,0,.5)]">
                   <h2
-                    style={{
-                      fontFamily: "'Anton', sans-serif",
-                      fontSize: 22,
-                      letterSpacing: ".04em",
-                      color: "var(--gold)",
-                      marginBottom: 6,
-                    }}
+                    className="text-[22px] tracking-[.04em] text-[var(--gold)] mb-1.5 font-anton"
                   >
                     GIẢI THƯỞNG
                   </h2>
-                  <p
-                    style={{
-                      fontSize: 12,
-                      color: "var(--dim)",
-                      marginBottom: 28,
-                    }}
-                  >
+                  <p className="text-[12px] text-[var(--dim)] mb-7">
                     Nhập tên đội / cá nhân nhận giải
                   </p>
 
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 18,
-                    }}
-                  >
+                  <div className="flex flex-col gap-[18px]">
                     {manualAwards.map((award) => (
                       <div
                         key={award.id}
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          gap: 14,
-                        }}
+                        className="flex items-start gap-[14px]"
                       >
-                        <div
-                          style={{
-                            minWidth: 160,
-                            fontSize: 13,
-                            fontWeight: 700,
-                            color: "var(--text)",
-                            paddingTop: 10,
-                          }}
-                        >
+                        <div className="min-w-[160px] text-[13px] font-bold text-[var(--text)] pt-[10px]">
                           {award.name}
                           {award.quantity > 1 && (
-                            <span
-                              style={{
-                                fontSize: 11,
-                                color: "var(--dim)",
-                                fontWeight: 400,
-                              }}
-                            >
+                            <span className="text-[11px] text-[var(--dim)] font-normal">
                               {" "}
                               ×{award.quantity}
                             </span>
                           )}
                           {award.prize && (
-                            <div
-                              style={{
-                                fontSize: 11,
-                                color: "var(--dim)",
-                                fontWeight: 400,
-                              }}
-                            >
+                            <div className="text-[11px] text-[var(--dim)] font-normal">
                               {award.prize}
                             </div>
                           )}
@@ -279,19 +171,7 @@ const Awards = () => {
                         <button
                           onClick={() => handleSaveAward(award)}
                           disabled={updateMutation.isPending}
-                          style={{
-                            padding: "10px 18px",
-                            borderRadius: 8,
-                            border: "none",
-                            background: "var(--gold)",
-                            color: "#050301",
-                            fontFamily: "'Montserrat', sans-serif",
-                            fontSize: 11,
-                            fontWeight: 800,
-                            cursor: "pointer",
-                            whiteSpace: "nowrap",
-                            marginTop: 0,
-                          }}
+                          className="py-[10px] px-[18px] rounded-lg border-none bg-[var(--gold)] text-[#050301] text-[11px] font-extrabold cursor-pointer whitespace-nowrap font-montserrat"
                         >
                           Lưu
                         </button>

@@ -72,15 +72,7 @@ const Leaderboard = () => {
 
   if (isLoading)
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          paddingTop: 108,
-          textAlign: "center",
-          color: "var(--dim)",
-          fontSize: 14,
-        }}
-      >
+      <div className="min-h-screen pt-[108px] text-center text-[var(--dim)] text-[14px]">
         Đang tải...
       </div>
     );
@@ -90,42 +82,15 @@ const Leaderboard = () => {
     .sort((a, b) => b.totalScore - a.totalScore);
   const autoAwards = sortedAwards.filter((a) => a.type === "AUTO");
   return (
-    <div style={{ minHeight: "100vh", paddingTop: 88, paddingBottom: 60 }}>
+    <div className="min-h-screen pt-[88px] pb-[60px]">
       {/* ── Page header ── */}
-      <div className="con" style={{ textAlign: "center", paddingBottom: 28 }}>
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 10,
-            marginBottom: 14,
-          }}
-        >
-          <span
-            style={{
-              width: 36,
-              height: 1,
-              background: "linear-gradient(90deg,transparent,var(--orange))",
-            }}
-          />
-          <span
-            style={{
-              fontSize: 10,
-              fontWeight: 800,
-              letterSpacing: ".42em",
-              textTransform: "uppercase",
-              color: "var(--orange)",
-            }}
-          >
+      <div className="con text-center pb-7">
+        <div className="inline-flex items-center gap-[10px] mb-[14px]">
+          <span className="w-9 h-px bg-[linear-gradient(90deg,transparent,var(--orange))]" />
+          <span className="text-[10px] font-extrabold tracking-[.42em] uppercase text-[var(--orange)]">
             LIVE RESULTS
           </span>
-          <span
-            style={{
-              width: 36,
-              height: 1,
-              background: "linear-gradient(90deg,var(--orange),transparent)",
-            }}
-          />
+          <span className="w-9 h-px bg-[linear-gradient(90deg,var(--orange),transparent)]" />
         </div>
         <h1 className="st">
           BẢNG XẾP <em>HẠNG</em>
@@ -134,34 +99,12 @@ const Leaderboard = () => {
 
       {/* ── MC Control Panel ── */}
       {isMC && (
-        <div className="con" style={{ marginTop: 10 }}>
-          <div
-            style={{
-              borderRadius: 14,
-              border: "1px solid rgba(251,140,5,.3)",
-              background: "var(--bg2)",
-              overflow: "hidden",
-            }}
-          >
+        <div className="con mt-[10px]">
+          <div className="rounded-[14px] border border-[rgba(251,140,5,.3)] bg-[var(--bg2)] overflow-hidden">
             {/* Panel header */}
-            <div
-              className="flex flex-wrap items-center justify-between gap-3"
-              style={{
-                padding: "14px 20px",
-                borderBottom: "1px solid rgba(255,255,255,.06)",
-                background: "rgba(251,140,5,.04)",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 800,
-                    letterSpacing: ".28em",
-                    color: "var(--orange)",
-                    textTransform: "uppercase",
-                  }}
-                >
+            <div className="flex flex-wrap items-center justify-between gap-3 py-[14px] px-5 border-b border-[rgba(255,255,255,.06)] bg-[rgba(251,140,5,.04)]">
+              <div className="flex items-center gap-[10px]">
+                <span className="text-[10px] font-extrabold tracking-[.28em] text-[var(--orange)] uppercase">
                   Công bố giải
                 </span>
               </div>
@@ -208,24 +151,14 @@ const Leaderboard = () => {
                 return (
                   <div
                     key={award.id}
-                    style={{
-                      padding: "12px 20px",
-                      borderBottom: "1px solid rgba(255,255,255,.05)",
-                      background: isRevealed
-                        ? "rgba(251,140,5,.03)"
-                        : undefined,
-                    }}
+                    className="py-3 px-5 border-b border-[rgba(255,255,255,.05)]"
+                    style={{ background: isRevealed ? "rgba(251,140,5,.03)" : undefined }}
                   >
                     {/* Header: dot + name + button */}
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 10 }}
-                    >
+                    <div className="flex items-center gap-[10px]">
                       <span
+                        className="w-2 h-2 rounded-full shrink-0"
                         style={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: "50%",
-                          flexShrink: 0,
                           background: isRevealed
                             ? "#4ade80"
                             : hasWinners || isAuto
@@ -233,19 +166,10 @@ const Leaderboard = () => {
                               : "rgba(255,255,255,.15)",
                         }}
                       />
-                      <div
-                        style={{
-                          flex: 1,
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 6,
-                          minWidth: 0,
-                        }}
-                      >
+                      <div className="flex-1 flex items-center gap-[6px] min-w-0">
                         <span
+                          className="text-[14px] font-semibold"
                           style={{
-                            fontSize: 14,
-                            fontWeight: 600,
                             color: isRevealed
                               ? "var(--text)"
                               : hasWinners || isAuto
@@ -256,33 +180,14 @@ const Leaderboard = () => {
                           {award.name}
                         </span>
                         {isAuto && (
-                          <span
-                            style={{
-                              fontSize: 9,
-                              fontWeight: 700,
-                              letterSpacing: ".1em",
-                              color: "var(--orange)",
-                              background: "rgba(251,140,5,.12)",
-                              border: "1px solid rgba(251,140,5,.25)",
-                              borderRadius: 4,
-                              padding: "1px 4px",
-                              textTransform: "uppercase",
-                              flexShrink: 0,
-                            }}
-                          >
+                          <span className="text-[9px] font-bold tracking-[.1em] text-[var(--orange)] bg-[rgba(251,140,5,.12)] border border-[rgba(251,140,5,.25)] rounded-[4px] px-1 py-px uppercase shrink-0">
                             Tự động
                           </span>
                         )}
                       </div>
-                      <div style={{ flexShrink: 0 }}>
+                      <div className="shrink-0">
                         {!isAuto && !hasWinners && (
-                          <span
-                            style={{
-                              fontSize: 11,
-                              color: "rgba(255,255,255,.2)",
-                              padding: "3px 8px",
-                            }}
-                          >
+                          <span className="text-[11px] text-[rgba(255,255,255,.2)] py-[3px] px-2">
                             —
                           </span>
                         )}
@@ -290,19 +195,12 @@ const Leaderboard = () => {
                           <button
                             onClick={() => handleReveal(award.id)}
                             disabled={!!pendingId}
+                            className="py-1 px-[10px] text-[11px] font-bold text-black border-none rounded-[6px] whitespace-nowrap transition-opacity duration-150"
                             style={{
-                              padding: "4px 10px",
-                              fontSize: 11,
-                              fontWeight: 700,
                               background: pendingId
                                 ? "rgba(251,140,5,.2)"
                                 : "var(--orange)",
-                              color: "#000",
-                              border: "none",
-                              borderRadius: 6,
                               cursor: pendingId ? "not-allowed" : "pointer",
-                              whiteSpace: "nowrap",
-                              transition: "opacity .15s",
                               opacity: pendingId && !isPending ? 0.4 : 1,
                             }}
                           >
@@ -313,19 +211,12 @@ const Leaderboard = () => {
                           <button
                             onClick={() => handleUnreveal(award.id)}
                             disabled={!!pendingId}
+                            className="py-1 px-[10px] text-[11px] font-semibold bg-transparent border border-[rgba(255,255,255,.12)] rounded-[6px] whitespace-nowrap transition-opacity duration-150"
                             style={{
-                              padding: "4px 10px",
-                              fontSize: 11,
-                              fontWeight: 600,
-                              background: "transparent",
                               color: pendingId
                                 ? "rgba(255,255,255,.2)"
                                 : "rgba(255,255,255,.35)",
-                              border: "1px solid rgba(255,255,255,.12)",
-                              borderRadius: 6,
                               cursor: pendingId ? "not-allowed" : "pointer",
-                              whiteSpace: "nowrap",
-                              transition: "opacity .15s",
                             }}
                           >
                             {isPending ? "..." : "Thu hồi"}
@@ -335,28 +226,17 @@ const Leaderboard = () => {
                     </div>
                     {/* Winner names - vertical */}
                     {entries.length > 0 && (
-                      <div style={{ paddingLeft: 18, marginTop: 7 }}>
+                      <div className="pl-[18px] mt-[7px]">
                         {entries.map((entry, i) => (
                           <div
                             key={i}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 8,
-                              fontSize: 13,
-                              color: "var(--dim)",
-                              marginTop: i > 0 ? 2 : 0,
-                            }}
+                            className={`flex items-center gap-2 text-[13px] text-[var(--dim)]${i > 0 ? " mt-[2px]" : ""}`}
                           >
                             <span>{entry.name} -</span>
                             {entry.score === undefined ? (
                               <span>Chưa nhập điểm</span>
                             ) : (
-                              <span
-                                style={{
-                                  color: "rgba(255,255,255,.35)",
-                                }}
-                              >
+                              <span className="text-[rgba(255,255,255,.35)]">
                                 {entry.score.toFixed(2)} điểm
                               </span>
                             )}
@@ -365,15 +245,7 @@ const Leaderboard = () => {
                       </div>
                     )}
                     {!hasWinners && !isAuto && (
-                      <div
-                        style={{
-                          paddingLeft: 18,
-                          marginTop: 4,
-                          fontSize: 11,
-                          color: "rgba(255,255,255,.2)",
-                          fontStyle: "italic",
-                        }}
-                      >
+                      <div className="pl-[18px] mt-1 text-[11px] text-[rgba(255,255,255,.2)] italic">
                         Chưa nhập người nhận
                       </div>
                     )}
@@ -382,14 +254,7 @@ const Leaderboard = () => {
               })}
 
               {sortedAwards.length === 0 && (
-                <div
-                  style={{
-                    padding: "28px 20px",
-                    textAlign: "center",
-                    color: "var(--dim)",
-                    fontSize: 13,
-                  }}
-                >
+                <div className="py-7 px-5 text-center text-[var(--dim)] text-[13px]">
                   Chưa có dữ liệu giải thưởng
                 </div>
               )}

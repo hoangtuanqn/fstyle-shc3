@@ -102,91 +102,44 @@ const TeamCard = ({ team }: { team: Team }) => {
       onMouseLeave={() => setHover(false)}
     >
       {/* Top accent bar */}
-      <div style={{ height: "4px", background: team.topBar }} />
+      <div className="h-[4px]" style={{ background: team.topBar }} />
 
       {/* Ảnh photoshoot */}
-      <div style={{ overflow: "hidden" }}>
+      <div className="overflow-hidden">
         <img src={team.image} alt={team.name} style={imgStyle} />
       </div>
 
       {/* Content */}
-      <div style={{ padding: "22px 20px 26px" }}>
+      <div className="pt-[22px] px-5 pb-[26px]">
         <div
-          style={{
-            fontSize: "9px",
-            fontWeight: 800,
-            letterSpacing: ".28em",
-            textTransform: "uppercase",
-            color: team.color,
-            marginBottom: "8px",
-          }}
+          className="text-[9px] font-extrabold tracking-[.28em] uppercase mb-2"
+          style={{ color: team.color }}
         >
           {team.concept}
         </div>
 
         <h3
-          style={{
-            fontFamily: "'Anton', sans-serif",
-            fontSize: "26px",
-            letterSpacing: ".04em",
-            marginBottom: "12px",
-          }}
+          className="text-[26px] tracking-[.04em] mb-3 font-anton"
         >
           {team.name}
         </h3>
 
-        <p
-          className="h-[90px]"
-          style={{
-            fontSize: "12.5px",
-            color: "var(--dim)",
-            lineHeight: 1.68,
-            marginBottom: "20px",
-          }}
-        >
+        <p className="h-[90px] text-[12.5px] text-[var(--dim)] leading-[1.68] mb-5">
           {team.desc}
         </p>
 
         {/* Weapon row */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            paddingTop: "16px",
-            borderTop: "1px solid rgba(255,255,255,.07)",
-          }}
-        >
+        <div className="flex items-center gap-3 pt-4 border-t border-[rgba(255,255,255,.07)]">
           <img
             src={team.weapon.img}
             alt={team.weapon.name}
-            style={{
-              width: "52px",
-              height: "52px",
-              objectFit: "contain",
-              flexShrink: 0,
-            }}
+            className="w-[52px] h-[52px] object-contain shrink-0"
           />
           <div>
-            <div
-              style={{
-                fontSize: "9px",
-                fontWeight: 800,
-                letterSpacing: ".22em",
-                textTransform: "uppercase",
-                color: "var(--dim)",
-                marginBottom: "3px",
-              }}
-            >
+            <div className="text-[9px] font-extrabold tracking-[.22em] uppercase text-[var(--dim)] mb-[3px]">
               Vũ khí
             </div>
-            <div
-              style={{
-                fontSize: "14px",
-                fontWeight: 700,
-                color: "var(--text)",
-              }}
-            >
+            <div className="text-[14px] font-bold text-[var(--text)]">
               {team.weapon.name}
             </div>
           </div>
@@ -198,23 +151,16 @@ const TeamCard = ({ team }: { team: Team }) => {
 
 const Teams = () => {
   return (
-    <section id="teams" className="sec" style={{ background: "var(--bg3)" }}>
+    <section id="teams" className="sec bg-[var(--bg3)]">
       <div className="con">
-        <div style={{ marginBottom: "48px" }}>
+        <div className="mb-12">
           <span className="ey rv">Đội Thi Tranh Tài</span>
           <h2 className="st rv">
             Đội Thi <em>SHC3</em>
           </h2>
         </div>
 
-        <div
-          className="teams-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: "20px",
-          }}
-        >
+        <div className="teams-grid grid grid-cols-4 gap-5">
           {teams.map((team, i) => (
             <div
               key={team.id}

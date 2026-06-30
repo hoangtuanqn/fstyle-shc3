@@ -55,107 +55,43 @@ const Login = () => {
   };
 
   return (
-    <section
-      style={{
-        position: "relative",
-        width: "100%",
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden",
-        padding: "40px 20px",
-      }}
-    >
+    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden py-10 px-5">
       {/* Background layers */}
       <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "url('/assets/images/bggg.png') center top / cover no-repeat",
-          animation: "hzoom 22s ease-in-out infinite alternate",
-          filter: "saturate(1.2) contrast(1.05) brightness(0.4)",
-        }}
+        className="absolute inset-0 bg-[url('/assets/images/bggg.png')] bg-[center_top] bg-cover bg-no-repeat animate-[hzoom_22s_ease-in-out_infinite_alternate] [filter:saturate(1.2)_contrast(1.05)_brightness(0.4)]"
       />
       <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "linear-gradient(to bottom, rgba(5,3,1,.6) 0%, rgba(5,3,1,.85) 50%, rgba(5,3,1,.95) 100%)",
-        }}
+        className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(5,3,1,.6)_0%,rgba(5,3,1,.85)_50%,rgba(5,3,1,.95)_100%)]"
       />
       <ParticleCanvas />
 
       {/* Form card */}
       <form
         onSubmit={handleSubmit}
-        style={{
-          position: "relative",
-          zIndex: 10,
-          width: "100%",
-          maxWidth: 420,
-          background: "rgba(10,7,3,0.88)",
-          border: "1px solid rgba(254,230,34,.18)",
-          borderRadius: 16,
-          padding: "48px 36px 40px",
-          boxShadow:
-            "0 0 80px rgba(254,230,34,.08), 0 24px 60px rgba(0,0,0,.6)",
-          animation: "fu .6s both",
-        }}
+        className="relative z-10 w-full max-w-[420px] bg-[rgba(10,7,3,0.88)] border border-[rgba(254,230,34,.18)] rounded-[16px] pt-[48px] px-[36px] pb-[40px] shadow-[0_0_80px_rgba(254,230,34,.08),0_24px_60px_rgba(0,0,0,.6)] animate-[fu_.6s_both]"
       >
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 32 }}>
+        <div className="text-center mb-8">
           <Link to="/">
             <img
               src="/assets/images/logo-chunhat.png"
               alt="FStyle Crew"
-              style={{
-                height: 69,
-                maxWidth: "100%",
-                display: "inline-block",
-                marginBottom: 18,
-              }}
+              className="h-[69px] max-w-full inline-block mb-[18px]"
             />
           </Link>
           <h1
-            style={{
-              fontFamily: "Anton, sans-serif",
-              fontSize: 28,
-              letterSpacing: ".04em",
-              color: "var(--gold)",
-              textShadow: "0 0 24px rgba(254,230,34,.4)",
-              margin: 0,
-            }}
+            className="text-[28px] tracking-[.04em] text-[var(--gold)] [text-shadow:0_0_24px_rgba(254,230,34,.4)] m-0 font-anton"
           >
             ĐĂNG NHẬP
           </h1>
-          <p
-            style={{
-              fontSize: 12,
-              color: "var(--dim)",
-              marginTop: 8,
-              letterSpacing: ".04em",
-            }}
-          >
+          <p className="text-[12px] text-[var(--dim)] mt-2 tracking-[.04em]">
             Heatwave Showcase #3 - APOCALYPSE
           </p>
         </div>
 
         {/* Email */}
-        <div style={{ marginBottom: 20 }}>
-          <label
-            style={{
-              display: "block",
-              fontSize: 10,
-              fontWeight: 800,
-              letterSpacing: ".3em",
-              color: "var(--orange)",
-              textTransform: "uppercase",
-              marginBottom: 8,
-            }}
-          >
+        <div className="mb-5">
+          <label className="block text-[10px] font-extrabold tracking-[.3em] text-[var(--orange)] uppercase mb-2">
             Email
           </label>
           <input
@@ -166,18 +102,7 @@ const Login = () => {
             required
             autoComplete="email"
             autoFocus
-            style={{
-              width: "100%",
-              padding: "14px 16px",
-              background: "rgba(0,0,0,.5)",
-              border: "1px solid rgba(254,230,34,.16)",
-              borderRadius: 10,
-              color: "var(--text)",
-              fontSize: 14,
-              fontFamily: "Montserrat, sans-serif",
-              outline: "none",
-              transition: "border-color .25s, box-shadow .25s",
-            }}
+            className="w-full py-[14px] px-4 bg-[rgba(0,0,0,.5)] border border-[rgba(254,230,34,.16)] rounded-[10px] text-[var(--text)] text-[14px] outline-none [transition:border-color_.25s,box-shadow_.25s] font-montserrat"
             onFocus={(e) => {
               e.currentTarget.style.borderColor = "rgba(254,230,34,.45)";
               e.currentTarget.style.boxShadow = "0 0 16px rgba(254,230,34,.12)";
@@ -190,21 +115,11 @@ const Login = () => {
         </div>
 
         {/* Password */}
-        <div style={{ marginBottom: 28 }}>
-          <label
-            style={{
-              display: "block",
-              fontSize: 10,
-              fontWeight: 800,
-              letterSpacing: ".3em",
-              color: "var(--orange)",
-              textTransform: "uppercase",
-              marginBottom: 8,
-            }}
-          >
+        <div className="mb-7">
+          <label className="block text-[10px] font-extrabold tracking-[.3em] text-[var(--orange)] uppercase mb-2">
             Mật khẩu
           </label>
-          <div style={{ position: "relative" }}>
+          <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
               value={password}
@@ -212,18 +127,7 @@ const Login = () => {
               placeholder="••••••••"
               required
               autoComplete="current-password"
-              style={{
-                width: "100%",
-                padding: "14px 48px 14px 16px",
-                background: "rgba(0,0,0,.5)",
-                border: "1px solid rgba(254,230,34,.16)",
-                borderRadius: 10,
-                color: "var(--text)",
-                fontSize: 14,
-                fontFamily: "Montserrat, sans-serif",
-                outline: "none",
-                transition: "border-color .25s, box-shadow .25s",
-              }}
+              className="w-full pt-[14px] pr-[48px] pb-[14px] pl-4 bg-[rgba(0,0,0,.5)] border border-[rgba(254,230,34,.16)] rounded-[10px] text-[var(--text)] text-[14px] outline-none [transition:border-color_.25s,box-shadow_.25s] font-montserrat"
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = "rgba(254,230,34,.45)";
                 e.currentTarget.style.boxShadow =
@@ -237,21 +141,7 @@ const Login = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              style={{
-                position: "absolute",
-                right: 14,
-                top: "50%",
-                transform: "translateY(-50%)",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--dim)",
-                fontSize: 13,
-                fontFamily: "Montserrat, sans-serif",
-                fontWeight: 600,
-                letterSpacing: ".05em",
-                transition: "color .2s",
-              }}
+              className="absolute right-[14px] top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-[var(--dim)] text-[13px] font-semibold tracking-[.05em] [transition:color_.2s] font-montserrat"
               onMouseEnter={(e) =>
                 (e.currentTarget.style.color = "var(--gold)")
               }
@@ -266,20 +156,11 @@ const Login = () => {
         <button
           type="submit"
           disabled={loading}
+          className="w-full py-[15px] border-0 rounded-[10px] text-[13px] font-extrabold uppercase tracking-[.2em] [transition:background_.3s,transform_.15s,box-shadow_.3s] font-montserrat"
           style={{
-            width: "100%",
-            padding: "15px 0",
             background: loading ? "rgba(254,230,34,.15)" : "var(--gold)",
-            border: "none",
-            borderRadius: 10,
             color: loading ? "var(--gold)" : "#050301",
-            fontSize: 13,
-            fontWeight: 800,
-            fontFamily: "Montserrat, sans-serif",
-            letterSpacing: ".2em",
-            textTransform: "uppercase",
             cursor: loading ? "not-allowed" : "pointer",
-            transition: "background .3s, transform .15s, box-shadow .3s",
             boxShadow: loading ? "none" : "0 0 30px rgba(254,230,34,.3)",
           }}
           onMouseEnter={(e) => {
@@ -301,16 +182,10 @@ const Login = () => {
         </button>
 
         {/* Back to home */}
-        <div style={{ marginTop: 24, textAlign: "center" }}>
+        <div className="mt-6 text-center">
           <Link
             to="/"
-            style={{
-              fontSize: 12,
-              color: "var(--dim)",
-              textDecoration: "none",
-              letterSpacing: ".04em",
-              transition: "color .2s",
-            }}
+            className="text-[12px] text-[var(--dim)] no-underline tracking-[.04em] [transition:color_.2s]"
             onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold)")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "var(--dim)")}
           >
@@ -319,26 +194,15 @@ const Login = () => {
         </div>
 
         {/* Footer */}
-        <div
-          style={{
-            marginTop: 20,
-            textAlign: "center",
-            fontSize: 11,
-            color: "rgba(242,237,224,.22)",
-          }}
-        >
+        <div className="mt-5 text-center text-[11px] text-[rgba(242,237,224,.22)]">
           <div>© 2026 FStyle Crew · FPT University HCM</div>
-          <div style={{ color: "rgba(242,237,224,.4)", marginTop: 6 }}>
+          <div className="text-[rgba(242,237,224,.4)] mt-[6px]">
             Phát triển bởi{" "}
             <a
               href="https://www.facebook.com/fcodeclub"
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                color: "var(--gold)",
-                textDecoration: "none",
-                fontWeight: 700,
-              }}
+              className="text-[var(--gold)] no-underline font-bold"
             >
               F-Code
             </a>{" "}
@@ -347,11 +211,7 @@ const Login = () => {
               href="https://www.facebook.com/mstsoftware.vn/"
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                color: "var(--gold)",
-                textDecoration: "none",
-                fontWeight: 700,
-              }}
+              className="text-[var(--gold)] no-underline font-bold"
             >
               MST Software
             </a>
