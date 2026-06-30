@@ -84,12 +84,7 @@ const ParticleCanvas = () => {
   return (
     <canvas
       ref={canvasRef}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        pointerEvents: 'none',
-        zIndex: 1,
-      }}
+      className="absolute inset-0 pointer-events-none z-[1]"
     />
   );
 };
