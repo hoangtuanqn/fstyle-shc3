@@ -7,7 +7,7 @@ import axios from 'axios';
 import UserApi from '~/api-requests/user.requests';
 import { RoleType } from '~/constants/enums';
 import usePageTitle from '~/hooks/usePageTitle';
-import type { CreateUserInput, UpdateUserInput, UserAdminType } from '~/types/user';
+import type { CreateUserInput, UserAdminType } from '~/types/user';
 
 const ROLE_LABELS: Record<string, string> = {
   ADMIN: 'Admin (BTC F-Code)',
@@ -27,9 +27,7 @@ const ROLE_OPTIONS = [
 type DialogState =
   | { type: 'none' }
   | { type: 'create' }
-  | { type: 'edit'; user: UserAdminType }
   | { type: 'reset'; user: UserAdminType }
-  | { type: 'delete'; user: UserAdminType }
   | { type: 'created'; email: string; rawPassword: string }
   | { type: 'resetDone'; name: string; rawPassword: string };
 
@@ -272,26 +270,6 @@ const Members = () => {
     onError: handleError,
   });
 
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateUserInput }) => UserApi.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
-      toast.success('Cập nhật thành công!');
-      setDialog({ type: 'none' });
-    },
-    onError: handleError,
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => UserApi.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
-      toast.success('Đã xóa tài khoản!');
-      setDialog({ type: 'none' });
-    },
-    onError: handleError,
-  });
-
   const resetMutation = useMutation({
     mutationFn: (id: string) => UserApi.resetPassword(id),
     onSuccess: (data, id) => {
@@ -307,11 +285,6 @@ const Members = () => {
     setDialog({ type: 'create' });
   };
 
-  const openEdit = (user: UserAdminType) => {
-    setFormName(user.name); setFormEmail(user.email); setFormRole(user.role); setFormTeamId(user.teamId ?? '');
-    setDialog({ type: 'edit', user });
-  };
-
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     createMutation.mutate({
@@ -319,20 +292,6 @@ const Members = () => {
       email: formEmail,
       role: formRole,
       teamId: formRole === RoleType.MEMBER ? formTeamId || null : null,
-    });
-  };
-
-  const handleEditSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (dialog.type !== 'edit') return;
-    updateMutation.mutate({
-      id: dialog.user.id,
-      data: {
-        name: formName,
-        email: formEmail,
-        role: formRole,
-        teamId: formRole === RoleType.MEMBER ? formTeamId || null : null,
-      },
     });
   };
 
@@ -497,24 +456,10 @@ const Members = () => {
                         <div style={{ display: 'flex', gap: 6 }}>
                           <button
                             type="button"
-                            onClick={() => openEdit(user)}
-                            style={{ padding: '5px 10px', background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.12)', borderRadius: 5, color: 'var(--text)', fontSize: 11, cursor: 'pointer' }}
-                          >
-                            Sửa
-                          </button>
-                          <button
-                            type="button"
                             onClick={() => setDialog({ type: 'reset', user })}
                             style={{ padding: '5px 10px', background: 'rgba(251,140,5,.08)', border: '1px solid rgba(251,140,5,.25)', borderRadius: 5, color: 'var(--orange)', fontSize: 11, cursor: 'pointer' }}
                           >
                             Reset MK
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setDialog({ type: 'delete', user })}
-                            style={{ padding: '5px 10px', background: 'rgba(208,64,71,.08)', border: '1px solid rgba(208,64,71,.25)', borderRadius: 5, color: '#D04047', fontSize: 11, cursor: 'pointer' }}
-                          >
-                            Xóa
                           </button>
                         </div>
                       </td>
@@ -548,24 +493,6 @@ const Members = () => {
             teamList={teamList}
             onSubmit={handleCreateSubmit}
             isPending={createMutation.isPending}
-          />
-        </Dialog>
-      )}
-
-      {dialog.type === 'edit' && (
-        <Dialog title="Sửa tài khoản" onClose={() => setDialog({ type: 'none' })}>
-          <UserForm
-            formName={formName}
-            setFormName={setFormName}
-            formEmail={formEmail}
-            setFormEmail={setFormEmail}
-            formRole={formRole}
-            setFormRole={setFormRole}
-            formTeamId={formTeamId}
-            setFormTeamId={setFormTeamId}
-            teamList={teamList}
-            onSubmit={handleEditSubmit}
-            isPending={updateMutation.isPending}
           />
         </Dialog>
       )}
@@ -639,32 +566,6 @@ const Members = () => {
         </Dialog>
       )}
 
-      {dialog.type === 'delete' && (
-        <Dialog title="Xóa tài khoản" onClose={() => setDialog({ type: 'none' })}>
-          <p style={{ fontSize: 13, color: 'var(--dim)', marginBottom: 20 }}>
-            Xác nhận xóa tài khoản <strong style={{ color: '#D04047' }}>{dialog.user.name}</strong>?
-            <br />
-            <span style={{ color: 'rgba(255,255,255,.3)', fontSize: 12 }}>Hành động này không thể hoàn tác.</span>
-          </p>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button
-              type="button"
-              onClick={() => setDialog({ type: 'none' })}
-              style={{ flex: 1, padding: '12px', background: 'transparent', border: '1px solid rgba(255,255,255,.15)', borderRadius: 8, color: 'var(--dim)', fontSize: 12, cursor: 'pointer' }}
-            >
-              Hủy
-            </button>
-            <button
-              type="button"
-              disabled={deleteMutation.isPending}
-              onClick={() => deleteMutation.mutate(dialog.user.id)}
-              style={{ flex: 1, padding: '12px', background: '#D04047', border: 'none', borderRadius: 8, color: '#fff', fontSize: 12, fontWeight: 800, cursor: deleteMutation.isPending ? 'not-allowed' : 'pointer' }}
-            >
-              {deleteMutation.isPending ? '...' : 'Xóa'}
-            </button>
-          </div>
-        </Dialog>
-      )}
     </div>
   );
 };
