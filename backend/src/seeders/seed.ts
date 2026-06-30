@@ -3,15 +3,12 @@ import "dotenv/config";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { awardWinners, awards, btcScores, judgeScores, teams, users } from "~/db/schema";
+import { generateStrongPassword } from "~/utils/password";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
-const DEFAULT_PASSWORD = "fstyle2026";
-const SALT_ROUNDS = 10;
-
 async function seed() {
   console.log("🌱 Seeding database...");
-  const hashedPassword = await bcrypt.hash(DEFAULT_PASSWORD, SALT_ROUNDS);
 
   // ── 1. Teams ───────────────────────────────────────
   const teamData = [
@@ -148,17 +145,38 @@ async function seed() {
   ];
 
   const allUsers = [
-    ...adminUsers.map((u) => ({ ...u, teamId: null, password: hashedPassword, avatarUrls: null })),
-    ...btcFstyleUsers.map((u) => ({ ...u, teamId: null, password: hashedPassword, avatarUrls: null })),
-    ...mcUsers.map((u) => ({ ...u, teamId: null, password: hashedPassword, avatarUrls: null })),
-    ...shiroMembers.map(({ avatarUrls, ...u }) => ({ ...u, role: "MEMBER" as const, teamId: shiro.id, password: hashedPassword, avatarUrls })),
-    ...apexMembers.map(({ avatarUrls, ...u }) => ({ ...u, role: "MEMBER" as const, teamId: apex.id, password: hashedPassword, avatarUrls })),
-    ...slattMembers.map(({ avatarUrls, ...u }) => ({ ...u, role: "MEMBER" as const, teamId: slatt.id, password: hashedPassword, avatarUrls })),
-    ...antiMembers.map(({ avatarUrls, ...u }) => ({ ...u, role: "MEMBER" as const, teamId: anti.id, password: hashedPassword, avatarUrls })),
+    ...adminUsers.map((u) => {
+      const raw = generateStrongPassword();
+      return { ...u, teamId: null, password: bcrypt.hashSync(raw, 10), rawPassword: raw, isFirstLogin: 1 as const, avatarUrls: null };
+    }),
+    ...btcFstyleUsers.map((u) => {
+      const raw = generateStrongPassword();
+      return { ...u, teamId: null, password: bcrypt.hashSync(raw, 10), rawPassword: raw, isFirstLogin: 1 as const, avatarUrls: null };
+    }),
+    ...mcUsers.map((u) => {
+      const raw = generateStrongPassword();
+      return { ...u, teamId: null, password: bcrypt.hashSync(raw, 10), rawPassword: raw, isFirstLogin: 1 as const, avatarUrls: null };
+    }),
+    ...shiroMembers.map(({ avatarUrls, ...u }) => {
+      const raw = generateStrongPassword();
+      return { ...u, role: "MEMBER" as const, teamId: shiro.id, password: bcrypt.hashSync(raw, 10), rawPassword: raw, isFirstLogin: 1 as const, avatarUrls };
+    }),
+    ...apexMembers.map(({ avatarUrls, ...u }) => {
+      const raw = generateStrongPassword();
+      return { ...u, role: "MEMBER" as const, teamId: apex.id, password: bcrypt.hashSync(raw, 10), rawPassword: raw, isFirstLogin: 1 as const, avatarUrls };
+    }),
+    ...slattMembers.map(({ avatarUrls, ...u }) => {
+      const raw = generateStrongPassword();
+      return { ...u, role: "MEMBER" as const, teamId: slatt.id, password: bcrypt.hashSync(raw, 10), rawPassword: raw, isFirstLogin: 1 as const, avatarUrls };
+    }),
+    ...antiMembers.map(({ avatarUrls, ...u }) => {
+      const raw = generateStrongPassword();
+      return { ...u, role: "MEMBER" as const, teamId: anti.id, password: bcrypt.hashSync(raw, 10), rawPassword: raw, isFirstLogin: 1 as const, avatarUrls };
+    }),
   ];
 
   await db.insert(users).values(allUsers);
-  console.log(`  ✓ ${allUsers.length} users (password: ${DEFAULT_PASSWORD})`);
+  console.log(`  ✓ ${allUsers.length} users (strong random passwords stored in raw_password)`);
 
   // ── 3. Judge Scores (empty - 3 BGK × 4 teams) ─────
   const judgeData = teamData.flatMap((team) =>

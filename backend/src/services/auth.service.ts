@@ -91,6 +91,24 @@ class AuthService {
     return user;
   };
 
+  changePassword = async (userId: string, newPassword: string) => {
+    const user = await userRepository.findById(userId);
+    if (!user) {
+      throw new ErrorWithStatus({
+        message: 'Người dùng không tồn tại!',
+        status: HTTP_STATUS.NOT_FOUND,
+      });
+    }
+    if (user.isFirstLogin === 0) {
+      throw new ErrorWithStatus({
+        message: 'Bạn đã đổi mật khẩu rồi!',
+        status: HTTP_STATUS.BAD_REQUEST,
+      });
+    }
+    const hashedPassword = AlgoCrypto.hashPassword(newPassword);
+    await userRepository.updateFirstLoginAndPassword(userId, hashedPassword);
+  };
+
   private signAccessToken = async (userId: string, role: string) => {
     return AlgoJwt.signToken({
       payload: { userId, role, type: TokenType.AccessToken },

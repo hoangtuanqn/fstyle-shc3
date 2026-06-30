@@ -6,6 +6,7 @@ export type UserType = {
   email: string;
   role: RoleType;
   teamId: string | null;
+  isFirstLogin: number;
   createdAt: string;
   updatedAt: string;
 };

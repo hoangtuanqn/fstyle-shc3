@@ -3,7 +3,9 @@ import { Route } from 'react-router';
 import { RoleType } from '~/constants/enums';
 import MainLayout from '~/layout/MainLayout';
 import ProtectedRoute from '~/layout/ProtectedRoute';
+import ChangePassword from '~/pages/ChangePassword';
 import Home from '~/pages/Home';
+import Members from '~/pages/Members';
 import Login from '~/pages/Login';
 import Dashboard from '~/pages/Dashboard';
 import Scoring from '~/pages/Scoring';
@@ -22,6 +24,9 @@ export const AppRoutes = () => (
       <Route index element={<Home />} />
     </Route>
     <Route path="/login" element={<Login />} />
+
+    {/* Change password — accessible when logged in but isFirstLogin=1 */}
+    <Route path="/change-password" element={<ChangePassword />} />
 
     {/* Members + BTC FStyle */}
     <Route element={<ProtectedRoute roleAccess={[RoleType.MEMBER, RoleType.BTC_FSTYLE]} />}>
@@ -55,6 +60,7 @@ export const AppRoutes = () => (
     <Route element={<ProtectedRoute roleAccess={[RoleType.ADMIN]} />}>
       <Route element={<MainLayout />}>
         <Route path="/scoring" element={<Scoring />} />
+        <Route path="/members" element={<Members />} />
       </Route>
     </Route>
   </>

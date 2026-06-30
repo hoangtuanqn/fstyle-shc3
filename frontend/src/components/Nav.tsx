@@ -37,6 +37,7 @@ const allPageLinks = [
     roles: [RoleType.ADMIN, RoleType.BTC_FSTYLE],
   },
   { to: "/scoring", label: "Chấm điểm", roles: [RoleType.ADMIN] },
+  { to: '/members', label: 'Quản lý thành viên', roles: [RoleType.ADMIN] },
 ];
 
 const roleLabels: Record<string, string> = {

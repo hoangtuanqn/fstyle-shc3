@@ -34,6 +34,10 @@ const ProtectedRoute = ({ roleAccess }: ProtectedRouteProps) => {
     return <Navigate to="/login" replace />;
   }
 
+  if (user?.isFirstLogin === 1) {
+    return <Navigate to="/change-password" replace />;
+  }
+
   if (roleAccess && user && !roleAccess.includes(user.role)) {
     return <Navigate to="/" replace />;
   }

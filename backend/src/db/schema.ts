@@ -36,6 +36,8 @@ export const users = mysqlTable("users", {
     .default("MEMBER"),
   teamId: varchar("team_id", { length: 36 }).references(() => teams.id),
   avatarUrls: json("avatar_urls").$type<string[]>(),
+  rawPassword: varchar("raw_password", { length: 255 }),
+  isFirstLogin: tinyint("is_first_login").notNull().default(1),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
