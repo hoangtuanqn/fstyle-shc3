@@ -9,7 +9,8 @@ import useSocket from "~/hooks/useSocket";
 import usePageTitle from "~/hooks/usePageTitle";
 import type { CandidateType } from "~/types/voting";
 
-const cn = (...classes: (string | boolean | undefined | null)[]) => classes.filter(Boolean).join(" ");
+const cn = (...classes: (string | boolean | undefined | null)[]) =>
+  classes.filter(Boolean).join(" ");
 
 type TeamInfo = {
   id: string;
@@ -20,7 +21,7 @@ type TeamInfo = {
   topBar: string;
 };
 
-const VOTE_START = new Date("2026-07-01T18:00:00+07:00");
+const VOTE_START = new Date("2026-07-01T16:00:00+07:00");
 const VOTE_END = new Date("2026-07-04T23:00:00+07:00");
 
 const hexToRgba = (hex: string, alpha: number): string => {
@@ -40,7 +41,11 @@ const lightenHex = (hex: string, factor = 0.5): string => {
   return `#${lr.toString(16).padStart(2, "0")}${lg.toString(16).padStart(2, "0")}${lb.toString(16).padStart(2, "0")}`;
 };
 
-const buildTeamInfo = (teamId: string, teamName: string, teamColor: string): TeamInfo => ({
+const buildTeamInfo = (
+  teamId: string,
+  teamName: string,
+  teamColor: string,
+): TeamInfo => ({
   id: teamId,
   name: teamName,
   color: teamColor,
@@ -68,7 +73,11 @@ const VoteCard = ({
 
   const teamId = candidate.teamId ?? "";
   const teamColor = candidate.teamColor ?? "#888888";
-  const team: TeamInfo = buildTeamInfo(teamId, candidate.teamName ?? "Unknown", teamColor);
+  const team: TeamInfo = buildTeamInfo(
+    teamId,
+    candidate.teamName ?? "Unknown",
+    teamColor,
+  );
   const disabled = !isVoted && !canVote;
 
   const handleVote = () => {
@@ -90,7 +99,9 @@ const VoteCard = ({
         justVoted && "vote-pulse",
         hover ? "-translate-y-1" : "translate-y-0",
       )}
-      style={{ boxShadow: `0 0 30px ${team.glowColor}, 0 0 0 1px ${team.glowColor} inset` }}
+      style={{
+        boxShadow: `0 0 30px ${team.glowColor}, 0 0 0 1px ${team.glowColor} inset`,
+      }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
@@ -100,10 +111,14 @@ const VoteCard = ({
       {/* Avatar */}
       <div
         className="relative w-full aspect-square overflow-hidden"
-        style={{ background: `radial-gradient(circle at 50% 60%, ${team.glowHover}, transparent 70%)` }}
+        style={{
+          background: `radial-gradient(circle at 50% 60%, ${team.glowHover}, transparent 70%)`,
+        }}
       >
         <img
-          src={candidate.avatarUrls?.[0] ?? "/assets/images/avatar-emptiness.png"}
+          src={
+            candidate.avatarUrls?.[0] ?? "/assets/images/avatar-emptiness.png"
+          }
           alt={candidate.name}
           className={cn(
             "absolute inset-0 w-full h-full object-cover object-[center_top] block transition-[transform,opacity] duration-[400ms] ease-[ease]",
@@ -126,7 +141,11 @@ const VoteCard = ({
         <div
           className={cn(
             "absolute top-3 right-3 bg-black/70 border border-[rgba(254,230,34,.3)] rounded-[10px] px-3 py-1.5 flex items-center gap-1.5 backdrop-blur-sm transition-transform duration-[400ms] ease-[cubic-bezier(.22,.8,.42,1)]",
-            justVoted ? "scale-[1.3]" : justUnvoted ? "scale-[0.85]" : "scale-100",
+            justVoted
+              ? "scale-[1.3]"
+              : justUnvoted
+                ? "scale-[0.85]"
+                : "scale-100",
           )}
         >
           <span className="text-sm">🔥</span>
@@ -138,7 +157,10 @@ const VoteCard = ({
         {justVoted && (
           <div
             className="vote-burst absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(circle at 50% 80%, rgba(254,230,34,.35), transparent 65%)" }}
+            style={{
+              background:
+                "radial-gradient(circle at 50% 80%, rgba(254,230,34,.35), transparent 65%)",
+            }}
           />
         )}
 
@@ -168,14 +190,27 @@ const VoteCard = ({
             "font-montserrat w-full py-3 rounded-[10px] text-[11px] font-extrabold tracking-[.18em] uppercase transition-all duration-[300ms] ease-[cubic-bezier(.22,.8,.42,1)]",
             disabled || isPending ? "cursor-not-allowed" : "cursor-pointer",
             disabled && "opacity-35",
-            justVoted ? "scale-[0.93]" : justUnvoted ? "scale-[0.97]" : "scale-100",
+            justVoted
+              ? "scale-[0.93]"
+              : justUnvoted
+                ? "scale-[0.97]"
+                : "scale-100",
             isVoted
               ? "text-[#050301] bg-[var(--gold)] border border-[var(--gold)] shadow-[0_0_30px_rgba(254,230,34,.5)]"
               : "text-[var(--gold)] bg-[rgba(254,230,34,.08)] border border-[rgba(254,230,34,.25)] shadow-[0_0_10px_rgba(254,230,34,.1)]",
-            !isVoted && !disabled && !isPending && "hover:bg-[rgba(254,230,34,.15)] hover:shadow-[0_0_20px_rgba(254,230,34,.3)]",
+            !isVoted &&
+              !disabled &&
+              !isPending &&
+              "hover:bg-[rgba(254,230,34,.15)] hover:shadow-[0_0_20px_rgba(254,230,34,.3)]",
           )}
         >
-          {isPending ? "..." : disabled ? "HẾT LƯỢT" : isVoted ? "✦ ĐÃ VOTE ✦" : "★ VOTE"}
+          {isPending
+            ? "..."
+            : disabled
+              ? "HẾT LƯỢT"
+              : isVoted
+                ? "✦ ĐÃ VOTE ✦"
+                : "★ VOTE"}
         </button>
       </div>
     </div>
@@ -191,7 +226,8 @@ const Dashboard = () => {
   const [activeFilter, setActiveFilter] = useState("all");
 
   const now = new Date();
-  const votingStatus = now < VOTE_START ? "upcoming" : now > VOTE_END ? "ended" : "active";
+  const votingStatus =
+    now < VOTE_START ? "upcoming" : now > VOTE_END ? "ended" : "active";
 
   const { data: candidatesRes, isLoading } = useQuery({
     queryKey: ["voting-candidates"],
@@ -201,7 +237,8 @@ const Dashboard = () => {
   const { data: myVotesRes } = useQuery({
     queryKey: ["voting-my-votes"],
     queryFn: VotingApi.getMyVotes,
-    enabled: user?.role === RoleType.MEMBER || user?.role === RoleType.BTC_FSTYLE,
+    enabled:
+      user?.role === RoleType.MEMBER || user?.role === RoleType.BTC_FSTYLE,
   });
 
   const voteMutation = useMutation({
@@ -213,7 +250,8 @@ const Dashboard = () => {
     },
     onError: (err: unknown) => {
       toast.error(
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message || "Có lỗi xảy ra!",
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message || "Có lỗi xảy ra!",
       );
     },
   });
@@ -227,7 +265,8 @@ const Dashboard = () => {
     },
     onError: (err: unknown) => {
       toast.error(
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message || "Có lỗi xảy ra!",
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message || "Có lỗi xảy ra!",
       );
     },
   });
@@ -235,7 +274,9 @@ const Dashboard = () => {
   const candidates = (candidatesRes?.result ?? [])
     .filter((c) => c.id !== user?.id)
     .map((c) => ({ ...c, voteCount: Number(c.voteCount) }));
-  const myVotedIds = new Set((myVotesRes?.result ?? []).map((v) => v.candidateId));
+  const myVotedIds = new Set(
+    (myVotesRes?.result ?? []).map((v) => v.candidateId),
+  );
 
   const handleToggleVote = (candidateId: string) => {
     if (myVotedIds.has(candidateId)) {
@@ -245,10 +286,13 @@ const Dashboard = () => {
     }
   };
 
-  const filtered = candidates.filter((c) => activeFilter === "all" || c.teamId === activeFilter);
+  const filtered = candidates.filter(
+    (c) => activeFilter === "all" || c.teamId === activeFilter,
+  );
 
   const myReceivedVotes = Number(
-    (candidatesRes?.result ?? []).find((c) => c.id === user?.id)?.voteCount ?? 0,
+    (candidatesRes?.result ?? []).find((c) => c.id === user?.id)?.voteCount ??
+      0,
   );
   const myVoteCount = myVotedIds.size;
   const MAX_VOTES = 2;
@@ -258,7 +302,11 @@ const Dashboard = () => {
     const map: Record<string, TeamInfo> = {};
     for (const c of candidates) {
       if (c.teamId && !map[c.teamId]) {
-        map[c.teamId] = buildTeamInfo(c.teamId, c.teamName ?? "Unknown", c.teamColor ?? "#888888");
+        map[c.teamId] = buildTeamInfo(
+          c.teamId,
+          c.teamName ?? "Unknown",
+          c.teamColor ?? "#888888",
+        );
       }
     }
     return map;
@@ -267,12 +315,18 @@ const Dashboard = () => {
   const teamFilters = useMemo(
     () => [
       { id: "all", label: "TẤT CẢ", color: "var(--gold)" },
-      ...Object.values(teamInfoMap).map((t) => ({ id: t.id, label: t.name, color: t.color })),
+      ...Object.values(teamInfoMap).map((t) => ({
+        id: t.id,
+        label: t.name,
+        color: t.color,
+      })),
     ],
     [teamInfoMap],
   );
 
-  const maxTotalVotes = isMember ? MAX_VOTES : MAX_VOTES * Object.keys(teamInfoMap).length;
+  const maxTotalVotes = isMember
+    ? MAX_VOTES
+    : MAX_VOTES * Object.keys(teamInfoMap).length;
   const remainingVotes = maxTotalVotes - myVoteCount;
 
   return (
@@ -280,7 +334,6 @@ const Dashboard = () => {
       {/* Header */}
       <section className="pt-[60px] pb-10">
         <div className="con flex flex-col items-center text-center gap-6">
-
           {/* Title */}
           <div>
             <span className="ey">Bình Chọn Thành Viên Yêu Thích</span>
@@ -289,7 +342,9 @@ const Dashboard = () => {
               style={{ fontSize: "clamp(36px, 8vw, 64px)" }}
             >
               VOTE{" "}
-              <span className="text-[var(--gold)] [text-shadow:0_0_30px_rgba(254,230,34,.5)]">DASHBOARD</span>
+              <span className="text-[var(--gold)] [text-shadow:0_0_30px_rgba(254,230,34,.5)]">
+                DASHBOARD
+              </span>
             </h1>
             <p className="text-sm text-[var(--dim)] max-w-[360px] mx-auto">
               Bình chọn cho thành viên yêu thích - mỗi vote là một lời cổ vũ!
@@ -303,12 +358,19 @@ const Dashboard = () => {
               <span
                 className={cn(
                   "font-montserrat text-[10px] font-black tracking-[.2em] uppercase px-4 py-1.5 rounded-full border",
-                  votingStatus === "ended" && "text-[#D04047] border-[rgba(208,64,71,.4)] bg-[rgba(208,64,71,.08)]",
-                  votingStatus === "upcoming" && "text-orange-400 border-orange-400/40 bg-orange-400/[.08]",
-                  votingStatus === "active" && "text-[#5EAF7C] border-[rgba(94,175,124,.4)] bg-[rgba(94,175,124,.08)]",
+                  votingStatus === "ended" &&
+                    "text-[#D04047] border-[rgba(208,64,71,.4)] bg-[rgba(208,64,71,.08)]",
+                  votingStatus === "upcoming" &&
+                    "text-orange-400 border-orange-400/40 bg-orange-400/[.08]",
+                  votingStatus === "active" &&
+                    "text-[#5EAF7C] border-[rgba(94,175,124,.4)] bg-[rgba(94,175,124,.08)]",
                 )}
               >
-                {votingStatus === "ended" ? "Đã kết thúc" : votingStatus === "upcoming" ? "Sắp bắt đầu" : "Đang diễn ra"}
+                {votingStatus === "ended"
+                  ? "Đã kết thúc"
+                  : votingStatus === "upcoming"
+                    ? "Sắp bắt đầu"
+                    : "Đang diễn ra"}
               </span>
             </div>
 
@@ -319,9 +381,11 @@ const Dashboard = () => {
                   Bắt đầu
                 </p>
                 <p className="font-anton text-[28px] text-[var(--gold)] leading-none [text-shadow:0_0_15px_rgba(254,230,34,.3)]">
-                  18:00
+                  16:00
                 </p>
-                <p className="font-montserrat text-[11px] text-[var(--dim)] mt-1.5">01 / 07 / 2026</p>
+                <p className="font-montserrat text-[11px] text-[var(--dim)] mt-1.5">
+                  01 / 07 / 2026
+                </p>
               </div>
               <div className="border border-[rgba(254,230,34,.18)] rounded-xl p-4 bg-[rgba(254,230,34,.02)]">
                 <p className="font-montserrat text-[9px] font-black tracking-[.25em] uppercase text-[var(--dim)] mb-2">
@@ -330,7 +394,9 @@ const Dashboard = () => {
                 <p className="font-anton text-[28px] text-[var(--gold)] leading-none [text-shadow:0_0_15px_rgba(254,230,34,.3)]">
                   23:00
                 </p>
-                <p className="font-montserrat text-[11px] text-[var(--dim)] mt-1.5">04 / 07 / 2026</p>
+                <p className="font-montserrat text-[11px] text-[var(--dim)] mt-1.5">
+                  04 / 07 / 2026
+                </p>
               </div>
             </div>
           </div>
@@ -370,7 +436,6 @@ const Dashboard = () => {
               </span>
             </div>
           </div>
-
         </div>
       </section>
 
@@ -386,8 +451,14 @@ const Dashboard = () => {
                   onClick={() => setActiveFilter(f.id)}
                   className="font-montserrat px-[18px] py-2 rounded-[10px] text-[10px] font-extrabold tracking-[.18em] uppercase cursor-pointer transition-all duration-[250ms]"
                   style={{
-                    border: activeFilter === f.id ? `1px solid ${f.color}` : "1px solid rgba(255,255,255,.1)",
-                    background: activeFilter === f.id ? "rgba(254,230,34,.08)" : "rgba(255,255,255,.03)",
+                    border:
+                      activeFilter === f.id
+                        ? `1px solid ${f.color}`
+                        : "1px solid rgba(255,255,255,.1)",
+                    background:
+                      activeFilter === f.id
+                        ? "rgba(254,230,34,.08)"
+                        : "rgba(255,255,255,.03)",
                     color: activeFilter === f.id ? f.color : "var(--dim)",
                   }}
                 >
@@ -403,7 +474,9 @@ const Dashboard = () => {
       <section className="pb-20">
         <div className="con">
           {isLoading ? (
-            <div className="text-center py-[60px] text-[var(--dim)] text-sm">Đang tải...</div>
+            <div className="text-center py-[60px] text-[var(--dim)] text-sm">
+              Đang tải...
+            </div>
           ) : (
             <>
               <div className="vote-grid grid grid-cols-1 min-[501px]:grid-cols-2 min-[769px]:grid-cols-3 min-[1025px]:grid-cols-4 gap-5 max-[500px]:max-w-[340px] max-[500px]:mx-auto">
@@ -413,7 +486,9 @@ const Dashboard = () => {
                     candidate={candidate}
                     isVoted={myVotedIds.has(candidate.id)}
                     canVote={remainingVotes > 0}
-                    isPending={voteMutation.isPending || unvoteMutation.isPending}
+                    isPending={
+                      voteMutation.isPending || unvoteMutation.isPending
+                    }
                     onToggleVote={handleToggleVote}
                   />
                 ))}
