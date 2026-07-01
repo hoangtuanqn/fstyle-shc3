@@ -4,8 +4,8 @@ import userRepository from '~/repositories/user.repository';
 import votingRepository from '~/repositories/voting.repository';
 import { ErrorWithStatus } from '~/rules/error';
 
-const VOTE_START = new Date('2025-06-29T00:00:00+07:00');
-const VOTE_END = new Date('2026-07-03T23:59:59+07:00');
+const VOTE_START = new Date('2026-07-01T18:00:00+07:00');
+const VOTE_END = new Date('2026-07-04T23:00:00+07:00');
 const MAX_VOTES_PER_SCOPE = 2;
 
 class VotingService {
@@ -86,7 +86,7 @@ class VotingService {
     const now = new Date();
     if (now < VOTE_START || now > VOTE_END) {
       throw new ErrorWithStatus({
-        message: 'Ngoài thời gian bình chọn! (29/6 → 3/7/2026)',
+        message: 'Ngoài thời gian bình chọn! (18:00 01/07 → 23:00 04/07/2026)',
         status: HTTP_STATUS.FORBIDDEN,
       });
     }
