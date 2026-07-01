@@ -70,12 +70,14 @@ class UserController {
       const sheet = workbook.addWorksheet('Tài khoản');
 
       sheet.columns = [
+        { header: 'Họ và tên', key: 'name', width: 28 },
         { header: 'Email', key: 'email', width: 36 },
         { header: 'Mật khẩu (ban đầu)', key: 'rawPassword', width: 24 },
       ];
 
       allUsers.forEach((user) => {
         sheet.addRow({
+          name: user.name,
           email: user.email,
           rawPassword: user.rawPassword ?? '',
         });
