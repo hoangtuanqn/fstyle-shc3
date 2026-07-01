@@ -1,11 +1,11 @@
-import { RoleType } from '~/constants/enums';
-import { HTTP_STATUS } from '~/constants/httpStatus';
-import userRepository from '~/repositories/user.repository';
-import votingRepository from '~/repositories/voting.repository';
-import { ErrorWithStatus } from '~/rules/error';
+import { RoleType } from "~/constants/enums";
+import { HTTP_STATUS } from "~/constants/httpStatus";
+import userRepository from "~/repositories/user.repository";
+import votingRepository from "~/repositories/voting.repository";
+import { ErrorWithStatus } from "~/rules/error";
 
-const VOTE_START = new Date('2026-07-01T18:00:00+07:00');
-const VOTE_END = new Date('2026-07-04T23:00:00+07:00');
+const VOTE_START = new Date("2026-07-01T16:00:00+07:00");
+const VOTE_END = new Date("2026-07-04T23:00:00+07:00");
 const MAX_VOTES_PER_SCOPE = 2;
 
 class VotingService {
@@ -13,7 +13,10 @@ class VotingService {
     if (role === RoleType.MEMBER) {
       const user = await userRepository.findById(userId);
       if (!user?.teamId) {
-        throw new ErrorWithStatus({ message: 'Bạn chưa thuộc đội nào!', status: HTTP_STATUS.BAD_REQUEST });
+        throw new ErrorWithStatus({
+          message: "Bạn chưa thuộc đội nào!",
+          status: HTTP_STATUS.BAD_REQUEST,
+        });
       }
       return await votingRepository.findCandidatesByTeam(user.teamId);
     }
@@ -28,35 +31,59 @@ class VotingService {
     this.checkVotingPeriod();
 
     if (userId === candidateId) {
-      throw new ErrorWithStatus({ message: 'Không thể vote cho chính mình!', status: HTTP_STATUS.BAD_REQUEST });
+      throw new ErrorWithStatus({
+        message: "Không thể vote cho chính mình!",
+        status: HTTP_STATUS.BAD_REQUEST,
+      });
     }
 
     const voter = await userRepository.findById(userId);
     if (!voter) {
-      throw new ErrorWithStatus({ message: 'Người dùng không tồn tại!', status: HTTP_STATUS.NOT_FOUND });
+      throw new ErrorWithStatus({
+        message: "Người dùng không tồn tại!",
+        status: HTTP_STATUS.NOT_FOUND,
+      });
     }
 
     const candidate = await userRepository.findById(candidateId);
     if (!candidate || candidate.role !== RoleType.MEMBER) {
-      throw new ErrorWithStatus({ message: 'Ứng viên không hợp lệ!', status: HTTP_STATUS.NOT_FOUND });
+      throw new ErrorWithStatus({
+        message: "Ứng viên không hợp lệ!",
+        status: HTTP_STATUS.NOT_FOUND,
+      });
     }
 
     if (role === RoleType.MEMBER) {
       if (!voter.teamId || candidate.teamId !== voter.teamId) {
-        throw new ErrorWithStatus({ message: 'Chỉ được vote thành viên trong team!', status: HTTP_STATUS.FORBIDDEN });
+        throw new ErrorWithStatus({
+          message: "Chỉ được vote thành viên trong team!",
+          status: HTTP_STATUS.FORBIDDEN,
+        });
       }
-      const existingVotes = await votingRepository.findVotesByVoterAndTeam(userId, voter.teamId!);
+      const existingVotes = await votingRepository.findVotesByVoterAndTeam(
+        userId,
+        voter.teamId!,
+      );
       if (existingVotes.length >= MAX_VOTES_PER_SCOPE) {
-        throw new ErrorWithStatus({ message: `Tối đa ${MAX_VOTES_PER_SCOPE} lượt vote!`, status: HTTP_STATUS.BAD_REQUEST });
+        throw new ErrorWithStatus({
+          message: `Tối đa ${MAX_VOTES_PER_SCOPE} lượt vote!`,
+          status: HTTP_STATUS.BAD_REQUEST,
+        });
       }
     }
 
     if (role === RoleType.BTC_FSTYLE) {
       if (!candidate.teamId) {
-        throw new ErrorWithStatus({ message: 'Ứng viên chưa thuộc đội nào!', status: HTTP_STATUS.BAD_REQUEST });
+        throw new ErrorWithStatus({
+          message: "Ứng viên chưa thuộc đội nào!",
+          status: HTTP_STATUS.BAD_REQUEST,
+        });
       }
       const candidateTeamId = candidate.teamId;
-      const teamVotes = await votingRepository.findVotesByVoterAndTeam(userId, candidateTeamId);
+      const teamVotes = await votingRepository.findVotesByVoterAndTeam(
+        userId,
+        candidateTeamId,
+      );
       if (teamVotes.length >= MAX_VOTES_PER_SCOPE) {
         throw new ErrorWithStatus({
           message: `Tối đa ${MAX_VOTES_PER_SCOPE} lượt vote mỗi đội!`,
@@ -65,9 +92,15 @@ class VotingService {
       }
     }
 
-    const alreadyVoted = await votingRepository.findVoteByVoterAndCandidate(userId, candidateId);
+    const alreadyVoted = await votingRepository.findVoteByVoterAndCandidate(
+      userId,
+      candidateId,
+    );
     if (alreadyVoted) {
-      throw new ErrorWithStatus({ message: 'Bạn đã vote ứng viên này rồi!', status: HTTP_STATUS.CONFLICT });
+      throw new ErrorWithStatus({
+        message: "Bạn đã vote ứng viên này rồi!",
+        status: HTTP_STATUS.CONFLICT,
+      });
     }
 
     await votingRepository.createVote(userId, candidateId);
@@ -86,7 +119,7 @@ class VotingService {
     const now = new Date();
     if (now < VOTE_START || now > VOTE_END) {
       throw new ErrorWithStatus({
-        message: 'Ngoài thời gian bình chọn! (18:00 01/07 → 23:00 04/07/2026)',
+        message: "Ngoài thời gian bình chọn! (18:00 01/07 → 23:00 04/07/2026)",
         status: HTTP_STATUS.FORBIDDEN,
       });
     }
